@@ -18,3 +18,12 @@ fields.forEach(function(field, index) {
 });
 
 console.log(user);
+
+document.getElementById('form-user-create').addEventListener('submit', function(event){
+
+  event.preventDefault();
+
+  console.log('ok');
+
+});
+
