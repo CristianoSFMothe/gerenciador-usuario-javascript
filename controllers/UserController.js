@@ -1,6 +1,6 @@
 class UserController {
 
-  constructor(formId, tableId){
+  constructor(formId, tableId) {
 
     this.formEl = document.getElementById(formId);
     this.tableEl = document.getElementById(tableId);
@@ -12,86 +12,101 @@ class UserController {
   // Método do evento do clique no botão
   onSubmit() {
 
-    this.formEl.addEventListener('submit', event =>{
+    this.formEl.addEventListener('submit', event => {
 
-      event.preventDefault();  
+      event.preventDefault();
 
       let values = this.getValues();
 
       // Carregando a foto
-      this.getPhoto((content) => {
+      this.getPhoto().then(
+        (content) => {
 
-        values.photo = content;
+          values.photo = content;
 
-        this.addLine(values);
+          this.addLine(values);
+        },
+        (e) => {
+          console.error(e);
+        }
+      );
 
-      });
-
-      
     });
   }
   // Fechando o método onSubmit
 
   // Método de receber o contéudo do arquivo (foto)
-  getPhoto(callback) {
+  getPhoto() {
 
-    let fileReader = new FileReader();
+    return new Promise((resolve, reject) => {
 
-    let elements = [...this.formEl.elements].filter(item => {
-      if (item.name === 'photo') {
-        return item;
+      let fileReader = new FileReader();
+
+      let elements = [...this.formEl.elements].filter(item => {
+        if (item.name === 'photo') {
+          return item;
+        };
+      });
+
+      let file = elements[0].files[0];
+
+      fileReader.onload = () => {
+
+        resolve(fileReader.result);
+
       };
+
+      fileReader.onerror = (e) => {
+
+        reject(e);
+
+      };
+
+      fileReader.readAsDataURL(file);
+
     });
 
-    let file = elements[0].files[0];
 
-    fileReader.onload = () => {
-
-      callback(fileReader.result);
-
-    };
-
-    fileReader.readAsDataURL(file);
   }
   // Fechar o método getPhoto
 
   // Método para receber os atributos dos componentes
-  getValues() {    
+  getValues() {
 
     let user = {};
 
     [...this.formEl.elements].forEach(function (field, index) {
 
       if (field.name == 'gender') {
-  
+
         if (field.checked) {
           user[field.name] = field.value;
         }
-  
+
       } else {
-  
+
         user[field.name] = field.value;
       }
-  
+
     });
-  
+
     return new User(
-        user.name, 
-        user.gender, 
-        user.birth, 
-        user.country, 
-        user.email, 
-        user.password, 
-        user.photo, 
-        user.admin
-      );
+      user.name,
+      user.gender,
+      user.birth,
+      user.country,
+      user.email,
+      user.password,
+      user.photo,
+      user.admin
+    );
   }
   // Fechando o método getValues
 
   addLine(dataUser) {
 
     console.log(dataUser);
-  
+
     this.tableEl.innerHTML = `
       <tr>
         <td>
