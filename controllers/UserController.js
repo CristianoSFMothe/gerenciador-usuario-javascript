@@ -6,10 +6,21 @@ class UserController {
     this.tableEl = document.getElementById(tableId);
 
     this.onSubmit();
+    this.onEdit();
 
   }
 
-  // Método do evento do clique no botão
+  // Evento de cancelar
+  onEdit(){
+
+    document.querySelector('#box-user-update .btn-cancel').addEventListener('click', e => {
+
+      this.showPanelCreate();
+
+    });
+  }// Fechando onEditCancel
+
+  // Evento do clique no botão enviar
   onSubmit() {
 
     this.formEl.addEventListener('submit', event => {
@@ -42,8 +53,7 @@ class UserController {
       );
 
     });
-  }
-  // Fechando o método onSubmit
+  }// Fechando o método onSubmit
 
   // Método de receber o contéudo do arquivo (foto)
   getPhoto() {
@@ -80,8 +90,7 @@ class UserController {
 
     });
 
-  }
-  // Fechar o método getPhoto
+  }// Fechar o método getPhoto
 
   // Método para receber os atributos dos componentes
   getValues() {
@@ -128,9 +137,9 @@ class UserController {
       user.photo,
       user.admin
     );
-  }
-  // Fechando o método getValues
+  }// Fechando o método getValues
 
+  // Método de adicionar a tabela dos dados do usuário
   addLine(dataUser) {
 
     let tr = document.createElement('tr');
@@ -147,16 +156,38 @@ class UserController {
           <td>${(dataUser.admin ? 'Sim' : 'Não')}</td>
           <td>${Utils.dataFormat(dataUser.register)}</td>
           <td>
-            <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
+            <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
             <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
           </td>    
     `;
 
+    tr.querySelector('.btn-edit').addEventListener('click', e => {
+
+      console.log(JSON.parse(tr.dataset.user));
+      
+      this.showPanelUpdate();
+
+    });
+
     this.tableEl.appendChild(tr);
 
     this.updateCount();
+  }// Fechando o addLine()
+
+  // Método de exibição dos formulários 
+  showPanelCreate() {
+    
+    document.querySelector('#box-user-create').style.display = 'block';
+    document.querySelector('#box-user-update').style.display = 'none';
   }
 
+  showPanelUpdate() {
+
+    document.querySelector('#box-user-create').style.display = 'none';
+    document.querySelector('#box-user-update').style.display = 'block';
+  }// Fechando o método de exibição dos formulários
+  
+  // Método de atualizar os dados do painel
   updateCount() {
 
     let numberUsers = 0;
@@ -174,6 +205,6 @@ class UserController {
 
     document.querySelector('#number-users').innerHTML = numberUsers;
     document.querySelector('#number-users-admin').innerHTML = numberAdmin;
-  }
+  }// Fechando o método updateCount()
 
 }
