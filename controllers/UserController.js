@@ -39,7 +39,7 @@ class UserController {
       // Método que recupera o conteúdo da imagem, criar uma cópia dela e sobrescreve os 
       // conteúdos da direita pelo o da esquerda
       let result = Object.assign({}, userOld, values);    
-      
+
       this.showPanelCreate();
 
       this.getPhoto(this.formUpdateEl).then(
@@ -222,7 +222,7 @@ class UserController {
           <td>${Utils.dataFormat(dataUser.register)}</td>
           <td>
             <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-            <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+            <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
           </td>    
     `;
 
@@ -234,7 +234,18 @@ class UserController {
   }// Fechando o addLine()
 
   // Método do addEventsTr
-  addEventsTr(tr) {
+  addEventsTr(tr) { 
+
+    tr.querySelector('.btn-delete').addEventListener('click', e =>{
+
+      if (confirm('Deseja realmente excluir?')) {
+
+        tr.remove();
+
+        this.updateCount();
+      }
+
+    });
 
     tr.querySelector('.btn-edit').addEventListener('click', e => {
 
