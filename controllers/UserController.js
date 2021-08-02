@@ -33,27 +33,54 @@ class UserController {
       let index = this.formUpdateEl.dataset.trIndex;
 
       let tr = this.tableEl.rows[index];
+
+      let userOld = JSON.parse(tr.dataset.user);
+
+      // Método que recupera o conteúdo da imagem, criar uma cópia dela e sobrescreve os 
+      // conteúdos da direita pelo o da esquerda
+      let result = Object.assign({}, userOld, values);    
       
-      tr.dataset.user = JSON.stringify(values);
+      this.showPanelCreate();
 
-      tr.innerHTML = 
-      `      
-        <td>
-          <img src="${values.photo}" alt="User Image" class="img-circle img-sm">
-        </td>
-            <td>${values.name}</td>
-            <td>${values.email}</td>
-            <td>${(values.admin ? 'Sim' : 'Não')}</td>
-            <td>${Utils.dataFormat(values.register)}</td>
+      this.getPhoto(this.formUpdateEl).then(
+        (content) => {
+
+          if (!values.photo) {
+            result._photo = userOld._photo;
+          } else {
+            result._photo = content;
+          }
+
+          // JSON.stringfy transforma um objeto JSON em uma String
+          tr.dataset.user = JSON.stringify(result); 
+
+          tr.innerHTML = 
+          `      
             <td>
-              <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-              <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
-            </td>    
-      `;     
+              <img src="${result._photo}" alt="User Image" class="img-circle img-sm">
+            </td>
+                <td>${result._name}</td>
+                <td>${result._email}</td>
+                <td>${(result._admin ? 'Sim' : 'Não')}</td>
+                <td>${Utils.dataFormat(result._register)}</td>
+                <td>
+                  <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
+                  <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+                </td>    
+          `;     
+    
+          this.addEventsTr(tr);
+    
+          this.updateCount();
 
-      this.addEventsTr(tr);
+          this.formUpdateEl.reset();
 
-      this.updateCount();
+          btn.disabled = false;
+        },
+        (e) => {
+          console.error(e);
+        }
+      );
 
     });
   }// Fechando onEdit
@@ -74,7 +101,7 @@ class UserController {
       if (!values) return false;
 
       // Carregando a foto
-      this.getPhoto().then(
+      this.getPhoto(this.formEl).then(
         (content) => {
 
           values.photo = content;
@@ -94,13 +121,13 @@ class UserController {
   }// Fechando o método onSubmit
 
   // Método de receber o contéudo do arquivo (foto)
-  getPhoto() {
+  getPhoto(formEl) {
 
     return new Promise((resolve, reject) => {
 
       let fileReader = new FileReader();
 
-      let elements = [...this.formEl.elements].filter(item => {
+      let elements = [...formEl.elements].filter(item => {
         if (item.name === 'photo') {
           return item;
         };
@@ -212,13 +239,12 @@ class UserController {
     tr.querySelector('.btn-edit').addEventListener('click', e => {
 
       let json = JSON.parse(tr.dataset.user);
-      let form = document.querySelector('#form-user-update');
 
-      form.dataset.trIndex = tr.sectionRowIndex;
+      this.formUpdateEl.dataset.trIndex = tr.sectionRowIndex;
 
       for (let name in json) {
 
-        let field = form.querySelector("[name=" + name.replace("_", "") + "]");
+        let field = this.formUpdateEl.querySelector("[name=" + name.replace("_", "") + "]");
 
         if (field) {
 
@@ -228,7 +254,7 @@ class UserController {
               break;
 
             case 'radio':
-              field = form.querySelector("[name=" + name.replace("_", "") + "][value=" + json[name] + "]");
+              field = this.formUpdateEl.querySelector("[name=" + name.replace("_", "") + "][value=" + json[name] + "]");
               field.checked = true;
               break;
 
@@ -244,6 +270,8 @@ class UserController {
         }
 
       }
+
+      this.formUpdateEl.querySelector('.photo').src = json._photo;
 
       this.showPanelUpdate();
 
