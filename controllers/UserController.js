@@ -11,7 +11,7 @@ class UserController {
   }
 
   // Evento de cancelar
-  onEdit(){
+  onEdit() {
 
     document.querySelector('#box-user-update .btn-cancel').addEventListener('click', e => {
 
@@ -28,7 +28,7 @@ class UserController {
       event.preventDefault();
 
       let btn = this.formEl.querySelector('[type=submit]');
-      
+
       btn.disabled = true;
 
       let values = this.getValues();
@@ -83,7 +83,7 @@ class UserController {
       };
 
       if (file) {
-        fileReader.readAsDataURL(file); 
+        fileReader.readAsDataURL(file);
       } else {
         resolve('dist/img/boxed-bg.jpg');
       }
@@ -112,14 +112,14 @@ class UserController {
           user[field.name] = field.value;
         }
 
-      } else if(field.name == 'admin') {
+      } else if (field.name == 'admin') {
 
         user[field.name] = field.checked;
 
       } else {
 
         user[field.name] = field.value;
-      }      
+      }
 
     });
 
@@ -146,8 +146,8 @@ class UserController {
 
     tr.dataset.user = JSON.stringify(dataUser);
 
-    tr.innerHTML = 
-    `
+    tr.innerHTML =
+      `
       <td>
         <img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm">
       </td>
@@ -169,16 +169,32 @@ class UserController {
       for (let name in json) {
 
         let field = form.querySelector("[name=" + name.replace("_", "") + "]");
-        
-        if (field) {
-          
-          if (field.type == 'file') continue;
 
-          field.value = json[name];
+        if (field) {
+
+          switch (field.type) {
+            case 'file':
+              continue;
+              break;
+
+            case 'radio':
+              field = form.querySelector("[name=" + name.replace("_", "") + "][value=" + json[name] + "]");
+              field.checked = true;
+              break;
+
+            case 'checkbox':
+              field.checked = json[name];
+              break;
+
+            default:
+              field.value = json[name];
+
+          }
+
         }
-        
+
       }
-      
+
       this.showPanelUpdate();
 
     });
@@ -190,7 +206,7 @@ class UserController {
 
   // Método de exibição dos formulários 
   showPanelCreate() {
-    
+
     document.querySelector('#box-user-create').style.display = 'block';
     document.querySelector('#box-user-update').style.display = 'none';
   }
@@ -200,7 +216,7 @@ class UserController {
     document.querySelector('#box-user-create').style.display = 'none';
     document.querySelector('#box-user-update').style.display = 'block';
   }// Fechando o método de exibição dos formulários
-  
+
   // Método de atualizar os dados do painel
   updateCount() {
 
