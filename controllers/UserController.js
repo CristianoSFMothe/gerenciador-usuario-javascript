@@ -204,10 +204,18 @@ class UserController {
     );
   }// Fechando o método getValues
 
+  // Método de insert
+  insert(data) {
+    
+  } // Fechando o insert()
+
+
   // Método de adicionar a tabela dos dados do usuário
   addLine(dataUser) {
 
     let tr = document.createElement('tr');
+
+    this.insert(dataUser);
 
     tr.dataset.user = JSON.stringify(dataUser);
 
