@@ -8,6 +8,7 @@ class UserController {
 
     this.onSubmit();
     this.onEdit();
+    this.selectAll();
 
   }
 
@@ -105,6 +106,8 @@ class UserController {
         (content) => {
 
           values.photo = content;
+
+          this.insert(values);
 
           this.addLine(values);
 
@@ -204,18 +207,49 @@ class UserController {
     );
   }// Fechando o método getValues
 
+  // Método para lista no Stoarage os usuários
+  getUsersStorage() {
+    
+    let users = [];
+
+    if (sessionStorage.getItem('users')) {
+      users = JSON.parse(sessionStorage.getItem('users'));
+    } 
+
+    return users;
+  }// Fecha getUsersStorage()
+
+  // Método para selecioar todos os usuários
+  selectAll() {
+
+    let users = this.getUsersStorage();
+
+    users.forEach(dataUser => {
+
+      let user = new User();
+
+      user.loadFromJSON(dataUser);
+
+      this.addLine(user);
+
+    });
+  } // Fecha selectAll()
+
   // Método de insert
   insert(data) {
+
+    let users = this.getUsersStorage();
+
+    users.push(data);
     
-  } // Fechando o insert()
+    sessionStorage.setItem('users', JSON.stringify(users));
+  } // Fecha o insert()
 
 
   // Método de adicionar a tabela dos dados do usuário
   addLine(dataUser) {
 
     let tr = document.createElement('tr');
-
-    this.insert(dataUser);
 
     tr.dataset.user = JSON.stringify(dataUser);
 
