@@ -52,8 +52,10 @@ class UserController {
             result._photo = content;
           }
           let user = new User();
-
+          
           user.loadFromJSON(result);
+          
+          user.save();
 
           this.getTr(user, tr);
     
@@ -92,7 +94,7 @@ class UserController {
 
           values.photo = content;
 
-          this.insert(values);
+          values.save();
 
           this.addLine(values);
 
@@ -218,19 +220,7 @@ class UserController {
       this.addLine(user);
 
     });
-  } // Fecha selectAll()
-
-  // Método de insert
-  insert(data) {
-
-    let users = this.getUsersStorage();
-
-    users.push(data);
-    
-    // sessionStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('users', JSON.stringify(users));
-  } // Fecha o insert()
-
+  } // Fecha selectAll()  
 
   // Método de adicionar a tabela dos dados do usuário
   addLine(dataUser) {
