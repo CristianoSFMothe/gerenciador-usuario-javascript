@@ -49,6 +49,8 @@
 
 ![image](https://user-images.githubusercontent.com/68359459/128443907-fb29dc1c-eb49-4927-a6f7-bc12f948868e.png)
 
+Podendo ser acessado atráves da página do projeto <a href="https://cristianodasilvaferreira.github.io/gerenciador-usuario-javascript/" target="_blank">Gerenciador Usuários JavaScript</a> hospetada no repositório do GitPage
+
 
 
 <h3>🛠 Tecnologias</h3>
