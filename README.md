@@ -2,6 +2,7 @@
  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/CristianoDaSilvaFerreira/gerenciador-usuario-javascript?style=for-the-badge"> <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/CristianoDaSilvaFerreira/gerenciador-usuario-javascript?style=for-the-badge">
  <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/CristianoDaSilvaFerreira/gerenciador-usuario-javascript?style=for-the-badge"> 
  <img alt="GitHub" src="https://img.shields.io/github/license/CristianoDaSilvaFerreira/gerenciador-usuario-javascript?style=for-the-badge">
+<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/CristianoDaSilvaFerreira/gerenciador-usuario-javascript?style=for-the-badge">
 </p>
 
 <p align="center">
