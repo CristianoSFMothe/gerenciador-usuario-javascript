@@ -11,7 +11,7 @@
 
 <h1 align="center">:key: Gerenciador Usuário JavaScript</h1>
 
- <p>Projeto de um site de Gerenciamento de Usuários, criado durante o curso de JavaScript completo da Hcode Treinamento - Udemy. Usando o templete visual do <a href="https://adminlte.io/" target="_blank">AdimLTE</a></p>
+ <p>Projeto de um site de Gerenciamento de Usuários, criado durante o curso de JavaScript completo da Hcode Treinamento - Udemy. Usando o templete visual do <a href="[https://adminlte.io/](https://cristianosfmothe.github.io/gerenciador-usuario-javascript/)" target="_blank">AdimLTE</a></p>
  
 <h2>Description</h2>
 <p>Com a utilização do JavaScrip, criando um sistema de Gerenciamento de Usuários, baseado no tamplete do AdminLTE, no qual poderá fazer o CRUD completo, usando funcionalidade atuais do ES6. É com isso na primeira parte do projeto, será permitido realizar o salvamento das informações no broswer do usuário, atráves do localStorage</p>
