@@ -73,6 +73,8 @@ Podendo ser acessado atráves da página do projeto <a href="https://cristianosf
 
 Feito com ❤️ por Cristiano da Silva Ferreira - atráves da formação do curso da <a href="https://hcode.com.br/cursos/JSFULL" target="_blank">Hcode Treinamentos</a> - <a href="https://www.udemy.com/course/javascript-curso-completo/" target="blank">Udemy</a> 👋🏽 Entre em contato!
 
+Link para acessar <a href="https://cristianosfmothe.github.io/gerenciador-usuario-javascript/">Gerenciador de Usuários Javascript</a>
+
 [![Linkedin Badge](https://img.shields.io/badge/-Cristiano-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/cristiano-da-silva-ferreira/)](https://www.linkedin.com/in/cristiano-da-silva-ferreira/) 
 [![Gmail Badge](https://img.shields.io/badge/-cristianodevsystemo@gmail.com-c14438?style=flat-square&logo=Gmail&logoColor=white&link=mailto:cristianodevsysten@gmail.com)](mailto:cristianodevsystem@gmail.com)
 
