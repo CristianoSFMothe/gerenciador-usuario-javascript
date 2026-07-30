@@ -132,13 +132,13 @@ Regras de organização:
 - `src/lib/prisma.ts` é o único ponto de instanciação do `PrismaClient` (padrão singleton, evitando esgotar conexões em desenvolvimento):
 
 ```ts
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client'
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 ```
 
 - Não instanciar `PrismaClient` em nenhum outro arquivo.
@@ -225,7 +225,7 @@ npx --no -- commitlint --edit "$1"
 `commitlint.config.js`:
 
 ```js
-module.exports = { extends: ["@commitlint/config-conventional"] };
+module.exports = { extends: ['@commitlint/config-conventional'] }
 ```
 
 `package.json` (trecho):
