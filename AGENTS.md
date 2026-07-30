@@ -24,16 +24,16 @@ Ordem de dependência entre fases (não pular etapas):
 
 ## 2. Stacks (Tecnologias)
 
-| Camada       | Tecnologia                                              | Observações                                                                                                                       |
-| ------------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Framework    | **Next.js** (App Router)                                | Server Components por padrão, Server Actions para mutações, TypeScript estrito                                                    |
-| Estilo       | **TailwindCSS**                                         | Configuração via `@theme` (CSS-first), sem `tailwind.config.js` tradicional                                                       |
-| Componentes  | **shadcn/ui**                                           | Componentes copiados para `src/components/ui`, não é uma dependência de node_modules — customizações vão direto no arquivo gerado |
-| ORM / Banco  | **Prisma** + **PostgreSQL**                             | Banco gerenciado (Neon ou Supabase); todo acesso a dados passa pelo Prisma Client                                                 |
-| Autenticação | **Better Auth**                                         | Estratégia email/senha; adapter oficial do Prisma                                                                                 |
-| Validação    | **Zod** + React Hook Form                               | Um schema por entidade, reaproveitado no client e no server                                                                       |
-| Qualidade    | **ESLint** + **Prettier** + **Husky** + **lint-staged** | Ver seções 7 e 8                                                                                                                  |
-| Testes       | **Vitest** (unitário) + **Playwright** (E2E)            | TDD sempre que praticável — ver seção 10                                                                                          |
+| Camada       | Tecnologia                                              | Observações                                                                                                                            |
+| ------------ | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework    | **Next.js** (App Router)                                | Server Components por padrão, Server Actions para mutações, TypeScript estrito                                                         |
+| Estilo       | **TailwindCSS**                                         | Configuração via `@theme` (CSS-first), sem `tailwind.config.js` tradicional                                                            |
+| Componentes  | **shadcn/ui**                                           | Componentes copiados para `src/app/_components/ui`, não é uma dependência de node_modules — customizações vão direto no arquivo gerado |
+| ORM / Banco  | **Prisma** + **PostgreSQL**                             | Banco gerenciado (Neon ou Supabase); todo acesso a dados passa pelo Prisma Client                                                      |
+| Autenticação | **Better Auth**                                         | Estratégia email/senha; adapter oficial do Prisma                                                                                      |
+| Validação    | **Zod** + React Hook Form                               | Um schema por entidade, reaproveitado no client e no server                                                                            |
+| Qualidade    | **ESLint** + **Prettier** + **Husky** + **lint-staged** | Ver seções 7 e 8                                                                                                                       |
+| Testes       | **Vitest** (unitário) + **Playwright** (E2E)            | TDD sempre que praticável — ver seção 10                                                                                               |
 
 Não introduzir bibliotecas fora dessa stack sem justificativa explícita na PR (ex.: não adicionar Redux, Axios, styled-components, Material UI, etc. sem necessidade real).
 
@@ -97,39 +97,43 @@ src/
 │   │       ├── novo/page.tsx        # criação
 │   │       └── [id]/page.tsx        # edição
 │   ├── api/auth/[...all]/route.ts   # handler do Better Auth
+│   ├── _components/
+│   │   ├── ui/                      # componentes shadcn (gerados via CLI)
+│   │   └── usuarios/                 # componentes de domínio (tabela, formulário, dialogs)
+│   ├── _lib/
+│   │   ├── auth.ts                     # config do Better Auth
+│   │   ├── prisma.ts                    # client singleton
+│   │   ├── utils.ts                      # helper `cn()` (shadcn)
+│   │   └── validations/
+│   │       └── usuario.ts                # schemas Zod
+│   ├── _hooks/                              # hooks de UI compartilhados
 │   ├── layout.tsx
 │   ├── loading.tsx
 │   └── error.tsx
-├── components/
-│   ├── ui/                          # componentes shadcn (gerados via CLI)
-│   └── usuarios/                     # componentes de domínio (tabela, formulário, dialogs)
-├── actions/
+├── _actions/
 │   └── usuarios.ts                    # Server Actions (create/update/delete)
-├── lib/
-│   ├── auth.ts                         # config do Better Auth
-│   ├── prisma.ts                        # client singleton
-│   └── validations/
-│       └── usuario.ts                    # schemas Zod
 ├── middleware.ts                          # proteção de rotas
 └── __tests__/                              # testes unitários (espelha a estrutura de src/)
 
 e2e/                                          # testes Playwright
 ```
 
+Pastas prefixadas com `_` dentro de `app/` são pastas privadas do App Router (Next.js as ignora como segmento de rota) — usadas para colocation de componentes, lib e hooks junto das rotas. `_actions/` fica fora de `app/`, no nível de `src/`, por não ter relação com o roteamento.
+
 Regras de organização:
 
-- Nada de lógica de negócio dentro de componentes de UI — fica em `actions/` ou `lib/`.
+- Nada de lógica de negócio dentro de componentes de UI — fica em `_actions/` ou `app/_lib/`.
 - Um schema Zod por entidade, reaproveitado no formulário (client) e na Server Action (server). Não duplicar validação.
 - Server Components por padrão; `"use client"` só quando houver interatividade real (formulários, dropdowns, dialogs).
 - Mutações internas via Server Actions; Route Handlers só para integrações externas (o Better Auth já expõe o dele em `api/auth/[...all]`).
-- Componentes de `components/ui` são gerados pelo CLI do shadcn — evitar edições manuais grandes; se precisar customizar, prefira compor por cima em vez de reescrever o gerado.
+- Componentes de `app/_components/ui` são gerados pelo CLI do shadcn — evitar edições manuais grandes; se precisar customizar, prefira compor por cima em vez de reescrever o gerado.
 
 ---
 
 ## 5. Banco de dados
 
 - Toda mudança de schema passa por `prisma/schema.prisma`, seguida de `npx prisma migrate dev --name <descricao-curta>`. Nunca editar o banco manualmente ou gerar SQL solto fora do fluxo de migrations do Prisma.
-- `src/lib/prisma.ts` é o único ponto de instanciação do `PrismaClient` (padrão singleton, evitando esgotar conexões em desenvolvimento):
+- `src/app/_lib/prisma.ts` é o único ponto de instanciação do `PrismaClient` (padrão singleton, evitando esgotar conexões em desenvolvimento):
 
 ```ts
 import { PrismaClient } from '@prisma/client'
@@ -150,9 +154,9 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 ## 6. Autenticação
 
-- Configuração central do Better Auth em `src/lib/auth.ts`, usando o adapter oficial do Prisma. Não duplicar lógica de sessão em outros arquivos.
+- Configuração central do Better Auth em `src/app/_lib/auth.ts`, usando o adapter oficial do Prisma. Não duplicar lógica de sessão em outros arquivos.
 - Estratégia inicial: email e senha. Provedores OAuth (Google, GitHub) são extensão futura (Fase 8), não implementar antes de solicitado.
-- O Route Handler `src/app/api/auth/[...all]/route.ts` apenas delega para a instância configurada em `lib/auth.ts` — não colocar lógica de negócio nele.
+- O Route Handler `src/app/api/auth/[...all]/route.ts` apenas delega para a instância configurada em `_lib/auth.ts` — não colocar lógica de negócio nele.
 - Rotas do dashboard são protegidas via `src/middleware.ts`. Ao criar uma nova rota autenticada, confirmar que o `matcher` do middleware cobre o novo caminho.
 - Senhas nunca são manipuladas manualmente — toda a lógica de hashing/verificação fica a cargo do Better Auth.
 - Variáveis sensíveis (`BETTER_AUTH_SECRET`, `DATABASE_URL`, etc.) vivem apenas em `.env`, nunca commitadas; `.env.example` documenta as chaves necessárias sem valores reais.
