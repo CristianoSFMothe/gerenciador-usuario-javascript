@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum Department {
+  HUMAN_RESOURCES
+  INFORMATION_TECHNOLOGY
+  FINANCE
+  SALES
+  MARKETING
+  OPERATIONS
+  LEGAL
+  ADMINISTRATIVE
+  CUSTOMER_SERVICE
+  OTHER
+}
+
+model Company {
+  id String @id @default(uuid())
+
+  tradeName             String
+  legalName             String
+  cnpj                  String   @unique
+  stateRegistration     String?
+  municipalRegistration String?
+  foundedAt             DateTime
+  website               String
+  email                 String
+  landlinePhone         String
+  mobilePhone           String?
+
+  postalCode   String
+  street       String
+  streetNumber String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+
+  positions Position[]
+  employees Employee[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Position {
+  id    String @id @default(uuid())
+  title String
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  employees Employee[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, title])
+}
+
+model Employee {
+  id String @id @default(uuid())
+
+  sequentialNumber   Int    @unique @default(autoincrement())
+  registrationNumber String @unique
+
+  firstName String
+  lastName  String
+  phone     String
+  cpf       String @unique
+  email     String @unique
+
+  birthDate  DateTime
+  gender     Gender
+  status     EmployeeStatus @default(ACTIVE)
+  department Department
+
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id])
+  positionId String
+  position   Position @relation(fields: [positionId], references: [id])
+
+  postalCode   String
+  street       String
+  streetNumber String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([positionId])
+  @@index([status])
+  @@index([department])
+}
