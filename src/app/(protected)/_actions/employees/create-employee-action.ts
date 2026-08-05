@@ -3,7 +3,7 @@
 import {
   type EmployeeInput,
   employeeSchema,
-} from '../../_schema/employee-schema'
+} from '../../dashboard/employee/_schema/employee-schema'
 
 type CreateEmployeeActionResult =
   { success: true; message: string } | { success: false; message: string }

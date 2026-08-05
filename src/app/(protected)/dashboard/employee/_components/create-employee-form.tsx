@@ -26,8 +26,9 @@ import {
 } from '@/app/_components/ui/select'
 import { cn } from '@/app/_lib/utils'
 
-import { createEmployeeAction } from '../_actions/employees/create-employee-action'
+import { createEmployeeAction } from '../../../_actions/employees/create-employee-action'
 import { type EmployeeInput, employeeSchema } from '../_schema/employee-schema'
+import EmployeeTextField from './employee-text-field'
 
 const GENDER_OPTIONS = [
   { value: 'MALE', label: 'Masculino' },
@@ -93,7 +94,7 @@ const CreateEmployeeForm = () => {
   return (
     <div className='flex flex-col gap-8'>
       <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px]'>
-        Cadastro de Nova Pessoa
+        Cadastro de Novo Funcionário
       </h1>
 
       <Form {...form}>
@@ -103,84 +104,39 @@ const CreateEmployeeForm = () => {
           className='flex flex-col gap-8 rounded-lg border border-[#dfe1e6] bg-white p-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sm:p-8'
         >
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
-            <FormField
+            <EmployeeTextField
               control={form.control}
               name='firstName'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                    Nome
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder='Digite o nome' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label='Nome'
+              placeholder='Digite o nome'
             />
 
-            <FormField
+            <EmployeeTextField
               control={form.control}
               name='lastName'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                    Sobrenome
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder='Digite o sobrenome' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label='Sobrenome'
+              placeholder='Digite o sobrenome'
             />
 
-            <FormField
+            <EmployeeTextField
               control={form.control}
               name='phone'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                    Telefone
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder='(00) 00000-0000' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label='Telefone'
+              placeholder='(00) 00000-0000'
             />
 
-            <FormField
+            <EmployeeTextField
               control={form.control}
               name='cpf'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                    CPF
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder='000.000.000-00' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label='CPF'
+              placeholder='000.000.000-00'
             />
 
-            <FormField
+            <EmployeeTextField
               control={form.control}
               name='email'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                    Email
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder='exemplo@email.com' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label='Email'
+              placeholder='exemplo@email.com'
             />
 
             <div className='flex gap-3'>

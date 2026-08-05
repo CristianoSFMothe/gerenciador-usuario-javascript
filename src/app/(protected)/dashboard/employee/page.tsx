@@ -1,4 +1,4 @@
-const Users = () => {
+const Employees = () => {
   return (
     <div>
       <h1>Usuários</h1>
@@ -6,4 +6,4 @@ const Users = () => {
   )
 }
 
-export default Users
+export default Employees

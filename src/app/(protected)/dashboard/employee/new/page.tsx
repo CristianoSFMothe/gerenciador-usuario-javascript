@@ -1,4 +1,4 @@
-import CreateEmployeeForm from '../../../_components/create-employee-form'
+import CreateEmployeeForm from '../_components/create-employee-form'
 
 const NewUserPage = () => {
   return (
