@@ -1,0 +1,96 @@
+'use client'
+
+import {
+  Briefcase,
+  Building2,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  Users,
+} from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
+import { cn } from '@/app/_lib/utils'
+
+import { logoutAction } from '../_actions/auth/logout-action'
+
+const NAV_LINKS = [
+  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { label: 'Pessoas', href: '/dashboard/users', icon: Users },
+  { label: 'Empresas', href: '/dashboard/companies', icon: Building2 },
+]
+
+const isLinkActive = (pathname: string, href: string) => {
+  if (href === '/dashboard') return pathname === href
+
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
+const navItemClassName = (active: boolean) =>
+  cn(
+    'flex items-center gap-2 rounded-sm py-2 pr-[18px] pl-4 text-xs font-semibold tracking-[0.6px]',
+    active
+      ? 'border-r-2 border-[#003d9b] bg-[#003d9b]/5 text-[#003d9b]'
+      : 'text-[#434654] hover:bg-[#003d9b]/5',
+  )
+
+const SideNavBar = () => {
+  const pathname = usePathname()
+
+  return (
+    <aside className='flex h-full w-64 shrink-0 flex-col justify-between border-r border-[#dfe1e6] bg-[#f3faff] py-6'>
+      <div className='flex flex-col gap-8 pb-8'>
+        <div className='flex items-center gap-2 px-4'>
+          <div className='flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#003d9b]/10'>
+            <Briefcase className='size-5 text-[#003d9b]' />
+          </div>
+          <div className='flex flex-col'>
+            <span className='text-xl leading-7 font-semibold tracking-[0.6px] text-[#003d9b]'>
+              Enterprise System
+            </span>
+            <span className='text-xs tracking-[0.6px] text-[#434654]'>
+              Management Hub
+            </span>
+          </div>
+        </div>
+
+        <nav className='flex flex-col gap-1 px-2'>
+          {NAV_LINKS.map(({ label, href, icon: Icon }) => {
+            const active = isLinkActive(pathname, href)
+
+            return (
+              <Link key={href} href={href} className={navItemClassName(active)}>
+                <Icon className='size-4.5 shrink-0' />
+                {label}
+              </Link>
+            )
+          })}
+        </nav>
+      </div>
+
+      <div className='flex flex-col gap-1 px-2'>
+        <Link
+          href='/dashboard/settings'
+          className={navItemClassName(
+            isLinkActive(pathname, '/dashboard/settings'),
+          )}
+        >
+          <Settings className='size-5 shrink-0' />
+          Configurações
+        </Link>
+
+        <button
+          type='button'
+          onClick={() => logoutAction()}
+          className={cn(navItemClassName(false), 'text-left')}
+        >
+          <LogOut className='size-4.5 shrink-0' />
+          Sair
+        </button>
+      </div>
+    </aside>
+  )
+}
+
+export default SideNavBar
