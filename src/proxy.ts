@@ -22,7 +22,7 @@ const buildCspHeader = (nonce: string) => {
   return directives.join('; ')
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith(PROTECTED_PATH_PREFIX)) {
     const sessionCookie = getSessionCookie(request)
 
