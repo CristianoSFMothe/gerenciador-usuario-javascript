@@ -105,7 +105,7 @@ model Employee {
 
   postalCode   String
   street       String
-  streetNumber String
+  streetNumber String?
   complement   String?
   neighborhood String
   city         String

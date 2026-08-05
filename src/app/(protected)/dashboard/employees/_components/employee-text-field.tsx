@@ -11,9 +11,14 @@ import { Input } from '@/app/_components/ui/input'
 
 import type { EmployeeInput } from '../_schema/employee-schema'
 
+type EmployeeTextFieldName = Exclude<
+  FieldPath<EmployeeInput>,
+  'hasNoStreetNumber'
+>
+
 type EmployeeTextFieldProps = {
   control: Control<EmployeeInput>
-  name: FieldPath<EmployeeInput>
+  name: EmployeeTextFieldName
   label: string
   placeholder?: string
   type?: string

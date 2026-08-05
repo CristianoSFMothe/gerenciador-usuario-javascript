@@ -25,33 +25,13 @@ import {
   SelectValue,
 } from '@/app/_components/ui/select'
 import { BRAZIL_STATES } from '@/app/_lib/brazil-states'
+import { calculateAge } from '@/app/_lib/calculate-age'
+import { GENDER_OPTIONS } from '@/app/_lib/gender-options'
 import { cn } from '@/app/_lib/utils'
 
 import { createEmployeeAction } from '../../../_actions/employees/create-employee-action'
 import { type EmployeeInput, employeeSchema } from '../_schema/employee-schema'
 import EmployeeTextField from './employee-text-field'
-
-const GENDER_OPTIONS = [
-  { value: 'MALE', label: 'Masculino' },
-  { value: 'FEMALE', label: 'Feminino' },
-  { value: 'OTHER', label: 'Outro' },
-] as const
-
-const calculateAge = (birthDate: string) => {
-  if (!birthDate) return null
-
-  const today = new Date()
-  const birth = new Date(birthDate)
-  let age = today.getFullYear() - birth.getFullYear()
-  const hasHadBirthdayThisYear =
-    today.getMonth() > birth.getMonth() ||
-    (today.getMonth() === birth.getMonth() &&
-      today.getDate() >= birth.getDate())
-
-  if (!hasHadBirthdayThisYear) age -= 1
-
-  return age
-}
 
 const addressInputClassName = (locked: boolean) =>
   cn(locked && 'bg-[#deeaf1]', 'disabled:opacity-100')
@@ -71,6 +51,8 @@ const CreateEmployeeForm = () => {
       birthDate: '',
       postalCode: '',
       street: '',
+      streetNumber: '',
+      hasNoStreetNumber: false,
       neighborhood: '',
       city: '',
       state: '',
@@ -79,6 +61,10 @@ const CreateEmployeeForm = () => {
 
   const birthDate = useWatch({ control: form.control, name: 'birthDate' })
   const age = calculateAge(birthDate)
+  const hasNoStreetNumber = useWatch({
+    control: form.control,
+    name: 'hasNoStreetNumber',
+  })
 
   const onSubmit = async (data: EmployeeInput) => {
     const result = await createEmployeeAction(data)
@@ -291,7 +277,7 @@ const CreateEmployeeForm = () => {
                 control={form.control}
                 name='street'
                 render={({ field }) => (
-                  <FormItem className='sm:col-span-8'>
+                  <FormItem className='sm:col-span-5'>
                     <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                       Logradouro
                     </FormLabel>
@@ -312,7 +298,30 @@ const CreateEmployeeForm = () => {
                 )}
               />
 
-              <div className='flex items-center gap-2 sm:col-span-12'>
+              <FormField
+                control={form.control}
+                name='streetNumber'
+                render={({ field }) => (
+                  <FormItem className='sm:col-span-3'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                      Número
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={hasNoStreetNumber}
+                        placeholder='Nº'
+                        className={addressInputClassName(
+                          hasNoStreetNumber === true,
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className='flex items-center gap-2 sm:col-span-9'>
                 <Checkbox
                   id='manual-address'
                   checked={manualAddress}
@@ -327,6 +336,32 @@ const CreateEmployeeForm = () => {
                   Não sei o CEP
                 </label>
               </div>
+
+              <FormField
+                control={form.control}
+                name='hasNoStreetNumber'
+                render={({ field }) => (
+                  <div className='flex items-center gap-2 sm:col-span-3'>
+                    <FormControl>
+                      <Checkbox
+                        id='no-street-number'
+                        checked={field.value === true}
+                        onCheckedChange={(checked) => {
+                          const isChecked = checked === true
+                          field.onChange(isChecked)
+                          if (isChecked) form.setValue('streetNumber', '')
+                        }}
+                      />
+                    </FormControl>
+                    <label
+                      htmlFor='no-street-number'
+                      className='cursor-pointer text-xs text-[#434654]'
+                    >
+                      Sem número
+                    </label>
+                  </div>
+                )}
+              />
 
               <FormField
                 control={form.control}
