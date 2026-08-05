@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 
 import { auth } from '@/app/_lib/auth'
 
+import TopNavbar from '../_components/top-navbar'
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -16,7 +18,7 @@ export default async function DashboardLayout({
 
   return (
     <div>
-      {/* sidebar + topbar */}
+      <TopNavbar />
       {children}
     </div>
   )
