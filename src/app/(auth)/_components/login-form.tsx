@@ -3,6 +3,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -21,6 +22,7 @@ import AuthenticationButton from './authentication-button'
 import AuthenticationInput from './authentication-input'
 
 const LoginForm = () => {
+  const router = useRouter()
   const [formError, setFormError] = useState<string | null>(null)
 
   const form = useForm<LoginInput>({
@@ -38,7 +40,10 @@ const LoginForm = () => {
 
     if (!result.success) {
       setFormError(result.message)
+      return
     }
+
+    router.push('/dashboard')
   }
 
   return (

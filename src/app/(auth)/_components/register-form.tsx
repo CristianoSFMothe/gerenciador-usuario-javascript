@@ -2,8 +2,10 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import {
   Form,
@@ -20,6 +22,7 @@ import AuthenticationButton from './authentication-button'
 import AuthenticationInput from './authentication-input'
 
 const RegisterForm = () => {
+  const router = useRouter()
   const [formError, setFormError] = useState<string | null>(null)
 
   const form = useForm<RegisterInput>({
@@ -39,7 +42,11 @@ const RegisterForm = () => {
 
     if (!result.success) {
       setFormError(result.message)
+      return
     }
+
+    toast.success(result.message)
+    router.push('/login')
   }
   return (
     <Form {...form}>
