@@ -4,7 +4,10 @@ import { APIError } from 'better-auth/api'
 
 import { auth } from '@/app/_lib/auth'
 
-import type { RegisterInput } from '../../_schema/register-schema'
+import {
+  type RegisterInput,
+  registerSchema,
+} from '../../_schema/register-schema'
 
 type RegisterActionResult =
   { success: true; message: string } | { success: false; message: string }
@@ -18,12 +21,18 @@ const ERROR_MESSAGES: Record<string, string> = {
 export const registerAction = async (
   data: RegisterInput,
 ): Promise<RegisterActionResult> => {
+  const parsed = registerSchema.safeParse(data)
+
+  if (!parsed.success) {
+    return { success: false, message: 'Dados inválidos.' }
+  }
+
   try {
     await auth.api.signUpEmail({
       body: {
-        name: data.name,
-        email: data.email,
-        password: data.password,
+        name: parsed.data.name,
+        email: parsed.data.email,
+        password: parsed.data.password,
       },
     })
 

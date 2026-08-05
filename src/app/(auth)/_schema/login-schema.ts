@@ -1,7 +1,9 @@
 import { z } from 'zod'
 
+import { emailSchema } from './shared'
+
 export const loginSchema = z.object({
-  email: z.email('Informe um e-mail válido.').min(1, 'Informe seu e-mail.'),
+  email: emailSchema,
   password: z.string().min(6, 'Informe sua senha.'),
 })
 

@@ -5,7 +5,7 @@ import { headers } from 'next/headers'
 
 import { auth } from '@/app/_lib/auth'
 
-import type { LoginInput } from '../../_schema/login-schema'
+import { type LoginInput, loginSchema } from '../../_schema/login-schema'
 
 type LoginActionResult =
   { success: true; message: string } | { success: false; message: string }
@@ -13,11 +13,17 @@ type LoginActionResult =
 export const loginAction = async (
   data: LoginInput,
 ): Promise<LoginActionResult> => {
+  const parsed = loginSchema.safeParse(data)
+
+  if (!parsed.success) {
+    return { success: false, message: 'Dados inválidos.' }
+  }
+
   try {
     await auth.api.signInEmail({
       body: {
-        email: data.email,
-        password: data.password,
+        email: parsed.data.email,
+        password: parsed.data.password,
       },
       headers: await headers(),
     })
