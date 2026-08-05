@@ -18,7 +18,7 @@ import { logoutAction } from '../_actions/auth/logout-action'
 
 const NAV_LINKS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Usuários', href: '/dashboard/users', icon: Users },
+  { label: 'Funcionários', href: '/dashboard/employees', icon: Users },
   { label: 'Empresas', href: '/dashboard/companies', icon: Building2 },
 ]
 
