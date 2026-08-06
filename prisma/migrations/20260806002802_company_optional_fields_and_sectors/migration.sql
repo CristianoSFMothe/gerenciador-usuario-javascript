@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Company" ADD COLUMN     "sectors" TEXT[] DEFAULT ARRAY[]::TEXT[],
+ALTER COLUMN "foundedAt" DROP NOT NULL,
+ALTER COLUMN "website" DROP NOT NULL,
+ALTER COLUMN "email" DROP NOT NULL,
+ALTER COLUMN "landlinePhone" DROP NOT NULL;

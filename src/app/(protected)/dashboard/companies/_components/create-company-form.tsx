@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Building2, Globe, Mail, MapPin, Phone, Search, X } from 'lucide-react'
+import { Building2, Mail, MapPin, Phone, Search, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -25,11 +25,16 @@ import {
   SelectValue,
 } from '@/app/_components/ui/select'
 import { BRAZIL_STATES } from '@/app/_lib/brazil-states'
+import { cn } from '@/app/_lib/utils'
+import { addressInputClassName } from '@/app/_utils/address-input-class-name'
 import { maskCEP, maskCNPJ } from '@/app/_utils/masks'
 
 import { createCompanyAction } from '../../../_actions/companies/create-company-action'
 import { type CompanyInput, companySchema } from '../_schema/company-schema'
+import AutoFillAddressField from './auto-fill-address-field'
 import CompanyTextField from './company-text-field'
+import FormCheckboxField from './form-checkbox-field'
+import FormSectionCard from './form-section-card'
 
 const CreateCompanyForm = () => {
   const router = useRouter()
@@ -50,8 +55,10 @@ const CreateCompanyForm = () => {
       mobilePhone: '',
       sectors: [],
       postalCode: '',
+      hasNoPostalCode: false,
       street: '',
       number: '',
+      hasNoStreetNumber: false,
       complement: '',
       neighborhood: '',
       city: '',
@@ -60,6 +67,14 @@ const CreateCompanyForm = () => {
   })
 
   const sectors = useWatch({ control: form.control, name: 'sectors' }) ?? []
+  const hasNoStreetNumber = useWatch({
+    control: form.control,
+    name: 'hasNoStreetNumber',
+  })
+  const manualAddress = useWatch({
+    control: form.control,
+    name: 'hasNoPostalCode',
+  })
 
   const addSector = () => {
     const trimmed = sectorInput.trim()
@@ -86,7 +101,8 @@ const CreateCompanyForm = () => {
     }
 
     toast.success(result.message)
-    router.push('/dashboard/companies')
+    form.reset()
+    setSectorInput('')
   }
 
   return (
@@ -109,14 +125,11 @@ const CreateCompanyForm = () => {
           noValidate
           className='flex flex-col gap-8'
         >
-          <div className='flex flex-col gap-4 rounded-lg border border-[#dfe1e6] bg-white p-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sm:p-8'>
-            <div className='flex items-center gap-2 border-b border-[#dfe1e6]/50 pb-3'>
-              <Building2 className='size-5 text-[#003d9b]' />
-              <h2 className='text-lg font-semibold text-[#121d22]'>
-                Informações Principais
-              </h2>
-            </div>
-
+          <FormSectionCard
+            icon={Building2}
+            title='Informações Principais'
+            contentClassName='flex flex-col gap-6'
+          >
             <div className='grid grid-cols-1 gap-6 sm:grid-cols-3'>
               <div className='sm:col-span-2'>
                 <CompanyTextField
@@ -133,7 +146,9 @@ const CreateCompanyForm = () => {
                 label='Nome Fantasia *'
                 placeholder='Ex: Acme'
               />
+            </div>
 
+            <div className='grid grid-cols-1 gap-6 sm:grid-cols-4'>
               <CompanyTextField
                 control={form.control}
                 name='cnpj'
@@ -162,7 +177,7 @@ const CreateCompanyForm = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                      Data de Abertura
+                      Data de Abertura *
                     </FormLabel>
                     <FormControl>
                       <Input type='date' {...field} />
@@ -172,17 +187,15 @@ const CreateCompanyForm = () => {
                 )}
               />
             </div>
-          </div>
+          </FormSectionCard>
 
           <div className='flex flex-col gap-8 sm:flex-row'>
-            <div className='flex flex-1 flex-col gap-4 rounded-lg border border-[#dfe1e6] bg-white p-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sm:p-8'>
-              <div className='flex items-center gap-2 border-b border-[#dfe1e6]/50 pb-3'>
-                <Phone className='size-5 text-[#003d9b]' />
-                <h2 className='text-lg font-semibold text-[#121d22]'>
-                  Contato &amp; Presença
-                </h2>
-              </div>
-
+            <FormSectionCard
+              icon={Phone}
+              title='Contato & Presença'
+              className='flex-1'
+              contentClassName='flex flex-col gap-4'
+            >
               <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                 <FormField
                   control={form.control}
@@ -190,19 +203,19 @@ const CreateCompanyForm = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                        Email Corporativo
+                        Email Corporativo *
                       </FormLabel>
-                      <FormControl>
-                        <div className='relative'>
-                          <Mail className='absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#434654]/70' />
+                      <div className='relative'>
+                        <Mail className='absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#434654]/70' />
+                        <FormControl>
                           <Input
                             type='email'
                             placeholder='contato@empresa.com.br'
                             className='pl-9'
                             {...field}
                           />
-                        </div>
-                      </FormControl>
+                        </FormControl>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -216,16 +229,18 @@ const CreateCompanyForm = () => {
                       <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                         Site Institucional
                       </FormLabel>
-                      <FormControl>
-                        <div className='relative'>
-                          <Globe className='absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#434654]/70' />
+                      <div className='relative'>
+                        <span className='pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-[#434654]/70'>
+                          https://
+                        </span>
+                        <FormControl>
                           <Input
-                            placeholder='https://www.empresa.com.br'
-                            className='pl-9'
+                            placeholder='www.empresa.com.br'
+                            className='pl-16'
                             {...field}
                           />
-                        </div>
-                      </FormControl>
+                        </FormControl>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -234,7 +249,7 @@ const CreateCompanyForm = () => {
                 <CompanyTextField
                   control={form.control}
                   name='landlinePhone'
-                  label='Telefone Fixo'
+                  label='Telefone Fixo *'
                   placeholder='(00) 0000-0000'
                 />
 
@@ -257,13 +272,16 @@ const CreateCompanyForm = () => {
                       className='flex items-center gap-1 rounded-full border border-[#0052cc]/20 bg-[#0052cc]/10 px-[9px] py-[3px] text-xs font-semibold tracking-[0.6px] text-[#0052cc]'
                     >
                       {sector}
-                      <button
+                      <Button
                         type='button'
+                        variant='ghost'
+                        size='icon-xs'
+                        className='size-3 rounded-full p-0 hover:bg-transparent'
                         onClick={() => removeSector(sector)}
                         aria-label={`Remover ${sector}`}
                       >
                         <X className='size-3' />
-                      </button>
+                      </Button>
                     </span>
                   ))}
                   <input
@@ -283,122 +301,163 @@ const CreateCompanyForm = () => {
                   Pressione &apos;Enter&apos; para adicionar uma nova tag.
                 </p>
               </FormItem>
-            </div>
+            </FormSectionCard>
 
-            <div className='flex flex-1 flex-col gap-4 rounded-lg border border-[#dfe1e6] bg-white p-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sm:p-8'>
-              <div className='flex items-center gap-2 border-b border-[#dfe1e6]/50 pb-3'>
-                <MapPin className='size-5 text-[#003d9b]' />
-                <h2 className='text-lg font-semibold text-[#121d22]'>
-                  Endereço (Matriz)
-                </h2>
-              </div>
-
-              <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-                <div className='sm:col-span-2'>
-                  <FormField
-                    control={form.control}
-                    name='postalCode'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                          CEP *
-                        </FormLabel>
-                        <div className='flex gap-2'>
-                          <FormControl>
-                            <Input
-                              placeholder='00000-000'
-                              className='max-w-[160px]'
-                              {...field}
-                              onChange={(event) =>
-                                field.onChange(maskCEP(event.target.value))
-                              }
-                            />
-                          </FormControl>
-                          <Button
-                            type='button'
-                            variant='outline'
-                            className='shrink-0 gap-1 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
-                          >
-                            <Search className='size-3.5' />
-                            Buscar
-                          </Button>
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className='sm:col-span-2'>
-                  <CompanyTextField
-                    control={form.control}
-                    name='street'
-                    label='Logradouro / Endereço *'
-                    placeholder='Rua, Avenida, etc.'
-                  />
-                </div>
-
-                <CompanyTextField
-                  control={form.control}
-                  name='number'
-                  label='Número *'
-                  placeholder='S/N'
-                />
-
-                <CompanyTextField
-                  control={form.control}
-                  name='complement'
-                  label='Complemento'
-                  placeholder='Sala, Andar, etc.'
-                />
-
-                <div className='sm:col-span-2'>
-                  <CompanyTextField
-                    control={form.control}
-                    name='neighborhood'
-                    label='Bairro *'
-                    placeholder='Bairro'
-                  />
-                </div>
-
-                <CompanyTextField
-                  control={form.control}
-                  name='city'
-                  label='Cidade *'
-                  placeholder='Cidade'
-                />
-
+            <FormSectionCard
+              icon={MapPin}
+              title='Endereço (Matriz)'
+              className='flex-1'
+              contentClassName='grid grid-cols-1 gap-4 sm:grid-cols-2'
+            >
+              <div className='sm:col-span-2'>
                 <FormField
                   control={form.control}
-                  name='state'
+                  name='postalCode'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                        Estado (UF) *
+                        CEP *
                       </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <div className='flex gap-2'>
                         <FormControl>
-                          <SelectTrigger className='w-full'>
-                            <SelectValue placeholder='Selecione...' />
-                          </SelectTrigger>
+                          <Input
+                            placeholder='00000-000'
+                            className='max-w-[160px]'
+                            disabled={manualAddress}
+                            {...field}
+                            onChange={(event) =>
+                              field.onChange(maskCEP(event.target.value))
+                            }
+                          />
                         </FormControl>
-                        <SelectContent>
-                          {BRAZIL_STATES.map((uf) => (
-                            <SelectItem key={uf} value={uf}>
-                              {uf}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          disabled={manualAddress}
+                          className='shrink-0 gap-1 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
+                        >
+                          <Search className='size-3.5' />
+                          Buscar
+                        </Button>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-            </div>
+
+              <div className='sm:col-span-2'>
+                <AutoFillAddressField
+                  control={form.control}
+                  name='street'
+                  label='Logradouro / Endereço *'
+                  placeholder='Rua, Avenida, etc.'
+                  locked={!manualAddress}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name='number'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                      Número *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={hasNoStreetNumber}
+                        placeholder='S/N'
+                        className={addressInputClassName(
+                          hasNoStreetNumber === true,
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <CompanyTextField
+                control={form.control}
+                name='complement'
+                label='Complemento'
+                placeholder='Sala, Andar, etc.'
+              />
+
+              <FormCheckboxField
+                control={form.control}
+                name='hasNoPostalCode'
+                label='Não sei o CEP'
+                onCheckedChange={(checked) => {
+                  if (checked) form.setValue('postalCode', '')
+                }}
+              />
+
+              <FormCheckboxField
+                control={form.control}
+                name='hasNoStreetNumber'
+                label='Sem número'
+                onCheckedChange={(checked) => {
+                  if (checked) form.setValue('number', '')
+                }}
+              />
+
+              <div className='sm:col-span-2'>
+                <AutoFillAddressField
+                  control={form.control}
+                  name='neighborhood'
+                  label='Bairro *'
+                  placeholder='Bairro'
+                  locked={!manualAddress}
+                />
+              </div>
+
+              <AutoFillAddressField
+                control={form.control}
+                name='city'
+                label='Cidade *'
+                placeholder='Cidade'
+                locked={!manualAddress}
+              />
+
+              <FormField
+                control={form.control}
+                name='state'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                      Estado (UF) *
+                    </FormLabel>
+                    <Select
+                      disabled={!manualAddress}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger
+                          className={cn(
+                            'w-full',
+                            addressInputClassName(!manualAddress),
+                          )}
+                        >
+                          <SelectValue placeholder='Selecione...' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {BRAZIL_STATES.map((uf) => (
+                          <SelectItem key={uf} value={uf}>
+                            {uf}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormSectionCard>
           </div>
 
           <div className='flex justify-end gap-4 border-t border-[#dfe1e6] pt-6'>

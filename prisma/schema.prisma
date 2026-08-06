@@ -46,14 +46,15 @@ model Company {
   stateRegistration     String?
   municipalRegistration String?
   foundedAt             DateTime
-  website               String
+  website               String?
   email                 String
   landlinePhone         String
   mobilePhone           String?
+  sectors               String[] @default([])
 
-  postalCode   String
+  postalCode   String?
   street       String
-  streetNumber String
+  streetNumber String?
   complement   String?
   neighborhood String
   city         String

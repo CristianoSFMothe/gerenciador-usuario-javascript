@@ -93,3 +93,18 @@ export const maskCNPJ = (value: string) => {
     .replace(/(\d{3})(\d)/, '$1/$2')
     .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
 }
+
+/**
+ * Strips every non-digit character from a value.
+ *
+ * The inverse of the `mask*` helpers in this module — use it to normalize
+ * a masked value (e.g. `314.518.150-50`) back to its raw digits
+ * (`31451815050`) before persisting it.
+ *
+ * @param value - A masked or partially masked value.
+ * @returns Only the digit characters from `value`, in the original order.
+ *
+ * @example
+ * onlyDigits('314.518.150-50') // '31451815050'
+ */
+export const onlyDigits = (value: string) => value.replace(/\D/g, '')

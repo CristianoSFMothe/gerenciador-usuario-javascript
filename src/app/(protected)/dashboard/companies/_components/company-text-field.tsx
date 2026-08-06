@@ -11,7 +11,10 @@ import { Input } from '@/app/_components/ui/input'
 
 import type { CompanyInput } from '../_schema/company-schema'
 
-type CompanyTextFieldName = Exclude<FieldPath<CompanyInput>, 'sectors'>
+type CompanyTextFieldName = Exclude<
+  FieldPath<CompanyInput>,
+  'sectors' | 'hasNoStreetNumber' | 'hasNoPostalCode'
+>
 
 type CompanyTextFieldProps = {
   control: Control<CompanyInput>

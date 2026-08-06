@@ -27,15 +27,13 @@ import {
 import { BRAZIL_STATES } from '@/app/_lib/brazil-states'
 import { GENDER_OPTIONS } from '@/app/_lib/gender-options'
 import { cn } from '@/app/_lib/utils'
+import { addressInputClassName } from '@/app/_utils/address-input-class-name'
 import { calculateAge } from '@/app/_utils/calculate-age'
 import { maskCEP, maskCPF, maskPhone } from '@/app/_utils/masks'
 
 import { createEmployeeAction } from '../../../_actions/employees/create-employee-action'
 import { type EmployeeInput, employeeSchema } from '../_schema/employee-schema'
 import EmployeeTextField from './employee-text-field'
-
-const addressInputClassName = (locked: boolean) =>
-  cn(locked && 'bg-[#deeaf1]', 'disabled:opacity-100')
 
 const CreateEmployeeForm = () => {
   const router = useRouter()
