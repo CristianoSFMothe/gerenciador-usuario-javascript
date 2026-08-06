@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/app/_components/ui/select'
 import { BRAZIL_STATES } from '@/app/_lib/brazil-states'
+import { maskCEP, maskCNPJ } from '@/app/_utils/masks'
 
 import { createCompanyAction } from '../../../_actions/companies/create-company-action'
 import { type CompanyInput, companySchema } from '../_schema/company-schema'
@@ -138,6 +139,7 @@ const CreateCompanyForm = () => {
                 name='cnpj'
                 label='CNPJ *'
                 placeholder='00.000.000/0000-00'
+                mask={maskCNPJ}
               />
 
               <CompanyTextField
@@ -307,6 +309,9 @@ const CreateCompanyForm = () => {
                               placeholder='00000-000'
                               className='max-w-[160px]'
                               {...field}
+                              onChange={(event) =>
+                                field.onChange(maskCEP(event.target.value))
+                              }
                             />
                           </FormControl>
                           <Button

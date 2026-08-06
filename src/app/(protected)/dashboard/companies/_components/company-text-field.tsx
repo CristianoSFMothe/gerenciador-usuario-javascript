@@ -19,6 +19,7 @@ type CompanyTextFieldProps = {
   label: string
   placeholder?: string
   type?: string
+  mask?: (value: string) => string
 }
 
 const CompanyTextField = ({
@@ -27,6 +28,7 @@ const CompanyTextField = ({
   label,
   placeholder,
   type,
+  mask,
 }: CompanyTextFieldProps) => {
   return (
     <FormField
@@ -38,7 +40,16 @@ const CompanyTextField = ({
             {label}
           </FormLabel>
           <FormControl>
-            <Input type={type} placeholder={placeholder} {...field} />
+            <Input
+              type={type}
+              placeholder={placeholder}
+              {...field}
+              onChange={(event) =>
+                field.onChange(
+                  mask ? mask(event.target.value) : event.target.value,
+                )
+              }
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

@@ -25,9 +25,10 @@ import {
   SelectValue,
 } from '@/app/_components/ui/select'
 import { BRAZIL_STATES } from '@/app/_lib/brazil-states'
-import { calculateAge } from '@/app/_lib/calculate-age'
 import { GENDER_OPTIONS } from '@/app/_lib/gender-options'
 import { cn } from '@/app/_lib/utils'
+import { calculateAge } from '@/app/_utils/calculate-age'
+import { maskCEP, maskCPF, maskPhone } from '@/app/_utils/masks'
 
 import { createEmployeeAction } from '../../../_actions/employees/create-employee-action'
 import { type EmployeeInput, employeeSchema } from '../_schema/employee-schema'
@@ -110,6 +111,7 @@ const CreateEmployeeForm = () => {
               name='phone'
               label='Telefone'
               placeholder='(00) 00000-0000'
+              mask={maskPhone}
             />
 
             <EmployeeTextField
@@ -117,6 +119,7 @@ const CreateEmployeeForm = () => {
               name='cpf'
               label='CPF'
               placeholder='000.000.000-00'
+              mask={maskCPF}
             />
 
             <EmployeeTextField
@@ -257,6 +260,9 @@ const CreateEmployeeForm = () => {
                           placeholder='00000-000'
                           disabled={manualAddress}
                           {...field}
+                          onChange={(event) =>
+                            field.onChange(maskCEP(event.target.value))
+                          }
                         />
                       </FormControl>
                       <Button
