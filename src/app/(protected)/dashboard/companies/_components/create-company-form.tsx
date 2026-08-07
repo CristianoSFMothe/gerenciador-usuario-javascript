@@ -1,7 +1,15 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Building2, Mail, MapPin, Phone, Search, X } from 'lucide-react'
+import {
+  Building2,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+  Search,
+  X,
+} from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -27,7 +35,8 @@ import {
 import { BRAZIL_STATES } from '@/app/_lib/brazil-states'
 import { cn } from '@/app/_lib/utils'
 import { addressInputClassName } from '@/app/_utils/address-input-class-name'
-import { maskCEP, maskCNPJ } from '@/app/_utils/masks'
+import { fetchAddressByCEP } from '@/app/_utils/fetch-address-by-cep'
+import { maskCEP, maskCNPJ, onlyDigits } from '@/app/_utils/masks'
 
 import { createCompanyAction } from '../../../_actions/companies/create-company-action'
 import { type CompanyInput, companySchema } from '../_schema/company-schema'
@@ -39,6 +48,7 @@ import FormSectionCard from './form-section-card'
 const CreateCompanyForm = () => {
   const router = useRouter()
   const [sectorInput, setSectorInput] = useState('')
+  const [isSearchingCep, setIsSearchingCep] = useState(false)
 
   const form = useForm<CompanyInput>({
     resolver: zodResolver(companySchema),
@@ -90,6 +100,32 @@ const CreateCompanyForm = () => {
       sectors.filter((item) => item !== sector),
       { shouldDirty: true },
     )
+  }
+
+  const searchCep = async () => {
+    const postalCode = form.getValues('postalCode') ?? ''
+
+    if (onlyDigits(postalCode).length !== 8) {
+      toast.error('Informe um CEP válido com 8 dígitos.')
+      return
+    }
+
+    setIsSearchingCep(true)
+
+    const result = await fetchAddressByCEP(postalCode)
+
+    setIsSearchingCep(false)
+
+    if (!result.success) {
+      toast.error(result.error)
+      return
+    }
+
+    const fillOptions = { shouldValidate: true, shouldDirty: true }
+    form.setValue('street', result.address.street, fillOptions)
+    form.setValue('neighborhood', result.address.neighborhood, fillOptions)
+    form.setValue('city', result.address.city, fillOptions)
+    form.setValue('state', result.address.state, fillOptions)
   }
 
   const onSubmit = async (data: CompanyInput) => {
@@ -265,11 +301,15 @@ const CreateCompanyForm = () => {
                 <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                   Setores / Áreas de Atuação
                 </FormLabel>
-                <div className='flex min-h-[40px] flex-wrap items-center gap-2 rounded-md border border-[#dfe1e6] bg-[#f3faff] p-2'>
+                <div className='flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-[#dfe1e6] bg-[#f3faff] p-2'>
                   {sectors.map((sector) => (
                     <span
                       key={sector}
-                      className='flex items-center gap-1 rounded-full border border-[#0052cc]/20 bg-[#0052cc]/10 px-[9px] py-[3px] text-xs font-semibold tracking-[0.6px] text-[#0052cc]'
+                      className={cn(
+                        'flex items-center gap-1 rounded-full border',
+                        'border-[#0052cc]/20 bg-[#0052cc]/10 px-2.25 py-0.75',
+                        'text-xs font-semibold tracking-[0.6px] text-[#0052cc]',
+                      )}
                     >
                       {sector}
                       <Button
@@ -294,7 +334,7 @@ const CreateCompanyForm = () => {
                       }
                     }}
                     placeholder='Adicionar área...'
-                    className='min-w-[120px] flex-1 bg-transparent text-sm outline-none placeholder:text-[#434654]/50'
+                    className='min-w-30 flex-1 bg-transparent text-sm outline-none placeholder:text-[#434654]/50'
                   />
                 </div>
                 <p className='text-xs text-[#434654]/70'>
@@ -328,15 +368,26 @@ const CreateCompanyForm = () => {
                             onChange={(event) =>
                               field.onChange(maskCEP(event.target.value))
                             }
+                            onKeyDown={(event) => {
+                              if (event.key === 'Enter') {
+                                event.preventDefault()
+                                searchCep()
+                              }
+                            }}
                           />
                         </FormControl>
                         <Button
                           type='button'
                           variant='outline'
-                          disabled={manualAddress}
+                          disabled={manualAddress || isSearchingCep}
+                          onClick={searchCep}
                           className='shrink-0 gap-1 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
                         >
-                          <Search className='size-3.5' />
+                          {isSearchingCep ? (
+                            <Loader2 className='size-3.5 animate-spin' />
+                          ) : (
+                            <Search className='size-3.5' />
+                          )}
                           Buscar
                         </Button>
                       </div>

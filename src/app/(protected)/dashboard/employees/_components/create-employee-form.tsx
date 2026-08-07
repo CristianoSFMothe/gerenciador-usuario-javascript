@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -29,7 +30,8 @@ import { GENDER_OPTIONS } from '@/app/_lib/gender-options'
 import { cn } from '@/app/_lib/utils'
 import { addressInputClassName } from '@/app/_utils/address-input-class-name'
 import { calculateAge } from '@/app/_utils/calculate-age'
-import { maskCEP, maskCPF, maskPhone } from '@/app/_utils/masks'
+import { fetchAddressByCEP } from '@/app/_utils/fetch-address-by-cep'
+import { maskCEP, maskCPF, maskPhone, onlyDigits } from '@/app/_utils/masks'
 
 import { createEmployeeAction } from '../../../_actions/employees/create-employee-action'
 import { type EmployeeInput, employeeSchema } from '../_schema/employee-schema'
@@ -38,6 +40,7 @@ import EmployeeTextField from './employee-text-field'
 const CreateEmployeeForm = () => {
   const router = useRouter()
   const [manualAddress, setManualAddress] = useState(false)
+  const [isSearchingCep, setIsSearchingCep] = useState(false)
 
   const form = useForm<EmployeeInput>({
     resolver: zodResolver(employeeSchema),
@@ -64,6 +67,32 @@ const CreateEmployeeForm = () => {
     control: form.control,
     name: 'hasNoStreetNumber',
   })
+
+  const searchCep = async () => {
+    const postalCode = form.getValues('postalCode') ?? ''
+
+    if (onlyDigits(postalCode).length !== 8) {
+      toast.error('Informe um CEP válido com 8 dígitos.')
+      return
+    }
+
+    setIsSearchingCep(true)
+
+    const result = await fetchAddressByCEP(postalCode)
+
+    setIsSearchingCep(false)
+
+    if (!result.success) {
+      toast.error(result.error)
+      return
+    }
+
+    const fillOptions = { shouldValidate: true, shouldDirty: true }
+    form.setValue('street', result.address.street, fillOptions)
+    form.setValue('neighborhood', result.address.neighborhood, fillOptions)
+    form.setValue('city', result.address.city, fillOptions)
+    form.setValue('state', result.address.state, fillOptions)
+  }
 
   const onSubmit = async (data: EmployeeInput) => {
     const result = await createEmployeeAction(data)
@@ -261,14 +290,24 @@ const CreateEmployeeForm = () => {
                           onChange={(event) =>
                             field.onChange(maskCEP(event.target.value))
                           }
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                              event.preventDefault()
+                              searchCep()
+                            }
+                          }}
                         />
                       </FormControl>
                       <Button
                         type='button'
                         variant='outline'
-                        disabled={manualAddress}
+                        disabled={manualAddress || isSearchingCep}
+                        onClick={searchCep}
                         className='shrink-0 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
                       >
+                        {isSearchingCep ? (
+                          <Loader2 className='size-3.5 animate-spin' />
+                        ) : null}
                         Consultar
                       </Button>
                     </div>
