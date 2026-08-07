@@ -4,17 +4,49 @@ import type { Prisma } from '@/generated/prisma/client'
 
 const PAGE_SIZE = 10
 
+export type CompanySortField =
+  | 'tradeName'
+  | 'cnpj'
+  | 'email'
+  | 'website'
+  | 'landlinePhone'
+  | 'mobilePhone'
+  | 'postalCode'
+
+export type CompanySortOrder = 'asc' | 'desc'
+
+const SORTABLE_FIELDS: CompanySortField[] = [
+  'tradeName',
+  'cnpj',
+  'email',
+  'website',
+  'landlinePhone',
+  'mobilePhone',
+  'postalCode',
+]
+
+const isSortableField = (value: string): value is CompanySortField =>
+  SORTABLE_FIELDS.includes(value as CompanySortField)
+
 type GetCompaniesParams = {
   query?: string
   page?: number
+  sortBy?: string
+  sortOrder?: string
 }
 
 export const getCompanies = async ({
   query = '',
   page = 1,
+  sortBy,
+  sortOrder,
 }: GetCompaniesParams) => {
   const trimmedQuery = query.trim()
   const queryDigits = onlyDigits(trimmedQuery)
+
+  const safeSortBy: CompanySortField =
+    sortBy && isSortableField(sortBy) ? sortBy : 'tradeName'
+  const safeSortOrder: CompanySortOrder = sortOrder === 'desc' ? 'desc' : 'asc'
 
   const where: Prisma.CompanyWhereInput = trimmedQuery
     ? {
@@ -29,14 +61,20 @@ export const getCompanies = async ({
   const [companies, totalCount] = await Promise.all([
     prisma.company.findMany({
       where,
-      orderBy: { tradeName: 'asc' },
+      orderBy: { [safeSortBy]: safeSortOrder },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     }),
     prisma.company.count({ where }),
   ])
 
-  return { companies, totalCount, pageSize: PAGE_SIZE }
+  return {
+    companies,
+    totalCount,
+    pageSize: PAGE_SIZE,
+    sortBy: safeSortBy,
+    sortOrder: safeSortOrder,
+  }
 }
 
 export type CompanyListItem = Awaited<

@@ -8,20 +8,33 @@ import {
   PaginationPrevious,
 } from '@/app/_components/ui/pagination'
 import { cn } from '@/app/_lib/utils'
+import type {
+  CompanySortField,
+  CompanySortOrder,
+} from '@/app/(protected)/_actions/companies/get-companies'
 
 type CompaniesPaginationProps = {
   currentPage: number
   totalCount: number
   pageSize: number
   query?: string
+  sortBy: CompanySortField
+  sortOrder: CompanySortOrder
 }
 
 const ELLIPSIS = 'ellipsis' as const
 
-const buildPageHref = (page: number, query?: string) => {
+const buildPageHref = (
+  page: number,
+  query: string | undefined,
+  sortBy: CompanySortField,
+  sortOrder: CompanySortOrder,
+) => {
   const params = new URLSearchParams()
 
   if (query) params.set('q', query)
+  params.set('sortBy', sortBy)
+  params.set('sortOrder', sortOrder)
   if (page > 1) params.set('page', String(page))
 
   const search = params.toString()
@@ -59,6 +72,8 @@ const CompaniesPagination = ({
   totalCount,
   pageSize,
   query,
+  sortBy,
+  sortOrder,
 }: CompaniesPaginationProps) => {
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
   const pageNumbers = buildPageNumbers(currentPage, totalPages)
@@ -73,7 +88,12 @@ const CompaniesPagination = ({
             className={hasPreviousPage ? undefined : 'cursor-not-allowed'}
           >
             <PaginationPrevious
-              href={buildPageHref(Math.max(currentPage - 1, 1), query)}
+              href={buildPageHref(
+                Math.max(currentPage - 1, 1),
+                query,
+                sortBy,
+                sortOrder,
+              )}
               aria-disabled={!hasPreviousPage}
               tabIndex={hasPreviousPage ? undefined : -1}
               className={
@@ -92,7 +112,7 @@ const CompaniesPagination = ({
             ) : (
               <PaginationItem key={page}>
                 <PaginationLink
-                  href={buildPageHref(page, query)}
+                  href={buildPageHref(page, query, sortBy, sortOrder)}
                   isActive={page === currentPage}
                   className={cn(
                     'cursor-pointer',
@@ -111,7 +131,12 @@ const CompaniesPagination = ({
             className={hasNextPage ? undefined : 'cursor-not-allowed'}
           >
             <PaginationNext
-              href={buildPageHref(Math.min(currentPage + 1, totalPages), query)}
+              href={buildPageHref(
+                Math.min(currentPage + 1, totalPages),
+                query,
+                sortBy,
+                sortOrder,
+              )}
               aria-disabled={!hasNextPage}
               tabIndex={hasNextPage ? undefined : -1}
               className={

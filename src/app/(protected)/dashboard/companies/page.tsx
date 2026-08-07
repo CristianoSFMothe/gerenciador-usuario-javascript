@@ -9,16 +9,29 @@ import CompaniesTable from './_components/companies-table'
 import CompanySearchInput from './_components/company-search-input'
 
 type CompaniesPageProps = {
-  searchParams: Promise<{ q?: string; page?: string }>
+  searchParams: Promise<{
+    q?: string
+    page?: string
+    sortBy?: string
+    sortOrder?: string
+  }>
 }
 
 const Companies = async ({ searchParams }: CompaniesPageProps) => {
-  const { q, page } = await searchParams
+  const { q, page, sortBy, sortOrder } = await searchParams
   const currentPage = Number(page) > 0 ? Number(page) : 1
 
-  const { companies, totalCount, pageSize } = await getCompanies({
+  const {
+    companies,
+    totalCount,
+    pageSize,
+    sortBy: currentSortBy,
+    sortOrder: currentSortOrder,
+  } = await getCompanies({
     query: q,
     page: currentPage,
+    sortBy,
+    sortOrder,
   })
 
   return (
@@ -67,13 +80,20 @@ const Companies = async ({ searchParams }: CompaniesPageProps) => {
           </div>
         </div>
 
-        <CompaniesTable companies={companies} />
+        <CompaniesTable
+          companies={companies}
+          query={q}
+          sortBy={currentSortBy}
+          sortOrder={currentSortOrder}
+        />
 
         <CompaniesPagination
           currentPage={currentPage}
           totalCount={totalCount}
           pageSize={pageSize}
           query={q}
+          sortBy={currentSortBy}
+          sortOrder={currentSortOrder}
         />
       </div>
     </div>
