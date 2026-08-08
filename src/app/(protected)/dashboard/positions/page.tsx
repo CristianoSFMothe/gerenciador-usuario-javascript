@@ -1,10 +1,10 @@
-import { Download, Filter, Plus } from 'lucide-react'
-import Link from 'next/link'
+import { Download, Filter } from 'lucide-react'
 
 import { Button } from '@/app/_components/ui/button'
 import { getPositions } from '@/app/(protected)/_actions/positions/get-positions'
+import ListPageHeader from '@/app/(protected)/_components/list-page-header'
+import ListSearchInput from '@/app/(protected)/_components/list-search-input'
 
-import PositionSearchInput from './_components/position-search-input'
 import PositionsPagination from './_components/positions-pagination'
 import PositionsTable from './_components/positions-table'
 
@@ -36,27 +36,19 @@ const Positions = async ({ searchParams }: PositionsPageProps) => {
 
   return (
     <div className='flex flex-col gap-8 p-8'>
-      <div className='flex items-center justify-between'>
-        <div className='flex flex-col gap-2'>
-          <h1 className='text-[28px] font-semibold tracking-tight text-[#121d22]'>
-            Listagem de Cargos
-          </h1>
-          <p className='text-sm text-[#434654]'>
-            Gerencie os cargos disponíveis em cada empresa cadastrada.
-          </p>
-        </div>
-
-        <Button asChild className='bg-[#003d9b] text-xs hover:bg-[#003d9b]/90'>
-          <Link href='/dashboard/positions/new-position'>
-            <Plus className='size-3.5' />
-            Novo Cargo
-          </Link>
-        </Button>
-      </div>
+      <ListPageHeader
+        title='Listagem de Cargos'
+        description='Gerencie os cargos disponíveis em cada empresa cadastrada.'
+        actionLabel='Novo Cargo'
+        actionHref='/dashboard/positions/new-position'
+      />
 
       <div className='w-full rounded-sm border border-[#dfe1e6] bg-white'>
         <div className='flex items-center justify-between border-b border-[#dfe1e6] p-4'>
-          <PositionSearchInput defaultValue={q ?? ''} />
+          <ListSearchInput
+            defaultValue={q ?? ''}
+            placeholder='Buscar cargo por nome ou empresa...'
+          />
 
           <div className='flex gap-2'>
             <Button

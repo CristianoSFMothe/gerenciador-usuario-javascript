@@ -8,11 +8,15 @@ import { Input } from '@/app/_components/ui/input'
 
 const SEARCH_DEBOUNCE_IN_MS = 400
 
-type CompanySearchInputProps = {
+type ListSearchInputProps = {
   defaultValue: string
+  placeholder: string
 }
 
-const CompanySearchInput = ({ defaultValue }: CompanySearchInputProps) => {
+const ListSearchInput = ({
+  defaultValue,
+  placeholder,
+}: ListSearchInputProps) => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -43,11 +47,11 @@ const CompanySearchInput = ({ defaultValue }: CompanySearchInputProps) => {
         type='search'
         value={value}
         onChange={(event) => setValue(event.target.value)}
-        placeholder='Buscar empresa por nome ou CNPJ...'
+        placeholder={placeholder}
         className='rounded-none border-[#dfe1e6] bg-[#f3faff] pl-9 text-sm'
       />
     </div>
   )
 }
 
-export default CompanySearchInput
+export default ListSearchInput

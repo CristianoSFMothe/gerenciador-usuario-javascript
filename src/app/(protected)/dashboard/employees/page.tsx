@@ -1,10 +1,10 @@
-import { Download, Filter, Plus } from 'lucide-react'
-import Link from 'next/link'
+import { Download, Filter } from 'lucide-react'
 
 import { Button } from '@/app/_components/ui/button'
 import { getEmployees } from '@/app/(protected)/_actions/employees/get-employees'
+import ListPageHeader from '@/app/(protected)/_components/list-page-header'
+import ListSearchInput from '@/app/(protected)/_components/list-search-input'
 
-import EmployeeSearchInput from './_components/employee-search-input'
 import EmployeesPagination from './_components/employees-pagination'
 import EmployeesTable from './_components/employees-table'
 
@@ -36,27 +36,19 @@ const Employees = async ({ searchParams }: EmployeesPageProps) => {
 
   return (
     <div className='flex flex-col gap-8 p-8'>
-      <div className='flex items-center justify-between'>
-        <div className='flex flex-col gap-2'>
-          <h1 className='text-[28px] font-semibold tracking-tight text-[#121d22]'>
-            Listagem de Funcionários
-          </h1>
-          <p className='text-sm text-[#434654]'>
-            Gerencie o cadastro de funcionários das empresas.
-          </p>
-        </div>
-
-        <Button asChild className='bg-[#003d9b] text-xs hover:bg-[#003d9b]/90'>
-          <Link href='/dashboard/employees/new-employee'>
-            <Plus className='size-3.5' />
-            Novo Funcionário
-          </Link>
-        </Button>
-      </div>
+      <ListPageHeader
+        title='Listagem de Funcionários'
+        description='Gerencie o cadastro de funcionários das empresas.'
+        actionLabel='Novo Funcionário'
+        actionHref='/dashboard/employees/new-employee'
+      />
 
       <div className='w-full rounded-sm border border-[#dfe1e6] bg-white'>
         <div className='flex items-center justify-between border-b border-[#dfe1e6] p-4'>
-          <EmployeeSearchInput defaultValue={q ?? ''} />
+          <ListSearchInput
+            defaultValue={q ?? ''}
+            placeholder='Buscar funcionário por nome, CPF ou empresa...'
+          />
 
           <div className='flex gap-2'>
             <Button
