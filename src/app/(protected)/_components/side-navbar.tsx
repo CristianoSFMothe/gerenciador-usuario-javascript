@@ -6,6 +6,7 @@ import {
   IdCard,
   LayoutDashboard,
   LogOut,
+  Network,
   Settings,
   Users,
   X,
@@ -22,6 +23,7 @@ const NAV_LINKS = [
   { label: 'Funcionários', href: '/dashboard/employees', icon: Users },
   { label: 'Empresas', href: '/dashboard/companies', icon: Building2 },
   { label: 'Cargos', href: '/dashboard/positions', icon: IdCard },
+  { label: 'Departamentos', href: '/dashboard/departments', icon: Network },
 ]
 
 const isLinkActive = (pathname: string, href: string) => {

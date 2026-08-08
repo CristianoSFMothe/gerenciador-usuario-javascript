@@ -24,19 +24,6 @@ enum EmployeeStatus {
   INACTIVE
 }
 
-enum Department {
-  HUMAN_RESOURCES
-  INFORMATION_TECHNOLOGY
-  FINANCE
-  SALES
-  MARKETING
-  OPERATIONS
-  LEGAL
-  ADMINISTRATIVE
-  CUSTOMER_SERVICE
-  OTHER
-}
-
 model Company {
   id String @id @default(uuid())
 
@@ -60,8 +47,9 @@ model Company {
   city         String
   state        String
 
-  positions Position[]
-  employees Employee[]
+  positions   Position[]
+  departments Department[]
+  employees   Employee[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -82,6 +70,21 @@ model Position {
   @@unique([companyId, title])
 }
 
+model Department {
+  id   String @id @default(uuid())
+  name String
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  employees Employee[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, name])
+}
+
 model Employee {
   id String @id @default(uuid())
 
@@ -94,15 +97,16 @@ model Employee {
   cpf       String @unique
   email     String @unique
 
-  birthDate  DateTime
-  gender     Gender
-  status     EmployeeStatus @default(ACTIVE)
-  department Department
+  birthDate DateTime
+  gender    Gender
+  status    EmployeeStatus @default(ACTIVE)
 
-  companyId  String
-  company    Company  @relation(fields: [companyId], references: [id])
-  positionId String
-  position   Position @relation(fields: [positionId], references: [id])
+  companyId    String
+  company      Company    @relation(fields: [companyId], references: [id])
+  positionId   String
+  position     Position   @relation(fields: [positionId], references: [id])
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
 
   postalCode   String
   street       String
@@ -117,8 +121,8 @@ model Employee {
 
   @@index([companyId])
   @@index([positionId])
+  @@index([departmentId])
   @@index([status])
-  @@index([department])
 }
 
 model User {
