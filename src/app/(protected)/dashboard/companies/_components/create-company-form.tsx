@@ -440,7 +440,7 @@ const CreateCompanyForm = () => {
               <FormCheckboxField
                 control={form.control}
                 name='hasNoPostalCode'
-                label='Não sei o CEP'
+                label='CEP não encontrado'
                 onCheckedChange={(checked) => {
                   if (checked) form.setValue('postalCode', '')
                 }}

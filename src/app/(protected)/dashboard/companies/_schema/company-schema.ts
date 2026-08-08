@@ -39,7 +39,7 @@ export const companySchema = z
   .refine(
     (data) => data.hasNoPostalCode === true || Boolean(data.postalCode?.trim()),
     {
-      message: 'Informe o CEP ou marque "Não sei o CEP".',
+      message: 'Informe o CEP ou marque "CEP não encontrado".',
       path: ['postalCode'],
     },
   )
