@@ -13,7 +13,7 @@ import type { EmployeeInput } from '../_schema/employee-schema'
 
 type EmployeeTextFieldName = Exclude<
   FieldPath<EmployeeInput>,
-  'hasNoStreetNumber'
+  'hasNoStreetNumber' | 'hasNoPostalCode'
 >
 
 type EmployeeTextFieldProps = {

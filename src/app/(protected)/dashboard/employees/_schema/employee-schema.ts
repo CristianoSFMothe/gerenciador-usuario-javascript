@@ -11,15 +11,17 @@ export const employeeSchema = z
     gender: z.enum(['MALE', 'FEMALE', 'OTHER'], {
       error: 'Selecione o sexo.',
     }),
-    companyId: z.string().optional(),
-    positionId: z.string().optional(),
+    companyId: z.string().min(1, 'Selecione a empresa.'),
+    positionId: z.string().min(1, 'Selecione o cargo.'),
+    departmentId: z.string().min(1, 'Selecione o departamento.'),
     postalCode: z.string().optional(),
-    street: z.string().optional(),
+    hasNoPostalCode: z.boolean().optional(),
+    street: z.string().min(1, 'Informe o logradouro.'),
     streetNumber: z.string().optional(),
     hasNoStreetNumber: z.boolean().optional(),
-    neighborhood: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
+    neighborhood: z.string().min(1, 'Informe o bairro.'),
+    city: z.string().min(1, 'Informe a cidade.'),
+    state: z.string().min(1, 'Selecione o estado.'),
   })
   .refine(
     (data) =>
@@ -27,6 +29,13 @@ export const employeeSchema = z
     {
       message: 'Informe o número ou marque "Sem número".',
       path: ['streetNumber'],
+    },
+  )
+  .refine(
+    (data) => data.hasNoPostalCode === true || Boolean(data.postalCode?.trim()),
+    {
+      message: 'Informe o CEP ou marque "CEP não encontrado".',
+      path: ['postalCode'],
     },
   )
 

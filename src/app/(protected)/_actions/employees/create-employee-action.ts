@@ -1,5 +1,14 @@
 'use server'
 
+import { randomUUID } from 'node:crypto'
+
+import { headers } from 'next/headers'
+
+import { auth } from '@/app/_lib/auth'
+import { prisma } from '@/app/_lib/prisma'
+import { onlyDigits } from '@/app/_utils/masks'
+import { Prisma } from '@/generated/prisma/client'
+
 import {
   type EmployeeInput,
   employeeSchema,
@@ -8,18 +17,108 @@ import {
 type CreateEmployeeActionResult =
   { success: true; message: string } | { success: false; message: string }
 
+const CPF_ALREADY_EXISTS_MESSAGE =
+  'Já existe um funcionário cadastrado com esse CPF.'
+const EMAIL_ALREADY_EXISTS_MESSAGE =
+  'Já existe um funcionário cadastrado com esse e-mail.'
+const REGISTRATION_NUMBER_PREFIX = 'FN'
+
 export const createEmployeeAction = async (
   data: EmployeeInput,
 ): Promise<CreateEmployeeActionResult> => {
+  const session = await auth.api.getSession({ headers: await headers() })
+
+  if (!session) {
+    return {
+      success: false,
+      message: 'Sua sessão expirou. Faça login novamente.',
+    }
+  }
+
   const parsed = employeeSchema.safeParse(data)
 
   if (!parsed.success) {
     return { success: false, message: 'Dados inválidos.' }
   }
 
-  // TODO(Fase 4 - CRUD): persistir via Prisma (Employee) quando o cadastro
-  // de Company/Position estiver disponível para popular os selects.
-  console.warn('createEmployeeAction (ainda não persiste):', parsed.data)
+  const [position, department] = await Promise.all([
+    prisma.position.findUnique({
+      where: { id: parsed.data.positionId },
+      select: { id: true, companyId: true },
+    }),
+    prisma.department.findUnique({
+      where: { id: parsed.data.departmentId },
+      select: { id: true, companyId: true },
+    }),
+  ])
 
-  return { success: true, message: 'Pessoa cadastrada com sucesso.' }
+  if (!position || position.companyId !== parsed.data.companyId) {
+    return {
+      success: false,
+      message: 'Selecione um cargo válido para a empresa escolhida.',
+    }
+  }
+
+  if (!department || department.companyId !== parsed.data.companyId) {
+    return {
+      success: false,
+      message: 'Selecione um departamento válido para a empresa escolhida.',
+    }
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      const employee = await tx.employee.create({
+        data: {
+          firstName: parsed.data.firstName,
+          lastName: parsed.data.lastName,
+          phone: onlyDigits(parsed.data.phone),
+          cpf: onlyDigits(parsed.data.cpf),
+          email: parsed.data.email,
+          birthDate: new Date(parsed.data.birthDate),
+          gender: parsed.data.gender,
+          companyId: parsed.data.companyId,
+          positionId: parsed.data.positionId,
+          departmentId: parsed.data.departmentId,
+          postalCode: parsed.data.postalCode
+            ? onlyDigits(parsed.data.postalCode)
+            : '',
+          street: parsed.data.street,
+          streetNumber: parsed.data.streetNumber || null,
+          neighborhood: parsed.data.neighborhood,
+          city: parsed.data.city,
+          state: parsed.data.state,
+          registrationNumber: randomUUID(),
+        },
+      })
+
+      await tx.employee.update({
+        where: { id: employee.id },
+        data: {
+          registrationNumber: `${REGISTRATION_NUMBER_PREFIX}${String(
+            employee.sequentialNumber,
+          ).padStart(6, '0')}`,
+        },
+      })
+    })
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      const target = error.meta?.target
+      const fields = Array.isArray(target) ? target : []
+
+      if (fields.includes('cpf')) {
+        return { success: false, message: CPF_ALREADY_EXISTS_MESSAGE }
+      }
+      if (fields.includes('email')) {
+        return { success: false, message: EMAIL_ALREADY_EXISTS_MESSAGE }
+      }
+    }
+
+    throw error
+  }
+
+  return { success: true, message: 'Funcionário cadastrado com sucesso.' }
 }

@@ -1,13 +1,15 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
+import { format, parse } from 'date-fns'
+import { CalendarIcon, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { Button } from '@/app/_components/ui/button'
+import { Calendar } from '@/app/_components/ui/calendar'
 import { Checkbox } from '@/app/_components/ui/checkbox'
 import {
   Form,
@@ -18,6 +20,11 @@ import {
   FormMessage,
 } from '@/app/_components/ui/form'
 import { Input } from '@/app/_components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/app/_components/ui/popover'
 import {
   Select,
   SelectContent,
@@ -32,14 +39,26 @@ import { addressInputClassName } from '@/app/_utils/address-input-class-name'
 import { calculateAge } from '@/app/_utils/calculate-age'
 import { fetchAddressByCEP } from '@/app/_utils/fetch-address-by-cep'
 import { maskCEP, maskCPF, maskPhone, onlyDigits } from '@/app/_utils/masks'
+import type { CompanyOption } from '@/app/(protected)/_actions/companies/get-company-options'
+import type { DepartmentOption } from '@/app/(protected)/_actions/departments/get-department-options'
+import type { PositionOption } from '@/app/(protected)/_actions/positions/get-position-options'
 
 import { createEmployeeAction } from '../../../_actions/employees/create-employee-action'
 import { type EmployeeInput, employeeSchema } from '../_schema/employee-schema'
 import EmployeeTextField from './employee-text-field'
 
-const CreateEmployeeForm = () => {
+type CreateEmployeeFormProps = {
+  companies: CompanyOption[]
+  positions: PositionOption[]
+  departments: DepartmentOption[]
+}
+
+const CreateEmployeeForm = ({
+  companies,
+  positions,
+  departments,
+}: CreateEmployeeFormProps) => {
   const router = useRouter()
-  const [manualAddress, setManualAddress] = useState(false)
   const [isSearchingCep, setIsSearchingCep] = useState(false)
 
   const form = useForm<EmployeeInput>({
@@ -52,6 +71,7 @@ const CreateEmployeeForm = () => {
       email: '',
       birthDate: '',
       postalCode: '',
+      hasNoPostalCode: false,
       street: '',
       streetNumber: '',
       hasNoStreetNumber: false,
@@ -67,6 +87,18 @@ const CreateEmployeeForm = () => {
     control: form.control,
     name: 'hasNoStreetNumber',
   })
+  const hasNoPostalCode = useWatch({
+    control: form.control,
+    name: 'hasNoPostalCode',
+  })
+  const companyId = useWatch({ control: form.control, name: 'companyId' })
+
+  const availablePositions = positions.filter(
+    (position) => position.companyId === companyId,
+  )
+  const availableDepartments = departments.filter(
+    (department) => department.companyId === companyId,
+  )
 
   const searchCep = async () => {
     const postalCode = form.getValues('postalCode') ?? ''
@@ -103,7 +135,7 @@ const CreateEmployeeForm = () => {
     }
 
     toast.success(result.message)
-    router.push('/dashboard/users')
+    router.push('/dashboard/employees')
   }
 
   return (
@@ -160,17 +192,53 @@ const CreateEmployeeForm = () => {
               <FormField
                 control={form.control}
                 name='birthDate'
-                render={({ field }) => (
-                  <FormItem className='flex-1'>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                      Data de Nascimento
-                    </FormLabel>
-                    <FormControl>
-                      <Input type='date' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const selectedDate = field.value
+                    ? parse(field.value, 'yyyy-MM-dd', new Date())
+                    : undefined
+
+                  return (
+                    <FormItem className='flex flex-col'>
+                      <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                        Data de Nascimento
+                      </FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              type='button'
+                              variant='outline'
+                              className={cn(
+                                'w-[150px] justify-start gap-2 font-normal',
+                                !field.value && 'text-[#434654]/50',
+                              )}
+                            >
+                              <CalendarIcon className='size-3.5' />
+                              {selectedDate
+                                ? format(selectedDate, 'dd/MM/yyyy')
+                                : 'Selecione'}
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className='w-auto p-0' align='start'>
+                          <Calendar
+                            mode='single'
+                            captionLayout='dropdown'
+                            selected={selectedDate}
+                            defaultMonth={selectedDate}
+                            disabled={{ after: new Date() }}
+                            onSelect={(date) =>
+                              field.onChange(
+                                date ? format(date, 'yyyy-MM-dd') : '',
+                              )
+                            }
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )
+                }}
               />
 
               <FormItem className='w-16 shrink-0'>
@@ -190,7 +258,7 @@ const CreateEmployeeForm = () => {
 
           <div className='border-t border-[#dfe1e6]' />
 
-          <div className='grid grid-cols-1 gap-6 sm:grid-cols-3'>
+          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4'>
             <FormField
               control={form.control}
               name='gender'
@@ -226,16 +294,73 @@ const CreateEmployeeForm = () => {
                   <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                     Empresa
                   </FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value)
+                      form.resetField('positionId')
+                      form.resetField('departmentId')
+                    }}
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger className='w-full'>
                         <SelectValue placeholder='Selecione a empresa' />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value='none' disabled>
-                        Nenhuma empresa cadastrada
-                      </SelectItem>
+                      {companies.length === 0 ? (
+                        <SelectItem value='none' disabled>
+                          Nenhuma empresa cadastrada
+                        </SelectItem>
+                      ) : (
+                        companies.map((company) => (
+                          <SelectItem key={company.id} value={company.id}>
+                            {company.tradeName}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='departmentId'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    Departamento
+                  </FormLabel>
+                  <Select
+                    key={companyId ?? 'no-company'}
+                    disabled={!companyId}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Selecione o departamento' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {!companyId ? (
+                        <SelectItem value='none' disabled>
+                          Selecione uma empresa primeiro
+                        </SelectItem>
+                      ) : availableDepartments.length === 0 ? (
+                        <SelectItem value='none' disabled>
+                          Nenhum departamento cadastrado para essa empresa
+                        </SelectItem>
+                      ) : (
+                        availableDepartments.map((department) => (
+                          <SelectItem key={department.id} value={department.id}>
+                            {department.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -251,16 +376,33 @@ const CreateEmployeeForm = () => {
                   <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                     Cargo
                   </FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    key={companyId ?? 'no-company'}
+                    disabled={!companyId}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger className='w-full'>
                         <SelectValue placeholder='Selecione o cargo' />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value='none' disabled>
-                        Nenhum cargo cadastrado
-                      </SelectItem>
+                      {!companyId ? (
+                        <SelectItem value='none' disabled>
+                          Selecione uma empresa primeiro
+                        </SelectItem>
+                      ) : availablePositions.length === 0 ? (
+                        <SelectItem value='none' disabled>
+                          Nenhum cargo cadastrado para essa empresa
+                        </SelectItem>
+                      ) : (
+                        availablePositions.map((position) => (
+                          <SelectItem key={position.id} value={position.id}>
+                            {position.title}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -285,7 +427,7 @@ const CreateEmployeeForm = () => {
                       <FormControl>
                         <Input
                           placeholder='00000-000'
-                          disabled={manualAddress}
+                          disabled={hasNoPostalCode}
                           {...field}
                           onChange={(event) =>
                             field.onChange(maskCEP(event.target.value))
@@ -301,7 +443,7 @@ const CreateEmployeeForm = () => {
                       <Button
                         type='button'
                         variant='outline'
-                        disabled={manualAddress || isSearchingCep}
+                        disabled={hasNoPostalCode || isSearchingCep}
                         onClick={searchCep}
                         className='shrink-0 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
                       >
@@ -326,13 +468,13 @@ const CreateEmployeeForm = () => {
                     </FormLabel>
                     <FormControl>
                       <Input
-                        disabled={!manualAddress}
+                        disabled={!hasNoPostalCode}
                         placeholder={
-                          manualAddress
+                          hasNoPostalCode
                             ? 'Digite o logradouro'
                             : 'Preenchido automaticamente'
                         }
-                        className={addressInputClassName(!manualAddress)}
+                        className={addressInputClassName(!hasNoPostalCode)}
                         {...field}
                       />
                     </FormControl>
@@ -364,21 +506,31 @@ const CreateEmployeeForm = () => {
                 )}
               />
 
-              <div className='flex items-center gap-2 sm:col-span-9'>
-                <Checkbox
-                  id='manual-address'
-                  checked={manualAddress}
-                  onCheckedChange={(checked) =>
-                    setManualAddress(checked === true)
-                  }
-                />
-                <label
-                  htmlFor='manual-address'
-                  className='cursor-pointer text-xs text-[#434654]'
-                >
-                  Não sei o CEP
-                </label>
-              </div>
+              <FormField
+                control={form.control}
+                name='hasNoPostalCode'
+                render={({ field }) => (
+                  <div className='flex items-center gap-2 sm:col-span-9'>
+                    <FormControl>
+                      <Checkbox
+                        id='has-no-postal-code'
+                        checked={field.value === true}
+                        onCheckedChange={(checked) => {
+                          const isChecked = checked === true
+                          field.onChange(isChecked)
+                          if (isChecked) form.setValue('postalCode', '')
+                        }}
+                      />
+                    </FormControl>
+                    <label
+                      htmlFor='has-no-postal-code'
+                      className='cursor-pointer text-xs text-[#434654]'
+                    >
+                      CEP não encontrado
+                    </label>
+                  </div>
+                )}
+              />
 
               <FormField
                 control={form.control}
@@ -416,13 +568,13 @@ const CreateEmployeeForm = () => {
                     </FormLabel>
                     <FormControl>
                       <Input
-                        disabled={!manualAddress}
+                        disabled={!hasNoPostalCode}
                         placeholder={
-                          manualAddress
+                          hasNoPostalCode
                             ? 'Digite o bairro'
                             : 'Preenchido automaticamente'
                         }
-                        className={addressInputClassName(!manualAddress)}
+                        className={addressInputClassName(!hasNoPostalCode)}
                         {...field}
                       />
                     </FormControl>
@@ -441,13 +593,13 @@ const CreateEmployeeForm = () => {
                     </FormLabel>
                     <FormControl>
                       <Input
-                        disabled={!manualAddress}
+                        disabled={!hasNoPostalCode}
                         placeholder={
-                          manualAddress
+                          hasNoPostalCode
                             ? 'Digite a cidade'
                             : 'Preenchido automaticamente'
                         }
-                        className={addressInputClassName(!manualAddress)}
+                        className={addressInputClassName(!hasNoPostalCode)}
                         {...field}
                       />
                     </FormControl>
@@ -465,7 +617,7 @@ const CreateEmployeeForm = () => {
                       Estado
                     </FormLabel>
                     <Select
-                      disabled={!manualAddress}
+                      disabled={!hasNoPostalCode}
                       onValueChange={field.onChange}
                       value={field.value}
                     >
@@ -473,7 +625,7 @@ const CreateEmployeeForm = () => {
                         <SelectTrigger
                           className={cn(
                             'w-full',
-                            addressInputClassName(!manualAddress),
+                            addressInputClassName(!hasNoPostalCode),
                           )}
                         >
                           <SelectValue placeholder='UF' />
@@ -499,7 +651,7 @@ const CreateEmployeeForm = () => {
               type='button'
               variant='outline'
               className='border-[#003d9b] px-8 text-[#003d9b] hover:bg-[#003d9b]/5 hover:text-[#003d9b]'
-              onClick={() => router.push('/dashboard/users')}
+              onClick={() => router.push('/dashboard/employees')}
             >
               Cancelar
             </Button>
