@@ -209,7 +209,7 @@ const CreateEmployeeForm = ({
                               type='button'
                               variant='outline'
                               className={cn(
-                                'w-[150px] justify-start gap-2 font-normal',
+                                'w-37.5 justify-start gap-2 font-normal',
                                 !field.value && 'text-[#434654]/50',
                               )}
                             >

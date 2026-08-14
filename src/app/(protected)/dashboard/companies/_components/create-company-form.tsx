@@ -362,7 +362,7 @@ const CreateCompanyForm = () => {
                         <FormControl>
                           <Input
                             placeholder='00000-000'
-                            className='max-w-[160px]'
+                            className='max-w-40'
                             disabled={manualAddress}
                             {...field}
                             onChange={(event) =>
