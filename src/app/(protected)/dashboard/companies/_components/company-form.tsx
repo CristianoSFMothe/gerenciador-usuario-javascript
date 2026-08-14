@@ -36,44 +36,76 @@ import { BRAZIL_STATES } from '@/app/_lib/brazil-states'
 import { cn } from '@/app/_lib/utils'
 import { addressInputClassName } from '@/app/_utils/address-input-class-name'
 import { fetchAddressByCEP } from '@/app/_utils/fetch-address-by-cep'
-import { maskCEP, maskCNPJ, onlyDigits } from '@/app/_utils/masks'
+import { maskCEP, maskCNPJ, maskPhone, onlyDigits } from '@/app/_utils/masks'
 
 import { createCompanyAction } from '../../../_actions/companies/create-company-action'
+import type { CompanyDetail } from '../../../_actions/companies/get-company'
+import { updateCompanyAction } from '../../../_actions/companies/update-company-action'
 import { type CompanyInput, companySchema } from '../_schema/company-schema'
 import AutoFillAddressField from './auto-fill-address-field'
 import CompanyTextField from './company-text-field'
 import FormCheckboxField from './form-checkbox-field'
 import FormSectionCard from './form-section-card'
 
-const CreateCompanyForm = () => {
+const EMPTY_DEFAULT_VALUES: CompanyInput = {
+  corporateName: '',
+  tradeName: '',
+  cnpj: '',
+  stateRegistration: '',
+  municipalRegistration: '',
+  foundationDate: '',
+  email: '',
+  website: '',
+  landlinePhone: '',
+  mobilePhone: '',
+  sectors: [],
+  postalCode: '',
+  hasNoPostalCode: false,
+  street: '',
+  number: '',
+  hasNoStreetNumber: false,
+  complement: '',
+  neighborhood: '',
+  city: '',
+  state: '',
+}
+
+const buildDefaultValues = (company: CompanyDetail): CompanyInput => ({
+  corporateName: company.legalName,
+  tradeName: company.tradeName,
+  cnpj: maskCNPJ(company.cnpj),
+  stateRegistration: company.stateRegistration ?? '',
+  municipalRegistration: company.municipalRegistration ?? '',
+  foundationDate: company.foundedAt.toISOString().slice(0, 10),
+  email: company.email,
+  website: company.website?.replace(/^https:\/\//, '') ?? '',
+  landlinePhone: maskPhone(company.landlinePhone),
+  mobilePhone: company.mobilePhone ? maskPhone(company.mobilePhone) : '',
+  sectors: company.sectors,
+  postalCode: company.postalCode ? maskCEP(company.postalCode) : '',
+  hasNoPostalCode: !company.postalCode,
+  street: company.street,
+  number: company.streetNumber ?? '',
+  hasNoStreetNumber: !company.streetNumber,
+  complement: company.complement ?? '',
+  neighborhood: company.neighborhood,
+  city: company.city,
+  state: company.state,
+})
+
+type CompanyFormProps = {
+  company?: CompanyDetail
+}
+
+const CompanyForm = ({ company }: CompanyFormProps) => {
   const router = useRouter()
+  const isEditMode = Boolean(company)
   const [sectorInput, setSectorInput] = useState('')
   const [isSearchingCep, setIsSearchingCep] = useState(false)
 
   const form = useForm<CompanyInput>({
     resolver: zodResolver(companySchema),
-    defaultValues: {
-      corporateName: '',
-      tradeName: '',
-      cnpj: '',
-      stateRegistration: '',
-      municipalRegistration: '',
-      foundationDate: '',
-      email: '',
-      website: '',
-      landlinePhone: '',
-      mobilePhone: '',
-      sectors: [],
-      postalCode: '',
-      hasNoPostalCode: false,
-      street: '',
-      number: '',
-      hasNoStreetNumber: false,
-      complement: '',
-      neighborhood: '',
-      city: '',
-      state: '',
-    },
+    defaultValues: company ? buildDefaultValues(company) : EMPTY_DEFAULT_VALUES,
   })
 
   const sectors = useWatch({ control: form.control, name: 'sectors' }) ?? []
@@ -129,7 +161,9 @@ const CreateCompanyForm = () => {
   }
 
   const onSubmit = async (data: CompanyInput) => {
-    const result = await createCompanyAction(data)
+    const result = company
+      ? await updateCompanyAction(company.id, data)
+      : await createCompanyAction(data)
 
     if (!result.success) {
       toast.error(result.message)
@@ -137,6 +171,12 @@ const CreateCompanyForm = () => {
     }
 
     toast.success(result.message)
+
+    if (company) {
+      router.push('/dashboard/companies')
+      return
+    }
+
     form.reset()
     setSectorInput('')
   }
@@ -146,11 +186,12 @@ const CreateCompanyForm = () => {
       <div className='flex items-center justify-between'>
         <div className='flex flex-col gap-1'>
           <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px]'>
-            Cadastro de Empresa
+            {isEditMode ? 'Edição de Empresa' : 'Cadastro de Empresa'}
           </h1>
           <p className='text-sm text-[#434654]'>
-            Preencha os dados abaixo para registrar uma nova entidade
-            corporativa no sistema.
+            {isEditMode
+              ? 'Atualize os dados da entidade corporativa selecionada.'
+              : 'Preencha os dados abaixo para registrar uma nova entidade corporativa no sistema.'}
           </p>
         </div>
       </div>
@@ -525,7 +566,7 @@ const CreateCompanyForm = () => {
               disabled={form.formState.isSubmitting}
               className='bg-[#003d9b] px-8 hover:bg-[#003d9b]/90'
             >
-              Salvar Empresa
+              {isEditMode ? 'Salvar Alterações' : 'Salvar Empresa'}
             </Button>
           </div>
         </form>
@@ -534,4 +575,4 @@ const CreateCompanyForm = () => {
   )
 }
 
-export default CreateCompanyForm
+export default CompanyForm

@@ -76,6 +76,7 @@ const CompaniesTable = ({
       sortOrder={sortOrder}
       emptyMessage='Nenhuma empresa encontrada.'
       entityLabel='empresa'
+      editHref={(company) => `/dashboard/companies/${company.id}/edit`}
     />
   )
 }

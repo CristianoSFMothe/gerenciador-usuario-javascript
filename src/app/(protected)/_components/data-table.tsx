@@ -28,6 +28,7 @@ type DataTableProps<TItem extends { id: string }, TField extends string> = {
   sortOrder: SortOrder
   emptyMessage: string
   entityLabel: string
+  editHref?: (item: TItem) => string
 }
 
 const buildSortHref = (field: string, nextOrder: SortOrder, query?: string) => {
@@ -89,6 +90,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
   sortOrder,
   emptyMessage,
   entityLabel,
+  editHref,
 }: DataTableProps<TItem, TField>) => {
   if (items.length === 0) {
     return (
@@ -130,15 +132,26 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
             ))}
             <TableCell className='p-4 text-right'>
               <div className='flex items-center justify-end gap-2'>
-                <button
-                  type='button'
-                  disabled
-                  title={`Editar ${entityLabel} (em breve)`}
-                  aria-label={`Editar ${entityLabel}`}
-                  className='cursor-not-allowed p-1 text-[#434654] opacity-50'
-                >
-                  <Pencil className='size-3.5' />
-                </button>
+                {editHref ? (
+                  <Link
+                    href={editHref(item)}
+                    title={`Editar ${entityLabel}`}
+                    aria-label={`Editar ${entityLabel}`}
+                    className='p-1 text-[#434654] hover:text-[#003d9b]'
+                  >
+                    <Pencil className='size-3.5' />
+                  </Link>
+                ) : (
+                  <button
+                    type='button'
+                    disabled
+                    title={`Editar ${entityLabel} (em breve)`}
+                    aria-label={`Editar ${entityLabel}`}
+                    className='cursor-not-allowed p-1 text-[#434654] opacity-50'
+                  >
+                    <Pencil className='size-3.5' />
+                  </button>
+                )}
                 <button
                   type='button'
                   disabled
