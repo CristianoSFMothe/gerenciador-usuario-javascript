@@ -5,6 +5,8 @@ import { Cell, Pie, PieChart } from 'recharts'
 import {
   type ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from '@/app/_components/ui/chart'
@@ -13,7 +15,18 @@ type UsersByDepartmentChartProps = {
   data: { name: string; count: number }[]
 }
 
-const PALETTE = ['#003d9b', '#38bdf8', '#a5b4fc', '#0f766e', '#dfe1e6']
+const PALETTE = [
+  '#003d9b',
+  '#38bdf8',
+  '#a5b4fc',
+  '#0f766e',
+  '#f59e0b',
+  '#d93025',
+  '#7c3aed',
+  '#059669',
+  '#db2777',
+  '#64748b',
+]
 
 const buildChartConfig = (data: { name: string }[]): ChartConfig =>
   data.reduce<ChartConfig>((config, item, index) => {
@@ -37,43 +50,57 @@ const UsersByDepartmentChart = ({ data }: UsersByDepartmentChartProps) => {
   const chartConfig = buildChartConfig(data)
 
   return (
-    <div className='flex h-64 w-full items-center justify-center gap-6'>
-      <ChartContainer config={chartConfig} className='aspect-square h-full'>
-        <PieChart>
-          <ChartTooltip
-            content={<ChartTooltipContent nameKey='name' hideLabel />}
-          />
-          <Pie
-            data={data}
-            dataKey='count'
-            nameKey='name'
-            innerRadius='60%'
-            outerRadius='100%'
-            strokeWidth={2}
-          >
-            {data.map((item, index) => (
-              <Cell
-                key={item.name}
-                fill={PALETTE[index % PALETTE.length]}
-                stroke='#ffffff'
-              />
-            ))}
-          </Pie>
-        </PieChart>
-      </ChartContainer>
-
-      <ul className='flex flex-col gap-2'>
-        {data.map((item, index) => (
-          <li key={item.name} className='flex items-center gap-2 text-sm'>
-            <span
-              className='size-2.5 shrink-0 rounded-full'
-              style={{ backgroundColor: PALETTE[index % PALETTE.length] }}
+    <ChartContainer config={chartConfig} className='h-80 w-full'>
+      <PieChart>
+        <ChartTooltip
+          content={
+            <ChartTooltipContent
+              nameKey='name'
+              hideLabel
+              formatter={(value, name, _item, index) => (
+                <div className='flex w-full items-center gap-1.5'>
+                  <span
+                    className='size-2.5 shrink-0 rounded-[2px]'
+                    style={{ backgroundColor: PALETTE[index % PALETTE.length] }}
+                  />
+                  <span className='text-[#434654]'>
+                    {name}
+                    <span className='font-semibold text-[#121d22]'>
+                      {' '}
+                      - {value}
+                    </span>
+                  </span>
+                </div>
+              )}
             />
-            <span className='text-[#434654]'>{item.name}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+          }
+        />
+        <Pie
+          data={data}
+          dataKey='count'
+          nameKey='name'
+          innerRadius='50%'
+          outerRadius='80%'
+          strokeWidth={2}
+        >
+          {data.map((item, index) => (
+            <Cell
+              key={item.name}
+              fill={PALETTE[index % PALETTE.length]}
+              stroke='#ffffff'
+            />
+          ))}
+        </Pie>
+        <ChartLegend
+          content={
+            <ChartLegendContent
+              nameKey='name'
+              className='grid grid-cols-4 gap-x-4 gap-y-2'
+            />
+          }
+        />
+      </PieChart>
+    </ChartContainer>
   )
 }
 
