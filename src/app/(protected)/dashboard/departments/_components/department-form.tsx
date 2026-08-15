@@ -26,29 +26,35 @@ import {
 import type { CompanyOption } from '@/app/(protected)/_actions/companies/get-company-options'
 
 import { createDepartmentAction } from '../../../_actions/departments/create-department-action'
+import type { DepartmentDetail } from '../../../_actions/departments/get-department'
+import { updateDepartmentAction } from '../../../_actions/departments/update-department-action'
 import {
   type DepartmentInput,
   departmentSchema,
 } from '../_schema/department-schema'
 import FormSectionCard from './form-section-card'
 
-type CreateDepartmentFormProps = {
+type DepartmentFormProps = {
   companies: CompanyOption[]
+  department?: DepartmentDetail
 }
 
-const CreateDepartmentForm = ({ companies }: CreateDepartmentFormProps) => {
+const DepartmentForm = ({ companies, department }: DepartmentFormProps) => {
   const router = useRouter()
+  const isEditMode = Boolean(department)
 
   const form = useForm<DepartmentInput>({
     resolver: zodResolver(departmentSchema),
     defaultValues: {
-      companyId: '',
-      name: '',
+      companyId: department?.companyId ?? '',
+      name: department?.name ?? '',
     },
   })
 
   const onSubmit = async (data: DepartmentInput) => {
-    const result = await createDepartmentAction(data)
+    const result = department
+      ? await updateDepartmentAction(department.id, data)
+      : await createDepartmentAction(data)
 
     if (!result.success) {
       toast.error(result.message)
@@ -56,6 +62,12 @@ const CreateDepartmentForm = ({ companies }: CreateDepartmentFormProps) => {
     }
 
     toast.success(result.message)
+
+    if (department) {
+      router.push('/dashboard/departments')
+      return
+    }
+
     form.reset()
   }
 
@@ -63,11 +75,12 @@ const CreateDepartmentForm = ({ companies }: CreateDepartmentFormProps) => {
     <div className='flex flex-col gap-8'>
       <div className='flex flex-col gap-1'>
         <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px]'>
-          Cadastro de Departamento
+          {isEditMode ? 'Edição de Departamento' : 'Cadastro de Departamento'}
         </h1>
         <p className='text-sm text-[#434654]'>
-          Preencha os dados abaixo para registrar um novo departamento vinculado
-          a uma empresa.
+          {isEditMode
+            ? 'Atualize os dados do departamento selecionado.'
+            : 'Preencha os dados abaixo para registrar um novo departamento vinculado a uma empresa.'}
         </p>
       </div>
 
@@ -146,7 +159,7 @@ const CreateDepartmentForm = ({ companies }: CreateDepartmentFormProps) => {
               disabled={form.formState.isSubmitting}
               className='bg-[#003d9b] px-8 hover:bg-[#003d9b]/90'
             >
-              Salvar Departamento
+              {isEditMode ? 'Salvar Alterações' : 'Salvar Departamento'}
             </Button>
           </div>
         </form>
@@ -155,4 +168,4 @@ const CreateDepartmentForm = ({ companies }: CreateDepartmentFormProps) => {
   )
 }
 
-export default CreateDepartmentForm
+export default DepartmentForm

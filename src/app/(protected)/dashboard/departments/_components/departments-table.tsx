@@ -44,6 +44,7 @@ const DepartmentsTable = ({
       sortOrder={sortOrder}
       emptyMessage='Nenhum departamento encontrado.'
       entityLabel='departamento'
+      editHref={(department) => `/dashboard/departments/${department.id}/edit`}
     />
   )
 }
