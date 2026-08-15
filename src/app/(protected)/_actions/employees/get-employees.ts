@@ -5,7 +5,9 @@ import type { Prisma } from '@/generated/prisma/client'
 const PAGE_SIZE = 10
 
 export type EmployeeSortField =
+  | 'registrationNumber'
   | 'firstName'
+  | 'lastName'
   | 'cpf'
   | 'email'
   | 'phone'
@@ -17,7 +19,9 @@ export type EmployeeSortField =
 export type EmployeeSortOrder = 'asc' | 'desc'
 
 const SORTABLE_FIELDS: EmployeeSortField[] = [
+  'registrationNumber',
   'firstName',
+  'lastName',
   'cpf',
   'email',
   'phone',

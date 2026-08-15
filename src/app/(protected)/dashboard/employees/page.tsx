@@ -2,10 +2,10 @@ import { Download, Filter } from 'lucide-react'
 
 import { Button } from '@/app/_components/ui/button'
 import { getEmployees } from '@/app/(protected)/_actions/employees/get-employees'
+import EmployeesPagination from '@/app/(protected)/_components/employees-pagination'
 import ListPageHeader from '@/app/(protected)/_components/list-page-header'
 import ListSearchInput from '@/app/(protected)/_components/list-search-input'
 
-import EmployeesPagination from './_components/employees-pagination'
 import EmployeesTable from './_components/employees-table'
 
 type EmployeesPageProps = {

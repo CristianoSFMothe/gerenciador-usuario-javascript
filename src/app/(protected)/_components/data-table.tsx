@@ -30,6 +30,7 @@ type DataTableProps<TItem extends { id: string }, TField extends string> = {
   entityLabel: string
   editHref?: (item: TItem) => string
   deleteAction?: (item: TItem) => ReactNode
+  actions?: (item: TItem) => ReactNode
   extraParams?: Record<string, string>
 }
 
@@ -106,6 +107,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
   entityLabel,
   editHref,
   deleteAction,
+  actions,
   extraParams,
 }: DataTableProps<TItem, TField>) => {
   if (items.length === 0) {
@@ -149,38 +151,44 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
             ))}
             <TableCell className='p-4 text-right'>
               <div className='flex items-center justify-end gap-2'>
-                {editHref ? (
-                  <Link
-                    href={editHref(item)}
-                    title={`Editar ${entityLabel}`}
-                    aria-label={`Editar ${entityLabel}`}
-                    className='p-1 text-[#434654] hover:text-[#003d9b]'
-                  >
-                    <Pencil className='size-3.5' />
-                  </Link>
+                {actions ? (
+                  actions(item)
                 ) : (
-                  <button
-                    type='button'
-                    disabled
-                    title={`Editar ${entityLabel} (em breve)`}
-                    aria-label={`Editar ${entityLabel}`}
-                    className='cursor-not-allowed p-1 text-[#434654] opacity-50'
-                  >
-                    <Pencil className='size-3.5' />
-                  </button>
-                )}
-                {deleteAction ? (
-                  deleteAction(item)
-                ) : (
-                  <button
-                    type='button'
-                    disabled
-                    title={`Excluir ${entityLabel} (em breve)`}
-                    aria-label={`Excluir ${entityLabel}`}
-                    className='cursor-not-allowed p-1 text-[#434654] opacity-50'
-                  >
-                    <Trash2 className='size-3.5' />
-                  </button>
+                  <>
+                    {editHref ? (
+                      <Link
+                        href={editHref(item)}
+                        title={`Editar ${entityLabel}`}
+                        aria-label={`Editar ${entityLabel}`}
+                        className='p-1 text-[#434654] hover:text-[#003d9b]'
+                      >
+                        <Pencil className='size-3.5' />
+                      </Link>
+                    ) : (
+                      <button
+                        type='button'
+                        disabled
+                        title={`Editar ${entityLabel} (em breve)`}
+                        aria-label={`Editar ${entityLabel}`}
+                        className='cursor-not-allowed p-1 text-[#434654] opacity-50'
+                      >
+                        <Pencil className='size-3.5' />
+                      </button>
+                    )}
+                    {deleteAction ? (
+                      deleteAction(item)
+                    ) : (
+                      <button
+                        type='button'
+                        disabled
+                        title={`Excluir ${entityLabel} (em breve)`}
+                        aria-label={`Excluir ${entityLabel}`}
+                        className='cursor-not-allowed p-1 text-[#434654] opacity-50'
+                      >
+                        <Trash2 className='size-3.5' />
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </TableCell>
