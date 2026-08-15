@@ -96,6 +96,7 @@ const EmployeesTable = ({
       sortOrder={sortOrder}
       emptyMessage='Nenhum funcionário encontrado.'
       entityLabel='funcionário'
+      editHref={(employee) => `/dashboard/employees/${employee.id}/edit`}
     />
   )
 }

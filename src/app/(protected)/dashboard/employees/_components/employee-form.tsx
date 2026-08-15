@@ -44,42 +44,73 @@ import { OTHER_DEPARTMENT_TYPE_VALUE } from '@/app/(protected)/_actions/departme
 import type { DepartmentTypeOption } from '@/app/(protected)/_actions/departments/get-department-types'
 
 import { createEmployeeAction } from '../../../_actions/employees/create-employee-action'
+import type { EmployeeDetail } from '../../../_actions/employees/get-employee'
+import { updateEmployeeAction } from '../../../_actions/employees/update-employee-action'
 import { type EmployeeInput, employeeSchema } from '../_schema/employee-schema'
 import EmployeeTextField from './employee-text-field'
 
-type CreateEmployeeFormProps = {
-  companies: CompanyOption[]
-  departmentTypes: DepartmentTypeOption[]
+const EMPTY_DEFAULT_VALUES: Partial<EmployeeInput> = {
+  firstName: '',
+  lastName: '',
+  phone: '',
+  cpf: '',
+  email: '',
+  birthDate: '',
+  position: '',
+  departmentTypeId: '',
+  customDepartmentName: '',
+  postalCode: '',
+  hasNoPostalCode: false,
+  street: '',
+  streetNumber: '',
+  hasNoStreetNumber: false,
+  neighborhood: '',
+  city: '',
+  state: '',
 }
 
-const CreateEmployeeForm = ({
+const buildDefaultValues = (employee: EmployeeDetail): EmployeeInput => ({
+  firstName: employee.firstName,
+  lastName: employee.lastName,
+  phone: maskPhone(employee.phone),
+  cpf: maskCPF(employee.cpf),
+  email: employee.email,
+  birthDate: employee.birthDate.toISOString().slice(0, 10),
+  gender: employee.gender,
+  companyId: employee.companyId,
+  position: employee.position,
+  departmentTypeId: employee.department.departmentTypeId,
+  customDepartmentName: '',
+  postalCode: maskCEP(employee.postalCode),
+  hasNoPostalCode: false,
+  street: employee.street,
+  streetNumber: employee.streetNumber ?? '',
+  hasNoStreetNumber: !employee.streetNumber,
+  neighborhood: employee.neighborhood,
+  city: employee.city,
+  state: employee.state,
+})
+
+type EmployeeFormProps = {
+  companies: CompanyOption[]
+  departmentTypes: DepartmentTypeOption[]
+  employee?: EmployeeDetail
+}
+
+const EmployeeForm = ({
   companies,
   departmentTypes,
-}: CreateEmployeeFormProps) => {
+  employee,
+}: EmployeeFormProps) => {
   const router = useRouter()
+  const isEditMode = Boolean(employee)
   const [isSearchingCep, setIsSearchingCep] = useState(false)
 
   const form = useForm<EmployeeInput>({
     resolver: zodResolver(employeeSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      phone: '',
-      cpf: '',
-      email: '',
-      birthDate: '',
-      position: '',
-      departmentTypeId: '',
-      customDepartmentName: '',
-      postalCode: '',
-      hasNoPostalCode: false,
-      street: '',
-      streetNumber: '',
-      hasNoStreetNumber: false,
-      neighborhood: '',
-      city: '',
-      state: '',
-    },
+    defaultValues: employee
+      ? buildDefaultValues(employee)
+      : EMPTY_DEFAULT_VALUES,
   })
 
   const birthDate = useWatch({ control: form.control, name: 'birthDate' })
@@ -126,7 +157,9 @@ const CreateEmployeeForm = ({
   }
 
   const onSubmit = async (data: EmployeeInput) => {
-    const result = await createEmployeeAction(data)
+    const result = employee
+      ? await updateEmployeeAction(employee.id, data)
+      : await createEmployeeAction(data)
 
     if (!result.success) {
       toast.error(result.message)
@@ -140,7 +173,7 @@ const CreateEmployeeForm = ({
   return (
     <div className='flex flex-col gap-8'>
       <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px]'>
-        Cadastro de Novo Funcionário
+        {isEditMode ? 'Edição de Funcionário' : 'Cadastro de Novo Funcionário'}
       </h1>
 
       <Form {...form}>
@@ -639,7 +672,7 @@ const CreateEmployeeForm = ({
               disabled={form.formState.isSubmitting}
               className='bg-[#003d9b] px-8 hover:bg-[#003d9b]/90'
             >
-              Salvar
+              {isEditMode ? 'Salvar Alterações' : 'Salvar'}
             </Button>
           </div>
         </form>
@@ -648,4 +681,4 @@ const CreateEmployeeForm = ({
   )
 }
 
-export default CreateEmployeeForm
+export default EmployeeForm
