@@ -30,14 +30,25 @@ type DataTableProps<TItem extends { id: string }, TField extends string> = {
   entityLabel: string
   editHref?: (item: TItem) => string
   deleteAction?: (item: TItem) => ReactNode
+  extraParams?: Record<string, string>
 }
 
-const buildSortHref = (field: string, nextOrder: SortOrder, query?: string) => {
+const buildSortHref = (
+  field: string,
+  nextOrder: SortOrder,
+  query?: string,
+  extraParams?: Record<string, string>,
+) => {
   const params = new URLSearchParams()
 
   if (query) params.set('q', query)
   params.set('sortBy', field)
   params.set('sortOrder', nextOrder)
+  if (extraParams) {
+    Object.entries(extraParams).forEach(([key, value]) => {
+      if (value) params.set(key, value)
+    })
+  }
 
   return `?${params.toString()}`
 }
@@ -48,6 +59,7 @@ type SortableTableHeadProps<TField extends string> = {
   query?: string
   currentSortBy: TField
   currentSortOrder: SortOrder
+  extraParams?: Record<string, string>
 }
 
 const SortableTableHead = <TField extends string>({
@@ -56,6 +68,7 @@ const SortableTableHead = <TField extends string>({
   query,
   currentSortBy,
   currentSortOrder,
+  extraParams,
 }: SortableTableHeadProps<TField>) => {
   const isActive = field === currentSortBy
   const nextOrder: SortOrder =
@@ -70,7 +83,7 @@ const SortableTableHead = <TField extends string>({
   return (
     <TableHead className='h-auto p-4 text-xs font-semibold tracking-[0.6px] text-[#434654]'>
       <Link
-        href={buildSortHref(field, nextOrder, query)}
+        href={buildSortHref(field, nextOrder, query, extraParams)}
         className={cn(
           'inline-flex items-center gap-1 hover:text-[#003d9b]',
           isActive && 'text-[#003d9b]',
@@ -93,6 +106,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
   entityLabel,
   editHref,
   deleteAction,
+  extraParams,
 }: DataTableProps<TItem, TField>) => {
   if (items.length === 0) {
     return (
@@ -114,6 +128,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
               query={query}
               currentSortBy={sortBy}
               currentSortOrder={sortOrder}
+              extraParams={extraParams}
             />
           ))}
           <TableHead className='h-auto p-4 text-right text-xs font-semibold tracking-[0.6px] text-[#434654]'>

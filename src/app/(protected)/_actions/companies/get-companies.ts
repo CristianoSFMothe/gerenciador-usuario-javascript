@@ -12,8 +12,11 @@ export type CompanySortField =
   | 'landlinePhone'
   | 'mobilePhone'
   | 'postalCode'
+  | 'active'
 
 export type CompanySortOrder = 'asc' | 'desc'
+
+export type CompanyStatusFilter = 'active' | 'inactive' | 'all'
 
 const SORTABLE_FIELDS: CompanySortField[] = [
   'tradeName',
@@ -23,16 +26,23 @@ const SORTABLE_FIELDS: CompanySortField[] = [
   'landlinePhone',
   'mobilePhone',
   'postalCode',
+  'active',
 ]
+
+const STATUS_FILTERS: CompanyStatusFilter[] = ['active', 'inactive', 'all']
 
 const isSortableField = (value: string): value is CompanySortField =>
   SORTABLE_FIELDS.includes(value as CompanySortField)
+
+const isStatusFilter = (value: string): value is CompanyStatusFilter =>
+  STATUS_FILTERS.includes(value as CompanyStatusFilter)
 
 type GetCompaniesParams = {
   query?: string
   page?: number
   sortBy?: string
   sortOrder?: string
+  status?: string
 }
 
 export const getCompanies = async ({
@@ -40,6 +50,7 @@ export const getCompanies = async ({
   page = 1,
   sortBy,
   sortOrder,
+  status,
 }: GetCompaniesParams) => {
   const trimmedQuery = query.trim()
   const queryDigits = onlyDigits(trimmedQuery)
@@ -47,9 +58,12 @@ export const getCompanies = async ({
   const safeSortBy: CompanySortField =
     sortBy && isSortableField(sortBy) ? sortBy : 'tradeName'
   const safeSortOrder: CompanySortOrder = sortOrder === 'desc' ? 'desc' : 'asc'
+  const safeStatus: CompanyStatusFilter =
+    status && isStatusFilter(status) ? status : 'active'
 
   const where: Prisma.CompanyWhereInput = {
-    active: true,
+    ...(safeStatus === 'active' && { active: true }),
+    ...(safeStatus === 'inactive' && { active: false }),
     ...(trimmedQuery
       ? {
           OR: [
@@ -82,6 +96,7 @@ export const getCompanies = async ({
     pageSize: PAGE_SIZE,
     sortBy: safeSortBy,
     sortOrder: safeSortOrder,
+    status: safeStatus,
   }
 }
 

@@ -11,6 +11,7 @@ import { cn } from '@/app/_lib/utils'
 import type {
   CompanySortField,
   CompanySortOrder,
+  CompanyStatusFilter,
 } from '@/app/(protected)/_actions/companies/get-companies'
 
 type CompaniesPaginationProps = {
@@ -20,6 +21,7 @@ type CompaniesPaginationProps = {
   query?: string
   sortBy: CompanySortField
   sortOrder: CompanySortOrder
+  status: CompanyStatusFilter
 }
 
 const ELLIPSIS = 'ellipsis' as const
@@ -29,12 +31,14 @@ const buildPageHref = (
   query: string | undefined,
   sortBy: CompanySortField,
   sortOrder: CompanySortOrder,
+  status: CompanyStatusFilter,
 ) => {
   const params = new URLSearchParams()
 
   if (query) params.set('q', query)
   params.set('sortBy', sortBy)
   params.set('sortOrder', sortOrder)
+  if (status !== 'active') params.set('status', status)
   if (page > 1) params.set('page', String(page))
 
   const search = params.toString()
@@ -74,6 +78,7 @@ const CompaniesPagination = ({
   query,
   sortBy,
   sortOrder,
+  status,
 }: CompaniesPaginationProps) => {
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
   const pageNumbers = buildPageNumbers(currentPage, totalPages)
@@ -93,6 +98,7 @@ const CompaniesPagination = ({
                 query,
                 sortBy,
                 sortOrder,
+                status,
               )}
               aria-disabled={!hasPreviousPage}
               tabIndex={hasPreviousPage ? undefined : -1}
@@ -112,7 +118,7 @@ const CompaniesPagination = ({
             ) : (
               <PaginationItem key={page}>
                 <PaginationLink
-                  href={buildPageHref(page, query, sortBy, sortOrder)}
+                  href={buildPageHref(page, query, sortBy, sortOrder, status)}
                   isActive={page === currentPage}
                   className={cn(
                     'cursor-pointer',
@@ -136,6 +142,7 @@ const CompaniesPagination = ({
                 query,
                 sortBy,
                 sortOrder,
+                status,
               )}
               aria-disabled={!hasNextPage}
               tabIndex={hasNextPage ? undefined : -1}
