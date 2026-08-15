@@ -273,6 +273,9 @@ const CreateEmployeeForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      <SelectItem value='placeholder' disabled>
+                        Selecione
+                      </SelectItem>
                       {GENDER_OPTIONS.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
@@ -305,11 +308,16 @@ const CreateEmployeeForm = ({
                           Nenhuma empresa cadastrada
                         </SelectItem>
                       ) : (
-                        companies.map((company) => (
-                          <SelectItem key={company.id} value={company.id}>
-                            {company.tradeName}
+                        <>
+                          <SelectItem value='placeholder' disabled>
+                            Selecione a empresa
                           </SelectItem>
-                        ))
+                          {companies.map((company) => (
+                            <SelectItem key={company.id} value={company.id}>
+                              {company.tradeName}
+                            </SelectItem>
+                          ))}
+                        </>
                       )}
                     </SelectContent>
                   </Select>
@@ -333,6 +341,9 @@ const CreateEmployeeForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      <SelectItem value='placeholder' disabled>
+                        Selecione o departamento
+                      </SelectItem>
                       {departmentTypes.map((departmentType) => (
                         <SelectItem
                           key={departmentType.id}
