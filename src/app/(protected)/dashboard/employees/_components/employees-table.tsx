@@ -9,6 +9,8 @@ import DataTable, {
   type DataTableColumn,
 } from '@/app/(protected)/_components/data-table'
 
+import EmployeeStatusDialog from './employee-status-dialog'
+
 type EmployeesTableProps = {
   employees: EmployeeListItem[]
   query?: string
@@ -97,6 +99,7 @@ const EmployeesTable = ({
       emptyMessage='Nenhum funcionário encontrado.'
       entityLabel='funcionário'
       editHref={(employee) => `/dashboard/employees/${employee.id}/edit`}
+      deleteAction={(employee) => <EmployeeStatusDialog employee={employee} />}
     />
   )
 }
