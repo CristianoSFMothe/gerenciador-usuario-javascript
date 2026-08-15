@@ -42,7 +42,6 @@ import { maskCEP, maskCPF, maskPhone, onlyDigits } from '@/app/_utils/masks'
 import type { CompanyOption } from '@/app/(protected)/_actions/companies/get-company-options'
 import { OTHER_DEPARTMENT_TYPE_VALUE } from '@/app/(protected)/_actions/departments/department-type-constants'
 import type { DepartmentTypeOption } from '@/app/(protected)/_actions/departments/get-department-types'
-import type { PositionOption } from '@/app/(protected)/_actions/positions/get-position-options'
 
 import { createEmployeeAction } from '../../../_actions/employees/create-employee-action'
 import { type EmployeeInput, employeeSchema } from '../_schema/employee-schema'
@@ -50,13 +49,11 @@ import EmployeeTextField from './employee-text-field'
 
 type CreateEmployeeFormProps = {
   companies: CompanyOption[]
-  positions: PositionOption[]
   departmentTypes: DepartmentTypeOption[]
 }
 
 const CreateEmployeeForm = ({
   companies,
-  positions,
   departmentTypes,
 }: CreateEmployeeFormProps) => {
   const router = useRouter()
@@ -71,6 +68,7 @@ const CreateEmployeeForm = ({
       cpf: '',
       email: '',
       birthDate: '',
+      position: '',
       departmentTypeId: '',
       customDepartmentName: '',
       postalCode: '',
@@ -94,17 +92,12 @@ const CreateEmployeeForm = ({
     control: form.control,
     name: 'hasNoPostalCode',
   })
-  const companyId = useWatch({ control: form.control, name: 'companyId' })
   const departmentTypeId = useWatch({
     control: form.control,
     name: 'departmentTypeId',
   })
   const isCustomDepartmentType =
     departmentTypeId === OTHER_DEPARTMENT_TYPE_VALUE
-
-  const availablePositions = positions.filter(
-    (position) => position.companyId === companyId,
-  )
 
   const searchCep = async () => {
     const postalCode = form.getValues('postalCode') ?? ''
@@ -264,12 +257,12 @@ const CreateEmployeeForm = ({
 
           <div className='border-t border-[#dfe1e6]' />
 
-          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4'>
+          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-12'>
             <FormField
               control={form.control}
               name='gender'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='lg:col-span-2'>
                   <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                     Sexo
                   </FormLabel>
@@ -296,17 +289,11 @@ const CreateEmployeeForm = ({
               control={form.control}
               name='companyId'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='lg:col-span-3'>
                   <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                     Empresa
                   </FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      form.resetField('positionId')
-                    }}
-                    value={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className='w-full'>
                         <SelectValue placeholder='Selecione a empresa' />
@@ -335,7 +322,7 @@ const CreateEmployeeForm = ({
               control={form.control}
               name='departmentTypeId'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='lg:col-span-3'>
                   <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                     Departamento
                   </FormLabel>
@@ -364,12 +351,21 @@ const CreateEmployeeForm = ({
               )}
             />
 
+            <div className='lg:col-span-4'>
+              <EmployeeTextField
+                control={form.control}
+                name='position'
+                label='Cargo'
+                placeholder='Digite o cargo'
+              />
+            </div>
+
             {isCustomDepartmentType && (
               <FormField
                 control={form.control}
                 name='customDepartmentName'
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className='lg:col-span-3'>
                     <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                       Nome do Departamento
                     </FormLabel>
@@ -381,48 +377,6 @@ const CreateEmployeeForm = ({
                 )}
               />
             )}
-
-            <FormField
-              control={form.control}
-              name='positionId'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                    Cargo
-                  </FormLabel>
-                  <Select
-                    key={companyId ?? 'no-company'}
-                    disabled={!companyId}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className='w-full'>
-                        <SelectValue placeholder='Selecione o cargo' />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {!companyId ? (
-                        <SelectItem value='none' disabled>
-                          Selecione uma empresa primeiro
-                        </SelectItem>
-                      ) : availablePositions.length === 0 ? (
-                        <SelectItem value='none' disabled>
-                          Nenhum cargo cadastrado para essa empresa
-                        </SelectItem>
-                      ) : (
-                        availablePositions.map((position) => (
-                          <SelectItem key={position.id} value={position.id}>
-                            {position.title}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
 
           <div className='flex flex-col gap-4 border-t border-[#dfe1e6] pt-8'>

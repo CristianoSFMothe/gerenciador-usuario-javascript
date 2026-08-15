@@ -71,7 +71,7 @@ export const getEmployees = async ({
       case 'company':
         return { company: { tradeName: safeSortOrder } }
       case 'position':
-        return { position: { title: safeSortOrder } }
+        return { position: safeSortOrder }
       case 'department':
         return { department: { departmentType: { name: safeSortOrder } } }
       default:
@@ -87,7 +87,6 @@ export const getEmployees = async ({
       take: PAGE_SIZE,
       include: {
         company: { select: { tradeName: true } },
-        position: { select: { title: true } },
         department: { select: { departmentType: { select: { name: true } } } },
       },
     }),

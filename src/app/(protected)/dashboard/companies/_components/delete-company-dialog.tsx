@@ -30,9 +30,6 @@ const describeDependents = (company: CompanyListItem) => {
   if (company._count.employees > 0) {
     parts.push(`${company._count.employees} funcionário(s)`)
   }
-  if (company._count.positions > 0) {
-    parts.push(`${company._count.positions} cargo(s)`)
-  }
   if (company._count.departments > 0) {
     parts.push(`${company._count.departments} departamento(s)`)
   }
@@ -46,9 +43,7 @@ const DeleteCompanyDialog = ({ company }: DeleteCompanyDialogProps) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const hasDependents =
-    company._count.employees > 0 ||
-    company._count.positions > 0 ||
-    company._count.departments > 0
+    company._count.employees > 0 || company._count.departments > 0
 
   const handleDelete = async () => {
     setIsDeleting(true)

@@ -3,7 +3,6 @@
 import {
   Briefcase,
   Building2,
-  IdCard,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -21,7 +20,6 @@ const NAV_LINKS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Funcionários', href: '/dashboard/employees', icon: Users },
   { label: 'Empresas', href: '/dashboard/companies', icon: Building2 },
-  { label: 'Cargos', href: '/dashboard/positions', icon: IdCard },
 ]
 
 const isLinkActive = (pathname: string, href: string) => {

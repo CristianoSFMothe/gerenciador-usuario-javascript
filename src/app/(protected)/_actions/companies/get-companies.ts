@@ -83,7 +83,7 @@ export const getCompanies = async ({
       take: PAGE_SIZE,
       include: {
         _count: {
-          select: { employees: true, positions: true, departments: true },
+          select: { employees: true, departments: true },
         },
       },
     }),

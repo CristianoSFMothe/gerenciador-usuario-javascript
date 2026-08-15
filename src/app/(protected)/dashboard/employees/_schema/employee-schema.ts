@@ -14,7 +14,7 @@ export const employeeSchema = z
       error: 'Selecione o sexo.',
     }),
     companyId: z.string().min(1, 'Selecione a empresa.'),
-    positionId: z.string().min(1, 'Selecione o cargo.'),
+    position: z.string().min(1, 'Informe o cargo.'),
     departmentTypeId: z.string().min(1, 'Selecione o departamento.'),
     customDepartmentName: z.string().optional(),
     postalCode: z.string().optional(),

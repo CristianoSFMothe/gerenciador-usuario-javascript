@@ -49,27 +49,11 @@ model Company {
   city         String
   state        String
 
-  positions   Position[]
   departments Department[]
   employees   Employee[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Position {
-  id    String @id @default(uuid())
-  title String
-
-  companyId String
-  company   Company @relation(fields: [companyId], references: [id])
-
-  employees Employee[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([companyId, title])
 }
 
 model DepartmentType {
@@ -117,8 +101,7 @@ model Employee {
 
   companyId    String
   company      Company    @relation(fields: [companyId], references: [id])
-  positionId   String
-  position     Position   @relation(fields: [positionId], references: [id])
+  position     String
   departmentId String
   department   Department @relation(fields: [departmentId], references: [id])
 
@@ -134,7 +117,6 @@ model Employee {
   updatedAt DateTime @updatedAt
 
   @@index([companyId])
-  @@index([positionId])
   @@index([departmentId])
   @@index([status])
 }

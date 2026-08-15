@@ -24,7 +24,7 @@ export const deleteCompanyAction = async (
     where: { id },
     select: {
       _count: {
-        select: { employees: true, positions: true, departments: true },
+        select: { employees: true, departments: true },
       },
     },
   })
@@ -34,9 +34,7 @@ export const deleteCompanyAction = async (
   }
 
   const hasDependents =
-    company._count.employees > 0 ||
-    company._count.positions > 0 ||
-    company._count.departments > 0
+    company._count.employees > 0 || company._count.departments > 0
 
   if (hasDependents) {
     await prisma.company.update({ where: { id }, data: { active: false } })

@@ -42,18 +42,6 @@ export const createEmployeeAction = async (
     return { success: false, message: 'Dados inválidos.' }
   }
 
-  const position = await prisma.position.findUnique({
-    where: { id: parsed.data.positionId },
-    select: { id: true, companyId: true },
-  })
-
-  if (!position || position.companyId !== parsed.data.companyId) {
-    return {
-      success: false,
-      message: 'Selecione um cargo válido para a empresa escolhida.',
-    }
-  }
-
   const departmentTypeId = await resolveDepartmentTypeId(
     parsed.data.departmentTypeId,
     parsed.data.customDepartmentName,
@@ -85,7 +73,7 @@ export const createEmployeeAction = async (
           birthDate: new Date(parsed.data.birthDate),
           gender: parsed.data.gender,
           companyId: parsed.data.companyId,
-          positionId: parsed.data.positionId,
+          position: parsed.data.position,
           departmentId: department.id,
           postalCode: parsed.data.postalCode
             ? onlyDigits(parsed.data.postalCode)
