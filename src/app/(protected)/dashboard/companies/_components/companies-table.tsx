@@ -8,6 +8,8 @@ import DataTable, {
   type DataTableColumn,
 } from '@/app/(protected)/_components/data-table'
 
+import DeleteCompanyDialog from './delete-company-dialog'
+
 type CompaniesTableProps = {
   companies: CompanyListItem[]
   query?: string
@@ -77,6 +79,7 @@ const CompaniesTable = ({
       emptyMessage='Nenhuma empresa encontrada.'
       entityLabel='empresa'
       editHref={(company) => `/dashboard/companies/${company.id}/edit`}
+      deleteAction={(company) => <DeleteCompanyDialog company={company} />}
     />
   )
 }

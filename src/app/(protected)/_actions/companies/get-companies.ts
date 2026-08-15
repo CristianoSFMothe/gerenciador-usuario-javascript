@@ -48,15 +48,18 @@ export const getCompanies = async ({
     sortBy && isSortableField(sortBy) ? sortBy : 'tradeName'
   const safeSortOrder: CompanySortOrder = sortOrder === 'desc' ? 'desc' : 'asc'
 
-  const where: Prisma.CompanyWhereInput = trimmedQuery
-    ? {
-        OR: [
-          { tradeName: { contains: trimmedQuery, mode: 'insensitive' } },
-          { legalName: { contains: trimmedQuery, mode: 'insensitive' } },
-          ...(queryDigits ? [{ cnpj: { contains: queryDigits } }] : []),
-        ],
-      }
-    : {}
+  const where: Prisma.CompanyWhereInput = {
+    active: true,
+    ...(trimmedQuery
+      ? {
+          OR: [
+            { tradeName: { contains: trimmedQuery, mode: 'insensitive' } },
+            { legalName: { contains: trimmedQuery, mode: 'insensitive' } },
+            ...(queryDigits ? [{ cnpj: { contains: queryDigits } }] : []),
+          ],
+        }
+      : {}),
+  }
 
   const [companies, totalCount] = await Promise.all([
     prisma.company.findMany({
@@ -64,6 +67,11 @@ export const getCompanies = async ({
       orderBy: { [safeSortBy]: safeSortOrder },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
+      include: {
+        _count: {
+          select: { employees: true, positions: true, departments: true },
+        },
+      },
     }),
     prisma.company.count({ where }),
   ])

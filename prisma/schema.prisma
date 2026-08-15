@@ -27,6 +27,8 @@ enum EmployeeStatus {
 model Company {
   id String @id @default(uuid())
 
+  active Boolean @default(true)
+
   tradeName             String
   legalName             String
   cnpj                  String   @unique
