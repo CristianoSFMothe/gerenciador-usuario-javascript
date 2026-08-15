@@ -1,14 +1,14 @@
 import { getCompanyOptions } from '@/app/(protected)/_actions/companies/get-company-options'
-import { getDepartmentOptions } from '@/app/(protected)/_actions/departments/get-department-options'
+import { getDepartmentTypes } from '@/app/(protected)/_actions/departments/get-department-types'
 import { getPositionOptions } from '@/app/(protected)/_actions/positions/get-position-options'
 
 import CreateEmployeeForm from '../_components/create-employee-form'
 
 const NewEmployeePage = async () => {
-  const [companies, positions, departments] = await Promise.all([
+  const [companies, positions, departmentTypes] = await Promise.all([
     getCompanyOptions(),
     getPositionOptions(),
-    getDepartmentOptions(),
+    getDepartmentTypes(),
   ])
 
   return (
@@ -16,7 +16,7 @@ const NewEmployeePage = async () => {
       <CreateEmployeeForm
         companies={companies}
         positions={positions}
-        departments={departments}
+        departmentTypes={departmentTypes}
       />
     </div>
   )

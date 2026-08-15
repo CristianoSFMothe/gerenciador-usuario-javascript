@@ -1,0 +1,1 @@
+export const OTHER_DEPARTMENT_TYPE_VALUE = 'OTHER'

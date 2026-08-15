@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { OTHER_DEPARTMENT_TYPE_VALUE } from '@/app/(protected)/_actions/departments/department-type-constants'
+
 export const employeeSchema = z
   .object({
     firstName: z.string().min(1, 'Informe o nome.'),
@@ -13,7 +15,8 @@ export const employeeSchema = z
     }),
     companyId: z.string().min(1, 'Selecione a empresa.'),
     positionId: z.string().min(1, 'Selecione o cargo.'),
-    departmentId: z.string().min(1, 'Selecione o departamento.'),
+    departmentTypeId: z.string().min(1, 'Selecione o departamento.'),
+    customDepartmentName: z.string().optional(),
     postalCode: z.string().optional(),
     hasNoPostalCode: z.boolean().optional(),
     street: z.string().min(1, 'Informe o logradouro.'),
@@ -36,6 +39,15 @@ export const employeeSchema = z
     {
       message: 'Informe o CEP ou marque "CEP não encontrado".',
       path: ['postalCode'],
+    },
+  )
+  .refine(
+    (data) =>
+      data.departmentTypeId !== OTHER_DEPARTMENT_TYPE_VALUE ||
+      Boolean(data.customDepartmentName?.trim()),
+    {
+      message: 'Informe o nome do departamento.',
+      path: ['customDepartmentName'],
     },
   )
 

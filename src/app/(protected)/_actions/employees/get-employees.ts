@@ -73,7 +73,7 @@ export const getEmployees = async ({
       case 'position':
         return { position: { title: safeSortOrder } }
       case 'department':
-        return { department: { name: safeSortOrder } }
+        return { department: { departmentType: { name: safeSortOrder } } }
       default:
         return { [safeSortBy]: safeSortOrder }
     }
@@ -88,7 +88,7 @@ export const getEmployees = async ({
       include: {
         company: { select: { tradeName: true } },
         position: { select: { title: true } },
-        department: { select: { name: true } },
+        department: { select: { departmentType: { select: { name: true } } } },
       },
     }),
     prisma.employee.count({ where }),

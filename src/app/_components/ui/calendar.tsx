@@ -13,6 +13,13 @@ import {
 } from 'react-day-picker'
 
 import { Button, buttonVariants } from '@/app/_components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/app/_components/ui/select'
 import { cn } from '@/app/_lib/utils'
 
 function Calendar({
@@ -53,17 +60,17 @@ function Calendar({
         ),
         month: cn('flex w-full flex-col gap-4', defaultClassNames.month),
         nav: cn(
-          'absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1',
+          'pointer-events-none absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1',
           defaultClassNames.nav,
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          'size-(--cell-size) p-0 select-none aria-disabled:opacity-50',
+          'pointer-events-auto size-(--cell-size) p-0 select-none aria-disabled:opacity-50',
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          'size-(--cell-size) p-0 select-none aria-disabled:opacity-50',
+          'pointer-events-auto size-(--cell-size) p-0 select-none aria-disabled:opacity-50',
           defaultClassNames.button_next,
         ),
         month_caption: cn(
@@ -171,6 +178,44 @@ function Calendar({
                 {children}
               </div>
             </td>
+          )
+        },
+        DropdownNav: ({ className, ...props }) => (
+          <div
+            className={cn('flex items-center gap-2', className)}
+            {...props}
+          />
+        ),
+        Dropdown: ({ value, onChange, options }) => {
+          const selected = options?.find((option) => option.value === value)
+
+          const handleChange = (nextValue: string) => {
+            const changeEvent = {
+              target: { value: nextValue },
+            } as React.ChangeEvent<HTMLSelectElement>
+            onChange?.(changeEvent)
+          }
+
+          return (
+            <Select value={value?.toString()} onValueChange={handleChange}>
+              <SelectTrigger
+                size='sm'
+                className='h-fit w-fit gap-1 ps-2 pe-1.5 text-xs [&_svg]:size-3.5!'
+              >
+                <SelectValue>{selected?.label}</SelectValue>
+              </SelectTrigger>
+              <SelectContent className='max-h-[min(26rem,var(--radix-select-content-available-height))]'>
+                {options?.map((option) => (
+                  <SelectItem
+                    key={option.value}
+                    value={option.value.toString()}
+                    disabled={option.disabled}
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )
         },
         ...components,

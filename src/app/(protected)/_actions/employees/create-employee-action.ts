@@ -13,6 +13,7 @@ import {
   type EmployeeInput,
   employeeSchema,
 } from '../../dashboard/employees/_schema/employee-schema'
+import { resolveDepartmentTypeId } from '../departments/resolve-department-type-id'
 
 type CreateEmployeeActionResult =
   { success: true; message: string } | { success: false; message: string }
@@ -41,16 +42,10 @@ export const createEmployeeAction = async (
     return { success: false, message: 'Dados inválidos.' }
   }
 
-  const [position, department] = await Promise.all([
-    prisma.position.findUnique({
-      where: { id: parsed.data.positionId },
-      select: { id: true, companyId: true },
-    }),
-    prisma.department.findUnique({
-      where: { id: parsed.data.departmentId },
-      select: { id: true, companyId: true },
-    }),
-  ])
+  const position = await prisma.position.findUnique({
+    where: { id: parsed.data.positionId },
+    select: { id: true, companyId: true },
+  })
 
   if (!position || position.companyId !== parsed.data.companyId) {
     return {
@@ -59,12 +54,24 @@ export const createEmployeeAction = async (
     }
   }
 
-  if (!department || department.companyId !== parsed.data.companyId) {
-    return {
-      success: false,
-      message: 'Selecione um departamento válido para a empresa escolhida.',
-    }
-  }
+  const departmentTypeId = await resolveDepartmentTypeId(
+    parsed.data.departmentTypeId,
+    parsed.data.customDepartmentName,
+  )
+
+  const department = await prisma.department.upsert({
+    where: {
+      companyId_departmentTypeId: {
+        companyId: parsed.data.companyId,
+        departmentTypeId,
+      },
+    },
+    update: {},
+    create: {
+      companyId: parsed.data.companyId,
+      departmentTypeId,
+    },
+  })
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -79,7 +86,7 @@ export const createEmployeeAction = async (
           gender: parsed.data.gender,
           companyId: parsed.data.companyId,
           positionId: parsed.data.positionId,
-          departmentId: parsed.data.departmentId,
+          departmentId: department.id,
           postalCode: parsed.data.postalCode
             ? onlyDigits(parsed.data.postalCode)
             : '',

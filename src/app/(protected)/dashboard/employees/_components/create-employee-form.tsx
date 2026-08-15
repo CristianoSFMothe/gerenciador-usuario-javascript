@@ -40,7 +40,8 @@ import { calculateAge } from '@/app/_utils/calculate-age'
 import { fetchAddressByCEP } from '@/app/_utils/fetch-address-by-cep'
 import { maskCEP, maskCPF, maskPhone, onlyDigits } from '@/app/_utils/masks'
 import type { CompanyOption } from '@/app/(protected)/_actions/companies/get-company-options'
-import type { DepartmentOption } from '@/app/(protected)/_actions/departments/get-department-options'
+import { OTHER_DEPARTMENT_TYPE_VALUE } from '@/app/(protected)/_actions/departments/department-type-constants'
+import type { DepartmentTypeOption } from '@/app/(protected)/_actions/departments/get-department-types'
 import type { PositionOption } from '@/app/(protected)/_actions/positions/get-position-options'
 
 import { createEmployeeAction } from '../../../_actions/employees/create-employee-action'
@@ -50,13 +51,13 @@ import EmployeeTextField from './employee-text-field'
 type CreateEmployeeFormProps = {
   companies: CompanyOption[]
   positions: PositionOption[]
-  departments: DepartmentOption[]
+  departmentTypes: DepartmentTypeOption[]
 }
 
 const CreateEmployeeForm = ({
   companies,
   positions,
-  departments,
+  departmentTypes,
 }: CreateEmployeeFormProps) => {
   const router = useRouter()
   const [isSearchingCep, setIsSearchingCep] = useState(false)
@@ -70,6 +71,8 @@ const CreateEmployeeForm = ({
       cpf: '',
       email: '',
       birthDate: '',
+      departmentTypeId: '',
+      customDepartmentName: '',
       postalCode: '',
       hasNoPostalCode: false,
       street: '',
@@ -92,12 +95,15 @@ const CreateEmployeeForm = ({
     name: 'hasNoPostalCode',
   })
   const companyId = useWatch({ control: form.control, name: 'companyId' })
+  const departmentTypeId = useWatch({
+    control: form.control,
+    name: 'departmentTypeId',
+  })
+  const isCustomDepartmentType =
+    departmentTypeId === OTHER_DEPARTMENT_TYPE_VALUE
 
   const availablePositions = positions.filter(
     (position) => position.companyId === companyId,
-  )
-  const availableDepartments = departments.filter(
-    (department) => department.companyId === companyId,
   )
 
   const searchCep = async () => {
@@ -298,7 +304,6 @@ const CreateEmployeeForm = ({
                     onValueChange={(value) => {
                       field.onChange(value)
                       form.resetField('positionId')
-                      form.resetField('departmentId')
                     }}
                     value={field.value}
                   >
@@ -328,45 +333,54 @@ const CreateEmployeeForm = ({
 
             <FormField
               control={form.control}
-              name='departmentId'
+              name='departmentTypeId'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                     Departamento
                   </FormLabel>
-                  <Select
-                    key={companyId ?? 'no-company'}
-                    disabled={!companyId}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className='w-full'>
                         <SelectValue placeholder='Selecione o departamento' />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {!companyId ? (
-                        <SelectItem value='none' disabled>
-                          Selecione uma empresa primeiro
+                      {departmentTypes.map((departmentType) => (
+                        <SelectItem
+                          key={departmentType.id}
+                          value={departmentType.id}
+                        >
+                          {departmentType.name}
                         </SelectItem>
-                      ) : availableDepartments.length === 0 ? (
-                        <SelectItem value='none' disabled>
-                          Nenhum departamento cadastrado para essa empresa
-                        </SelectItem>
-                      ) : (
-                        availableDepartments.map((department) => (
-                          <SelectItem key={department.id} value={department.id}>
-                            {department.name}
-                          </SelectItem>
-                        ))
-                      )}
+                      ))}
+                      <SelectItem value={OTHER_DEPARTMENT_TYPE_VALUE}>
+                        Outro
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {isCustomDepartmentType && (
+              <FormField
+                control={form.control}
+                name='customDepartmentName'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                      Nome do Departamento
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder='Ex: Sustentabilidade' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}

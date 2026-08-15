@@ -61,7 +61,7 @@ const COLUMNS: DataTableColumn<EmployeeListItem, EmployeeSortField>[] = [
   {
     label: 'Departamento',
     field: 'department',
-    render: (employee) => employee.department.name,
+    render: (employee) => employee.department.departmentType.name,
   },
   {
     label: 'Status',
