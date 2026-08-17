@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   LogOut,
   Settings,
+  User,
   Users,
   X,
 } from 'lucide-react'
@@ -109,6 +110,17 @@ const SideNavBar = ({ open, onClose }: SideNavBarProps) => {
         </div>
 
         <div className='flex flex-col gap-1 px-2'>
+          <Link
+            href='/dashboard/profile'
+            onClick={onClose}
+            className={navItemClassName(
+              isLinkActive(pathname, '/dashboard/profile'),
+            )}
+          >
+            <User className='size-4.5 shrink-0' />
+            Perfil
+          </Link>
+
           <Link
             href='/dashboard/settings'
             onClick={onClose}

@@ -9,6 +9,10 @@ import DataTable, {
   type DataTableColumn,
 } from '@/app/(protected)/_components/data-table'
 
+import {
+  EMPLOYEE_STATUS_BADGE_CLASSNAME,
+  EMPLOYEE_STATUS_LABEL,
+} from '../_lib/employee-status'
 import EmployeeStatusDialog from './employee-status-dialog'
 
 type EmployeesTableProps = {
@@ -19,11 +23,6 @@ type EmployeesTableProps = {
   selectedIds: Set<string>
   onToggleRow: (id: string) => void
   onToggleAll: () => void
-}
-
-const STATUS_LABEL: Record<EmployeeListItem['status'], string> = {
-  ACTIVE: 'Ativo',
-  INACTIVE: 'Inativo',
 }
 
 const COLUMNS: DataTableColumn<EmployeeListItem, EmployeeSortField>[] = [
@@ -75,12 +74,10 @@ const COLUMNS: DataTableColumn<EmployeeListItem, EmployeeSortField>[] = [
       <span
         className={cn(
           'rounded-full px-2.25 py-0.75 text-xs font-semibold',
-          employee.status === 'ACTIVE'
-            ? 'bg-[#e3f5e9] text-[#15803d]'
-            : 'bg-[#f1f2f4] text-[#6b7280]',
+          EMPLOYEE_STATUS_BADGE_CLASSNAME[employee.status],
         )}
       >
-        {STATUS_LABEL[employee.status]}
+        {EMPLOYEE_STATUS_LABEL[employee.status]}
       </span>
     ),
   },
