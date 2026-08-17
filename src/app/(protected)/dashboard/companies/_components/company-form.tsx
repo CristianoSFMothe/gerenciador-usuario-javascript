@@ -15,6 +15,7 @@ import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
+import DatePickerField from '@/app/_components/date-picker-field'
 import { Button } from '@/app/_components/ui/button'
 import {
   Form,
@@ -248,20 +249,10 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                 placeholder='Opcional'
               />
 
-              <FormField
+              <DatePickerField
                 control={form.control}
                 name='foundationDate'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                      Data de Abertura *
-                    </FormLabel>
-                    <FormControl>
-                      <Input type='date' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label='Data de Abertura *'
               />
             </div>
           </FormSectionCard>
@@ -399,38 +390,49 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                       <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                         CEP *
                       </FormLabel>
-                      <div className='flex gap-2'>
-                        <FormControl>
-                          <Input
-                            placeholder='00000-000'
-                            className='max-w-40'
-                            disabled={manualAddress}
-                            {...field}
-                            onChange={(event) =>
-                              field.onChange(maskCEP(event.target.value))
-                            }
-                            onKeyDown={(event) => {
-                              if (event.key === 'Enter') {
-                                event.preventDefault()
-                                searchCep()
+                      <div className='flex flex-wrap items-center gap-3'>
+                        <div className='flex gap-2'>
+                          <FormControl>
+                            <Input
+                              placeholder='00000-000'
+                              className='max-w-40'
+                              disabled={manualAddress}
+                              {...field}
+                              onChange={(event) =>
+                                field.onChange(maskCEP(event.target.value))
                               }
-                            }}
-                          />
-                        </FormControl>
-                        <Button
-                          type='button'
-                          variant='outline'
-                          disabled={manualAddress || isSearchingCep}
-                          onClick={searchCep}
-                          className='shrink-0 gap-1 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
-                        >
-                          {isSearchingCep ? (
-                            <Loader2 className='size-3.5 animate-spin' />
-                          ) : (
-                            <Search className='size-3.5' />
-                          )}
-                          Buscar
-                        </Button>
+                              onKeyDown={(event) => {
+                                if (event.key === 'Enter') {
+                                  event.preventDefault()
+                                  searchCep()
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <Button
+                            type='button'
+                            variant='outline'
+                            disabled={manualAddress || isSearchingCep}
+                            onClick={searchCep}
+                            className='shrink-0 gap-1 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
+                          >
+                            {isSearchingCep ? (
+                              <Loader2 className='size-3.5 animate-spin' />
+                            ) : (
+                              <Search className='size-3.5' />
+                            )}
+                            Buscar
+                          </Button>
+                        </div>
+
+                        <FormCheckboxField
+                          control={form.control}
+                          name='hasNoPostalCode'
+                          label='CEP não encontrado'
+                          onCheckedChange={(checked) => {
+                            if (checked) form.setValue('postalCode', '')
+                          }}
+                        />
                       </div>
                       <FormMessage />
                     </FormItem>
@@ -476,15 +478,6 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                 name='complement'
                 label='Complemento'
                 placeholder='Sala, Andar, etc.'
-              />
-
-              <FormCheckboxField
-                control={form.control}
-                name='hasNoPostalCode'
-                label='CEP não encontrado'
-                onCheckedChange={(checked) => {
-                  if (checked) form.setValue('postalCode', '')
-                }}
               />
 
               <FormCheckboxField

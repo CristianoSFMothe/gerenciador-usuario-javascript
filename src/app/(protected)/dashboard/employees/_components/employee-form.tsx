@@ -1,15 +1,14 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { format, parse } from 'date-fns'
-import { CalendarIcon, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
+import DatePickerField from '@/app/_components/date-picker-field'
 import { Button } from '@/app/_components/ui/button'
-import { Calendar } from '@/app/_components/ui/calendar'
 import { Checkbox } from '@/app/_components/ui/checkbox'
 import {
   Form,
@@ -20,11 +19,6 @@ import {
   FormMessage,
 } from '@/app/_components/ui/form'
 import { Input } from '@/app/_components/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/app/_components/ui/popover'
 import {
   Select,
   SelectContent,
@@ -221,56 +215,11 @@ const EmployeeForm = ({
             />
 
             <div className='flex gap-3'>
-              <FormField
+              <DatePickerField
                 control={form.control}
                 name='birthDate'
-                render={({ field }) => {
-                  const selectedDate = field.value
-                    ? parse(field.value, 'yyyy-MM-dd', new Date())
-                    : undefined
-
-                  return (
-                    <FormItem className='flex flex-col'>
-                      <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
-                        Data de Nascimento
-                      </FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              type='button'
-                              variant='outline'
-                              className={cn(
-                                'w-37.5 justify-start gap-2 font-normal',
-                                !field.value && 'text-[#434654]/50',
-                              )}
-                            >
-                              <CalendarIcon className='size-3.5' />
-                              {selectedDate
-                                ? format(selectedDate, 'dd/MM/yyyy')
-                                : 'Selecione'}
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className='w-auto p-0' align='start'>
-                          <Calendar
-                            mode='single'
-                            captionLayout='dropdown'
-                            selected={selectedDate}
-                            defaultMonth={selectedDate}
-                            disabled={{ after: new Date() }}
-                            onSelect={(date) =>
-                              field.onChange(
-                                date ? format(date, 'yyyy-MM-dd') : '',
-                              )
-                            }
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )
-                }}
+                label='Data de Nascimento'
+                triggerClassName='w-37.5'
               />
 
               <FormItem className='w-16 shrink-0'>
@@ -431,39 +380,68 @@ const EmployeeForm = ({
                 control={form.control}
                 name='postalCode'
                 render={({ field }) => (
-                  <FormItem className='sm:col-span-4'>
+                  <FormItem className='sm:col-span-12'>
                     <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
                       CEP
                     </FormLabel>
-                    <div className='flex gap-2'>
-                      <FormControl>
-                        <Input
-                          placeholder='00000-000'
-                          disabled={hasNoPostalCode}
-                          {...field}
-                          onChange={(event) =>
-                            field.onChange(maskCEP(event.target.value))
-                          }
-                          onKeyDown={(event) => {
-                            if (event.key === 'Enter') {
-                              event.preventDefault()
-                              searchCep()
+                    <div className='flex flex-wrap items-center gap-3'>
+                      <div className='flex gap-2'>
+                        <FormControl>
+                          <Input
+                            placeholder='00000-000'
+                            disabled={hasNoPostalCode}
+                            className='max-w-40'
+                            {...field}
+                            onChange={(event) =>
+                              field.onChange(maskCEP(event.target.value))
                             }
-                          }}
-                        />
-                      </FormControl>
-                      <Button
-                        type='button'
-                        variant='outline'
-                        disabled={hasNoPostalCode || isSearchingCep}
-                        onClick={searchCep}
-                        className='shrink-0 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
-                      >
-                        {isSearchingCep ? (
-                          <Loader2 className='size-3.5 animate-spin' />
-                        ) : null}
-                        Consultar
-                      </Button>
+                            onKeyDown={(event) => {
+                              if (event.key === 'Enter') {
+                                event.preventDefault()
+                                searchCep()
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          disabled={hasNoPostalCode || isSearchingCep}
+                          onClick={searchCep}
+                          className='shrink-0 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
+                        >
+                          {isSearchingCep ? (
+                            <Loader2 className='size-3.5 animate-spin' />
+                          ) : null}
+                          Consultar
+                        </Button>
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name='hasNoPostalCode'
+                        render={({ field: hasNoPostalCodeField }) => (
+                          <div className='flex items-center gap-2'>
+                            <FormControl>
+                              <Checkbox
+                                id='has-no-postal-code'
+                                checked={hasNoPostalCodeField.value === true}
+                                onCheckedChange={(checked) => {
+                                  const isChecked = checked === true
+                                  hasNoPostalCodeField.onChange(isChecked)
+                                  if (isChecked) form.setValue('postalCode', '')
+                                }}
+                              />
+                            </FormControl>
+                            <label
+                              htmlFor='has-no-postal-code'
+                              className='cursor-pointer text-xs whitespace-nowrap text-[#434654]'
+                            >
+                              CEP não encontrado
+                            </label>
+                          </div>
+                        )}
+                      />
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -515,32 +493,6 @@ const EmployeeForm = ({
                     </FormControl>
                     <FormMessage />
                   </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='hasNoPostalCode'
-                render={({ field }) => (
-                  <div className='flex items-center gap-2 sm:col-span-9'>
-                    <FormControl>
-                      <Checkbox
-                        id='has-no-postal-code'
-                        checked={field.value === true}
-                        onCheckedChange={(checked) => {
-                          const isChecked = checked === true
-                          field.onChange(isChecked)
-                          if (isChecked) form.setValue('postalCode', '')
-                        }}
-                      />
-                    </FormControl>
-                    <label
-                      htmlFor='has-no-postal-code'
-                      className='cursor-pointer text-xs text-[#434654]'
-                    >
-                      CEP não encontrado
-                    </label>
-                  </div>
                 )}
               />
 
