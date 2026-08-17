@@ -16,6 +16,9 @@ type EmployeesTableProps = {
   query?: string
   sortBy: EmployeeSortField
   sortOrder: EmployeeSortOrder
+  selectedIds: Set<string>
+  onToggleRow: (id: string) => void
+  onToggleAll: () => void
 }
 
 const STATUS_LABEL: Record<EmployeeListItem['status'], string> = {
@@ -88,6 +91,9 @@ const EmployeesTable = ({
   query,
   sortBy,
   sortOrder,
+  selectedIds,
+  onToggleRow,
+  onToggleAll,
 }: EmployeesTableProps) => {
   return (
     <DataTable
@@ -100,6 +106,9 @@ const EmployeesTable = ({
       entityLabel='funcionário'
       editHref={(employee) => `/dashboard/employees/${employee.id}/edit`}
       deleteAction={(employee) => <EmployeeStatusDialog employee={employee} />}
+      selectedIds={selectedIds}
+      onToggleRow={onToggleRow}
+      onToggleAll={onToggleAll}
     />
   )
 }

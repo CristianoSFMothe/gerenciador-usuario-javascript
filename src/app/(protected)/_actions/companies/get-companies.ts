@@ -37,21 +37,25 @@ const isSortableField = (value: string): value is CompanySortField =>
 const isStatusFilter = (value: string): value is CompanyStatusFilter =>
   STATUS_FILTERS.includes(value as CompanyStatusFilter)
 
-type GetCompaniesParams = {
+const COMPANY_INCLUDE = {
+  _count: {
+    select: { employees: true, departments: true },
+  },
+} satisfies Prisma.CompanyInclude
+
+type BuildCompaniesQueryParams = {
   query?: string
-  page?: number
   sortBy?: string
   sortOrder?: string
   status?: string
 }
 
-export const getCompanies = async ({
+const buildCompaniesQuery = ({
   query = '',
-  page = 1,
   sortBy,
   sortOrder,
   status,
-}: GetCompaniesParams) => {
+}: BuildCompaniesQueryParams) => {
   const trimmedQuery = query.trim()
   const queryDigits = onlyDigits(trimmedQuery)
 
@@ -75,17 +79,38 @@ export const getCompanies = async ({
       : {}),
   }
 
+  return {
+    where,
+    orderBy: {
+      [safeSortBy]: safeSortOrder,
+    } as Prisma.CompanyOrderByWithRelationInput,
+    safeSortBy,
+    safeSortOrder,
+    safeStatus,
+  }
+}
+
+type GetCompaniesParams = BuildCompaniesQueryParams & {
+  page?: number
+}
+
+export const getCompanies = async ({
+  query,
+  page = 1,
+  sortBy,
+  sortOrder,
+  status,
+}: GetCompaniesParams) => {
+  const { where, orderBy, safeSortBy, safeSortOrder, safeStatus } =
+    buildCompaniesQuery({ query, sortBy, sortOrder, status })
+
   const [companies, totalCount] = await Promise.all([
     prisma.company.findMany({
       where,
-      orderBy: { [safeSortBy]: safeSortOrder },
+      orderBy,
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
-      include: {
-        _count: {
-          select: { employees: true, departments: true },
-        },
-      },
+      include: COMPANY_INCLUDE,
     }),
     prisma.company.count({ where }),
   ])
@@ -103,3 +128,31 @@ export const getCompanies = async ({
 export type CompanyListItem = Awaited<
   ReturnType<typeof getCompanies>
 >['companies'][number]
+
+type GetCompaniesForExportParams = BuildCompaniesQueryParams & {
+  ids?: string[]
+}
+
+export const getCompaniesForExport = async ({
+  query,
+  sortBy,
+  sortOrder,
+  status,
+  ids,
+}: GetCompaniesForExportParams) => {
+  if (ids && ids.length > 0) {
+    return prisma.company.findMany({
+      where: { id: { in: ids } },
+      include: COMPANY_INCLUDE,
+    })
+  }
+
+  const { where, orderBy } = buildCompaniesQuery({
+    query,
+    sortBy,
+    sortOrder,
+    status,
+  })
+
+  return prisma.company.findMany({ where, orderBy, include: COMPANY_INCLUDE })
+}

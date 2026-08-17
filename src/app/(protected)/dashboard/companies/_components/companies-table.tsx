@@ -19,6 +19,9 @@ type CompaniesTableProps = {
   sortBy: CompanySortField
   sortOrder: CompanySortOrder
   status: CompanyStatusFilter
+  selectedIds: Set<string>
+  onToggleRow: (id: string) => void
+  onToggleAll: () => void
 }
 
 const STATUS_COLUMN: DataTableColumn<CompanyListItem, CompanySortField> = {
@@ -90,6 +93,9 @@ const CompaniesTable = ({
   sortBy,
   sortOrder,
   status,
+  selectedIds,
+  onToggleRow,
+  onToggleAll,
 }: CompaniesTableProps) => {
   const columns =
     status === 'active' ? BASE_COLUMNS : [...BASE_COLUMNS, STATUS_COLUMN]
@@ -112,6 +118,9 @@ const CompaniesTable = ({
         )
       }
       extraParams={status !== 'active' ? { status } : undefined}
+      selectedIds={selectedIds}
+      onToggleRow={onToggleRow}
+      onToggleAll={onToggleAll}
     />
   )
 }

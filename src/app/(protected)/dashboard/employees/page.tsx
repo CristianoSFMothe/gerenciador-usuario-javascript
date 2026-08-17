@@ -1,12 +1,7 @@
-import { Download, Filter } from 'lucide-react'
-
-import { Button } from '@/app/_components/ui/button'
 import { getEmployees } from '@/app/(protected)/_actions/employees/get-employees'
-import EmployeesPagination from '@/app/(protected)/_components/employees-pagination'
 import ListPageHeader from '@/app/(protected)/_components/list-page-header'
-import ListSearchInput from '@/app/(protected)/_components/list-search-input'
 
-import EmployeesTable from './_components/employees-table'
+import EmployeesListPanel from './_components/employees-list-panel'
 
 type EmployeesPageProps = {
   searchParams: Promise<{
@@ -43,51 +38,15 @@ const Employees = async ({ searchParams }: EmployeesPageProps) => {
         actionHref='/dashboard/employees/new-employee'
       />
 
-      <div className='w-full rounded-sm border border-[#dfe1e6] bg-white'>
-        <div className='flex items-center justify-between border-b border-[#dfe1e6] p-4'>
-          <ListSearchInput
-            defaultValue={q ?? ''}
-            placeholder='Buscar funcionário por nome, CPF ou empresa...'
-          />
-
-          <div className='flex gap-2'>
-            <Button
-              variant='outline'
-              disabled
-              title='Em breve'
-              className='rounded-none border-[#dfe1e6] text-xs text-[#434654]'
-            >
-              <Filter className='size-3.5' />
-              Filtros
-            </Button>
-            <Button
-              variant='outline'
-              disabled
-              title='Em breve'
-              className='rounded-none border-[#dfe1e6] text-xs text-[#434654]'
-            >
-              <Download className='size-3.5' />
-              Exportar
-            </Button>
-          </div>
-        </div>
-
-        <EmployeesTable
-          employees={employees}
-          query={q}
-          sortBy={currentSortBy}
-          sortOrder={currentSortOrder}
-        />
-
-        <EmployeesPagination
-          currentPage={currentPage}
-          totalCount={totalCount}
-          pageSize={pageSize}
-          query={q}
-          sortBy={currentSortBy}
-          sortOrder={currentSortOrder}
-        />
-      </div>
+      <EmployeesListPanel
+        employees={employees}
+        query={q}
+        sortBy={currentSortBy}
+        sortOrder={currentSortOrder}
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={currentPage}
+      />
     </div>
   )
 }

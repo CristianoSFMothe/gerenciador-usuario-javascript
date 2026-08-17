@@ -34,19 +34,22 @@ const SORTABLE_FIELDS: EmployeeSortField[] = [
 const isSortableField = (value: string): value is EmployeeSortField =>
   SORTABLE_FIELDS.includes(value as EmployeeSortField)
 
-type GetEmployeesParams = {
+const EMPLOYEE_INCLUDE = {
+  company: { select: { tradeName: true } },
+  department: { select: { departmentType: { select: { name: true } } } },
+} satisfies Prisma.EmployeeInclude
+
+type BuildEmployeesQueryParams = {
   query?: string
-  page?: number
   sortBy?: string
   sortOrder?: string
 }
 
-export const getEmployees = async ({
+const buildEmployeesQuery = ({
   query = '',
-  page = 1,
   sortBy,
   sortOrder,
-}: GetEmployeesParams) => {
+}: BuildEmployeesQueryParams) => {
   const trimmedQuery = query.trim()
   const queryDigits = onlyDigits(trimmedQuery)
 
@@ -83,16 +86,32 @@ export const getEmployees = async ({
     }
   })()
 
+  return { where, orderBy, safeSortBy, safeSortOrder }
+}
+
+type GetEmployeesParams = BuildEmployeesQueryParams & {
+  page?: number
+}
+
+export const getEmployees = async ({
+  query,
+  page = 1,
+  sortBy,
+  sortOrder,
+}: GetEmployeesParams) => {
+  const { where, orderBy, safeSortBy, safeSortOrder } = buildEmployeesQuery({
+    query,
+    sortBy,
+    sortOrder,
+  })
+
   const [employees, totalCount] = await Promise.all([
     prisma.employee.findMany({
       where,
       orderBy,
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
-      include: {
-        company: { select: { tradeName: true } },
-        department: { select: { departmentType: { select: { name: true } } } },
-      },
+      include: EMPLOYEE_INCLUDE,
     }),
     prisma.employee.count({ where }),
   ])
@@ -109,3 +128,25 @@ export const getEmployees = async ({
 export type EmployeeListItem = Awaited<
   ReturnType<typeof getEmployees>
 >['employees'][number]
+
+type GetEmployeesForExportParams = BuildEmployeesQueryParams & {
+  ids?: string[]
+}
+
+export const getEmployeesForExport = async ({
+  query,
+  sortBy,
+  sortOrder,
+  ids,
+}: GetEmployeesForExportParams) => {
+  if (ids && ids.length > 0) {
+    return prisma.employee.findMany({
+      where: { id: { in: ids } },
+      include: EMPLOYEE_INCLUDE,
+    })
+  }
+
+  const { where, orderBy } = buildEmployeesQuery({ query, sortBy, sortOrder })
+
+  return prisma.employee.findMany({ where, orderBy, include: EMPLOYEE_INCLUDE })
+}

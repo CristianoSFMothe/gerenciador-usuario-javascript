@@ -2,6 +2,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Pencil, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
+import { Checkbox } from '@/app/_components/ui/checkbox'
 import {
   Table,
   TableBody,
@@ -32,6 +33,9 @@ type DataTableProps<TItem extends { id: string }, TField extends string> = {
   deleteAction?: (item: TItem) => ReactNode
   actions?: (item: TItem) => ReactNode
   extraParams?: Record<string, string>
+  selectedIds?: Set<string>
+  onToggleRow?: (id: string) => void
+  onToggleAll?: () => void
 }
 
 const buildSortHref = (
@@ -109,7 +113,20 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
   deleteAction,
   actions,
   extraParams,
+  selectedIds,
+  onToggleRow,
+  onToggleAll,
 }: DataTableProps<TItem, TField>) => {
+  const selectable = Boolean(onToggleRow && onToggleAll)
+  const allSelected =
+    selectable &&
+    items.length > 0 &&
+    items.every((item) => selectedIds?.has(item.id))
+  const someSelected =
+    selectable &&
+    !allSelected &&
+    items.some((item) => selectedIds?.has(item.id))
+
   if (items.length === 0) {
     return (
       <div className='flex w-full items-center justify-center px-4 py-16 text-sm text-[#434654]'>
@@ -122,6 +139,17 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
     <Table>
       <TableHeader>
         <TableRow className='border-[#dfe1e6] bg-[#f8f9fa] hover:bg-[#f8f9fa]'>
+          {selectable && (
+            <TableHead className='h-auto w-10 p-4'>
+              <Checkbox
+                checked={
+                  allSelected ? true : someSelected ? 'indeterminate' : false
+                }
+                onCheckedChange={onToggleAll}
+                aria-label='Selecionar todos'
+              />
+            </TableHead>
+          )}
           {columns.map((column) => (
             <SortableTableHead
               key={column.field}
@@ -141,6 +169,15 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
       <TableBody>
         {items.map((item) => (
           <TableRow key={item.id} className='border-[#dfe1e6]'>
+            {selectable && (
+              <TableCell className='w-10 p-4'>
+                <Checkbox
+                  checked={selectedIds?.has(item.id) ?? false}
+                  onCheckedChange={() => onToggleRow?.(item.id)}
+                  aria-label='Selecionar linha'
+                />
+              </TableCell>
+            )}
             {columns.map((column) => (
               <TableCell
                 key={column.field}
