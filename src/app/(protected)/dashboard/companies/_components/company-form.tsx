@@ -172,14 +172,7 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
     }
 
     toast.success(result.message)
-
-    if (company) {
-      router.push('/dashboard/companies')
-      return
-    }
-
-    form.reset()
-    setSectorInput('')
+    router.push('/dashboard/companies')
   }
 
   return (
