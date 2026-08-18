@@ -459,6 +459,126 @@ const seedDepartmentTypes = async () => {
   console.log(`Seeded ${DEPARTMENT_TYPES.length} department types.`)
 }
 
+const PERMISSIONS = [
+  {
+    key: 'create_user',
+    category: 'Gestão de Usuários',
+    label: 'Criar Usuário',
+    description: 'Provisionar novas contas de usuário e enviar convites.',
+    order: 0,
+  },
+  {
+    key: 'suspend_delete_user',
+    category: 'Gestão de Usuários',
+    label: 'Suspender / Excluir Usuário',
+    description:
+      'Remover permanentemente ou desativar temporariamente o acesso.',
+    order: 1,
+  },
+  {
+    key: 'view_companies',
+    category: 'Empresas e Dados de Entidade',
+    label: 'Visualizar Empresas',
+    description: 'Acesso de leitura aos perfis e hierarquias de empresas.',
+    order: 2,
+  },
+  {
+    key: 'delete_company',
+    category: 'Empresas e Dados de Entidade',
+    label: 'Excluir Empresa',
+    description: 'Exclusão irrevogável de registros de entidades.',
+    order: 3,
+  },
+  {
+    key: 'export_reports',
+    category: 'Relatórios e Análises',
+    label: 'Exportar Relatórios',
+    description: 'Baixar relatórios CSV/PDF contendo dados agregados.',
+    order: 4,
+  },
+] as const
+
+const ROLES = [
+  {
+    name: 'Administrador',
+    description:
+      'Acesso total ao sistema, incluindo configuração, gestão de usuários e faturamento.',
+    grants: {
+      create_user: true,
+      suspend_delete_user: true,
+      view_companies: true,
+      delete_company: false,
+      export_reports: true,
+    },
+  },
+  {
+    name: 'Gerente',
+    description:
+      'Pode gerenciar dados operacionais, equipes e gerar relatórios. Não pode alterar configurações do sistema.',
+    grants: {
+      create_user: false,
+      suspend_delete_user: false,
+      view_companies: true,
+      delete_company: false,
+      export_reports: true,
+    },
+  },
+  {
+    name: 'Visualizador',
+    description:
+      'Acesso somente leitura a painéis e dados de relatórios não sensíveis.',
+    grants: {
+      create_user: false,
+      suspend_delete_user: false,
+      view_companies: true,
+      delete_company: false,
+      export_reports: false,
+    },
+  },
+] as const
+
+const seedRolesAndPermissions = async () => {
+  const permissions = await Promise.all(
+    PERMISSIONS.map((permission) =>
+      prisma.permission.upsert({
+        where: { key: permission.key },
+        update: {},
+        create: permission,
+      }),
+    ),
+  )
+  const permissionIdByKey = new Map(
+    permissions.map((permission) => [permission.key, permission.id]),
+  )
+
+  for (const role of ROLES) {
+    const record = await prisma.role.upsert({
+      where: { name: role.name },
+      update: {},
+      create: { name: role.name, description: role.description },
+    })
+
+    await Promise.all(
+      Object.entries(role.grants).map(([key, granted]) => {
+        const permissionId = permissionIdByKey.get(key)
+        if (!permissionId) return null
+
+        return prisma.rolePermission.upsert({
+          where: {
+            roleId_permissionId: { roleId: record.id, permissionId },
+          },
+          update: {},
+          create: { roleId: record.id, permissionId, granted },
+        })
+      }),
+    )
+  }
+
+  console.log(
+    `Seeded ${PERMISSIONS.length} permissions and ${ROLES.length} roles.`,
+  )
+}
+
 const seedCompanies = async () => {
   const companies = []
 
@@ -624,6 +744,7 @@ const seedEmployees = async (
 
 const main = async () => {
   await seedDepartmentTypes()
+  await seedRolesAndPermissions()
   const companies = await seedCompanies()
   await seedEmployees(companies)
 }

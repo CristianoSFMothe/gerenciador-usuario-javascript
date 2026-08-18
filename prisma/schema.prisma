@@ -24,6 +24,11 @@ enum EmployeeStatus {
   INACTIVE
 }
 
+enum RoleStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model Company {
   id String @id @default(uuid())
 
@@ -154,8 +159,55 @@ model User {
   accounts      Account[]
   employee      Employee?
 
+  roleId String?
+  role   Role?   @relation(fields: [roleId], references: [id], onDelete: SetNull)
+
   @@unique([email])
   @@map("user")
+}
+
+model Role {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String
+  status      RoleStatus @default(ACTIVE)
+
+  users       User[]
+  permissions RolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id          String @id @default(uuid())
+  key         String @unique
+  category    String
+  label       String
+  description String
+  order       Int    @default(0)
+
+  roles RolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RolePermission {
+  id String @id @default(uuid())
+
+  roleId String
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  granted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([roleId, permissionId])
 }
 
 model Session {

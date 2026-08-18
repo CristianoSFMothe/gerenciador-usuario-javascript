@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   LogOut,
   Settings,
+  Shield,
   User,
   Users,
   X,
@@ -21,6 +22,7 @@ const NAV_LINKS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Funcionários', href: '/dashboard/employees', icon: Users },
   { label: 'Empresas', href: '/dashboard/companies', icon: Building2 },
+  { label: 'Papéis e Permissões', href: '/dashboard/roles', icon: Shield },
 ]
 
 const isLinkActive = (pathname: string, href: string) => {
