@@ -53,10 +53,10 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
     <div className='flex flex-col gap-8 p-8'>
       <div className='flex items-center justify-between'>
         <div className='flex flex-col gap-1'>
-          <h1 className='text-[28px] font-semibold tracking-tight text-[#121d22]'>
+          <h1 className='text-[28px] font-semibold tracking-tight text-[#121d22] dark:text-[#f1f5f9]'>
             Dashboard
           </h1>
-          <p className='text-sm text-[#434654]'>
+          <p className='text-sm text-[#434654] dark:text-[#94a3b8]'>
             Visão geral do sistema e métricas principais.
           </p>
         </div>
@@ -66,7 +66,7 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
             variant='outline'
             disabled
             title='Em breve'
-            className='border-[#dfe1e6] bg-[#e4f0f6] text-xs font-semibold text-[#121d22] hover:bg-[#e4f0f6]'
+            className='border-[#dfe1e6] bg-[#e4f0f6] text-xs font-semibold text-[#121d22] hover:bg-[#e4f0f6] dark:border-[#1e293b] dark:bg-[#1e293b] dark:text-[#94a3b8] dark:hover:bg-[#1e293b]'
           >
             <Download className='size-3.5' />
             Exportar Relatório
@@ -103,7 +103,9 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
           icon={UserCheck}
           tone='green'
           footer={
-            <span className='mb-1 text-xs text-[#434654]'>vs mês anterior</span>
+            <span className='mb-1 text-xs text-[#434654] dark:text-[#94a3b8]'>
+              vs mês anterior
+            </span>
           }
         />
         <DashboardStatCard
@@ -120,23 +122,23 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
       </div>
 
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-        <div className='flex flex-col gap-4 rounded-lg border border-[#dfe1e6] bg-white p-6'>
-          <h2 className='text-lg font-semibold text-[#121d22]'>
+        <div className='flex flex-col gap-4 rounded-lg border border-[#dfe1e6] bg-white p-6 dark:border-[#1e293b] dark:bg-[#0f172a]'>
+          <h2 className='text-lg font-semibold text-[#121d22] dark:text-[#f1f5f9]'>
             Crescimento de Usuários
           </h2>
           <UserGrowthChart data={metrics.userGrowth} />
         </div>
-        <div className='flex flex-col gap-4 rounded-lg border border-[#dfe1e6] bg-white p-6'>
-          <h2 className='text-lg font-semibold text-[#121d22]'>
+        <div className='flex flex-col gap-4 rounded-lg border border-[#dfe1e6] bg-white p-6 dark:border-[#1e293b] dark:bg-[#0f172a]'>
+          <h2 className='text-lg font-semibold text-[#121d22] dark:text-[#f1f5f9]'>
             Usuários por Setor
           </h2>
           <UsersByDepartmentChart data={metrics.departmentBreakdown} />
         </div>
       </div>
 
-      <div className='w-full rounded-sm border border-[#dfe1e6] bg-white'>
-        <div className='flex items-center justify-between border-b border-[#dfe1e6] p-4'>
-          <h2 className='text-lg font-semibold text-[#121d22]'>
+      <div className='w-full rounded-sm border border-[#dfe1e6] bg-white dark:border-[#1e293b] dark:bg-[#0f172a]'>
+        <div className='flex items-center justify-between border-b border-[#dfe1e6] p-4 dark:border-[#1e293b]'>
+          <h2 className='text-lg font-semibold text-[#121d22] dark:text-[#f1f5f9]'>
             Lista de Usuários
           </h2>
           <ListSearchInput

@@ -24,7 +24,11 @@ const UserGrowthChart = ({ data }: UserGrowthChartProps) => {
   return (
     <ChartContainer config={chartConfig} className='aspect-auto h-64 w-full'>
       <LineChart data={data} margin={{ left: -20, right: 12, top: 12 }}>
-        <CartesianGrid vertical={false} stroke='#eaf5fc' />
+        <CartesianGrid
+          vertical={false}
+          stroke='currentColor'
+          className='text-[#eaf5fc] dark:text-[#1e293b]'
+        />
         <XAxis
           dataKey='month'
           tickLine={false}

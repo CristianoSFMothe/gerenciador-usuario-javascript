@@ -58,7 +58,7 @@ const RegisterForm = () => {
         {formError ? (
           <p
             role='alert'
-            className='rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600'
+            className='rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400'
           >
             {formError}
           </p>
@@ -144,11 +144,11 @@ const RegisterForm = () => {
           Cadastrar
         </AuthenticationButton>
 
-        <p className='pt-2 text-center text-sm text-neutral-500'>
+        <p className='pt-2 text-center text-sm text-[#434654] dark:text-[#94a3b8]'>
           Já tem uma conta?{' '}
           <Link
             href='/login'
-            className='font-semibold text-neutral-900 hover:underline'
+            className='font-semibold text-[#003d9b] hover:underline dark:text-[#60a5fa]'
           >
             Entrar
           </Link>

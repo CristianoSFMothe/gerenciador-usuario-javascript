@@ -56,7 +56,7 @@ const LoginForm = () => {
         {formError ? (
           <p
             role='alert'
-            className='rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600'
+            className='rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400'
           >
             {formError}
           </p>
@@ -101,7 +101,7 @@ const LoginForm = () => {
               <div className='flex justify-end'>
                 <Link
                   href='#'
-                  className='text-xs font-semibold text-neutral-800 hover:underline'
+                  className='text-xs font-semibold text-[#003d9b] hover:underline dark:text-[#60a5fa]'
                 >
                   Esqueceu a senha?
                 </Link>
@@ -114,11 +114,11 @@ const LoginForm = () => {
           Entrar
         </AuthenticationButton>
 
-        <p className='pt-2 text-center text-sm text-neutral-500'>
+        <p className='pt-2 text-center text-sm text-[#434654] dark:text-[#94a3b8]'>
           Não tem uma conta?{' '}
           <Link
             href='/register'
-            className='font-semibold text-neutral-900 hover:underline'
+            className='font-semibold text-[#003d9b] hover:underline dark:text-[#60a5fa]'
           >
             Cadastre-se
           </Link>

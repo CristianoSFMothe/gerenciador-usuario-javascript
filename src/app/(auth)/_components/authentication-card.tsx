@@ -51,17 +51,17 @@ const AuthenticationCard = ({
       </aside>
 
       <section className='flex items-center justify-center px-6 py-16 sm:px-10'>
-        <Card className='w-full max-w-md gap-0 border-none py-0 shadow-none'>
+        <Card className='w-full max-w-md gap-6 rounded-2xl border border-[#dfe1e6] bg-white p-8 shadow-none dark:border-[#1e293b] dark:bg-[#0f172a]'>
           <CardHeader className='px-0 text-center'>
             <CardTitle className='text-3xl font-extrabold tracking-tight'>
               {title}
             </CardTitle>
-            <CardDescription className='mt-2 text-sm text-neutral-500'>
+            <CardDescription className='mt-2 text-sm text-[#434654] dark:text-[#94a3b8]'>
               {description}
             </CardDescription>
           </CardHeader>
 
-          <CardContent className='px-0 pt-10'>{children}</CardContent>
+          <CardContent className='px-0'>{children}</CardContent>
         </Card>
       </section>
     </main>

@@ -28,7 +28,7 @@ const COLUMNS: DataTableColumn<EmployeeListItem, EmployeeSortField>[] = [
     label: 'Matrícula',
     field: 'registrationNumber',
     render: (employee) => (
-      <span className='font-medium text-[#121d22]'>
+      <span className='font-medium text-[#121d22] dark:text-[#f1f5f9]'>
         #{employee.registrationNumber}
       </span>
     ),
@@ -96,7 +96,7 @@ const DashboardEmployeesTable = ({
           href={`/dashboard/employees/${employee.id}/edit`}
           title='Visualizar usuário'
           aria-label='Visualizar usuário'
-          className='p-1 text-[#434654] hover:text-[#003d9b]'
+          className='p-1 text-[#434654] hover:text-[#003d9b] dark:text-[#94a3b8] dark:hover:text-[#60a5fa]'
         >
           <Eye className='size-3.5' />
         </Link>

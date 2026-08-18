@@ -21,8 +21,8 @@ const AuthenticationButton = ({
       disabled={disabled ?? isSubmitting}
       className={cn(
         'flex h-14 w-full items-center justify-center gap-2 rounded-full',
-        'bg-neutral-950 text-sm font-semibold text-white transition-colors',
-        'hover:bg-neutral-800 disabled:opacity-60',
+        'bg-[#003d9b] text-sm font-semibold text-white transition-colors',
+        'hover:bg-[#003d9b]/90 disabled:opacity-60',
         className,
       )}
       {...props}

@@ -23,8 +23,7 @@ const AuthenticationInput = ({
       <Input
         type={isPassword ? (showPassword ? 'text' : 'password') : type}
         className={cn(
-          'h-14 w-full rounded-xl border-neutral-200 px-6 text-sm',
-          'transition-colors outline-none placeholder:text-neutral-400 focus:border-neutral-900',
+          'h-14 w-full rounded-xl px-6 text-sm',
           isPassword && 'pr-14',
           className,
         )}
@@ -36,7 +35,7 @@ const AuthenticationInput = ({
           type='button'
           onClick={() => setShowPassword((value) => !value)}
           aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-          className='absolute inset-y-0 right-5 flex items-center text-neutral-400 hover:text-neutral-700'
+          className='text-muted-foreground hover:text-foreground absolute inset-y-0 right-5 flex items-center'
         >
           {showPassword ? (
             <EyeOff className='size-4' />
