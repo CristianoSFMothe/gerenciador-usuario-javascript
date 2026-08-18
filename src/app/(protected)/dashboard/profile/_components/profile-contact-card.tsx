@@ -11,6 +11,10 @@ type ProfileContactCardProps = {
     emailVerified: boolean
     createdAt: Date
   }
+  employee?: {
+    position: string
+    company: { tradeName: string }
+  }
 }
 
 const getInitials = (name: string) =>
@@ -22,7 +26,7 @@ const getInitials = (name: string) =>
     .join('')
     .toUpperCase()
 
-const ProfileContactCard = ({ user }: ProfileContactCardProps) => {
+const ProfileContactCard = ({ user, employee }: ProfileContactCardProps) => {
   return (
     <div className='flex flex-col items-center gap-3 rounded-lg border border-[#dfe1e6] bg-white p-6 text-center drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'>
       <Avatar size='lg' className='size-24'>
@@ -31,7 +35,16 @@ const ProfileContactCard = ({ user }: ProfileContactCardProps) => {
         </AvatarFallback>
       </Avatar>
 
-      <span className='text-lg font-semibold text-[#121d22]'>{user.name}</span>
+      <div className='flex flex-col gap-1'>
+        <span className='text-lg font-semibold text-[#121d22]'>
+          {user.name}
+        </span>
+        {employee ? (
+          <span className='text-sm text-[#434654]'>
+            {employee.position} · {employee.company.tradeName}
+          </span>
+        ) : null}
+      </div>
 
       <span
         className={cn(

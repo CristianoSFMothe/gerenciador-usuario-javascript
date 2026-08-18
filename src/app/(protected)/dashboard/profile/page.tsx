@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 
 import { Button } from '@/app/_components/ui/button'
 import { auth } from '@/app/_lib/auth'
+import { getEmployeeByUser } from '@/app/(protected)/_actions/employees/get-employee-by-user'
 
 import { logoutAction } from '../../_actions/auth/logout-action'
 import ProfileActivityCard from './_components/profile-activity-card'
@@ -14,6 +15,8 @@ const ProfilePage = async () => {
   const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session) redirect('/login')
+
+  const employee = await getEmployeeByUser(session.user.id)
 
   return (
     <div className='flex flex-col gap-8 p-4 sm:p-8'>
@@ -51,12 +54,18 @@ const ProfilePage = async () => {
 
       <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
         <div className='flex flex-col gap-6 lg:col-span-1'>
-          <ProfileContactCard user={session.user} />
+          <ProfileContactCard
+            user={session.user}
+            employee={employee ?? undefined}
+          />
           <ProfileDocumentsCard />
         </div>
 
         <div className='flex flex-col gap-6 lg:col-span-2'>
-          <ProfileEmploymentHistoryCard />
+          <ProfileEmploymentHistoryCard
+            history={employee?.employmentHistory}
+            companyName={employee?.company.tradeName}
+          />
           <ProfileActivityCard />
         </div>
       </div>

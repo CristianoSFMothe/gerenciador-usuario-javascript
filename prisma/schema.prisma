@@ -113,12 +113,33 @@ model Employee {
   city         String
   state        String
 
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  employmentHistory EmploymentHistory[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([companyId])
   @@index([departmentId])
   @@index([status])
+}
+
+model EmploymentHistory {
+  id String @id @default(uuid())
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  position  String
+  startDate DateTime
+  endDate   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([employeeId])
 }
 
 model User {
@@ -131,6 +152,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  employee      Employee?
 
   @@unique([email])
   @@map("user")
