@@ -3,6 +3,7 @@ import { CalendarDays, Mail, ShieldAlert, ShieldCheck } from 'lucide-react'
 
 import { Avatar, AvatarFallback } from '@/app/_components/ui/avatar'
 import { cn } from '@/app/_lib/utils'
+import { getInitials } from '@/app/_utils/get-initials'
 
 type ProfileContactCardProps = {
   user: {
@@ -16,15 +17,6 @@ type ProfileContactCardProps = {
     company: { tradeName: string }
   }
 }
-
-const getInitials = (name: string) =>
-  name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
 
 const ProfileContactCard = ({ user, employee }: ProfileContactCardProps) => {
   return (

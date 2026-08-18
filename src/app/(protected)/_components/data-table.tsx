@@ -86,12 +86,12 @@ const SortableTableHead = <TField extends string>({
     : ArrowUpDown
 
   return (
-    <TableHead className='h-auto p-4 text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+    <TableHead className='h-auto p-4 text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
       <Link
         href={buildSortHref(field, nextOrder, query, extraParams)}
         className={cn(
-          'inline-flex items-center gap-1 hover:text-[#003d9b]',
-          isActive && 'text-[#003d9b]',
+          'inline-flex items-center gap-1 hover:text-[#003d9b] dark:hover:text-[#60a5fa]',
+          isActive && 'text-[#003d9b] dark:text-[#60a5fa]',
         )}
       >
         {label}
@@ -129,7 +129,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
 
   if (items.length === 0) {
     return (
-      <div className='flex w-full items-center justify-center px-4 py-16 text-sm text-[#434654]'>
+      <div className='flex w-full items-center justify-center px-4 py-16 text-sm text-[#434654] dark:text-[#94a3b8]'>
         {emptyMessage}
       </div>
     )
@@ -138,7 +138,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
   return (
     <Table>
       <TableHeader>
-        <TableRow className='border-[#dfe1e6] bg-[#f8f9fa] hover:bg-[#f8f9fa]'>
+        <TableRow className='border-[#dfe1e6] bg-[#f8f9fa] hover:bg-[#f8f9fa] dark:border-[#1e293b] dark:bg-[#1e293b] dark:hover:bg-[#1e293b]'>
           {selectable && (
             <TableHead className='h-auto w-10 p-4'>
               <Checkbox
@@ -161,14 +161,17 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
               extraParams={extraParams}
             />
           ))}
-          <TableHead className='h-auto p-4 text-right text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+          <TableHead className='h-auto p-4 text-right text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
             Ações
           </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {items.map((item) => (
-          <TableRow key={item.id} className='border-[#dfe1e6]'>
+          <TableRow
+            key={item.id}
+            className='border-[#dfe1e6] dark:border-[#1e293b]'
+          >
             {selectable && (
               <TableCell className='w-10 p-4'>
                 <Checkbox
@@ -181,7 +184,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
             {columns.map((column) => (
               <TableCell
                 key={column.field}
-                className='p-4 text-sm text-[#434654]'
+                className='p-4 text-sm text-[#434654] dark:text-[#94a3b8]'
               >
                 {column.render(item)}
               </TableCell>
@@ -197,7 +200,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
                         href={editHref(item)}
                         title={`Editar ${entityLabel}`}
                         aria-label={`Editar ${entityLabel}`}
-                        className='p-1 text-[#434654] hover:text-[#003d9b]'
+                        className='p-1 text-[#434654] hover:text-[#003d9b] dark:text-[#94a3b8] dark:hover:text-[#60a5fa]'
                       >
                         <Pencil className='size-3.5' />
                       </Link>
@@ -207,7 +210,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
                         disabled
                         title={`Editar ${entityLabel} (em breve)`}
                         aria-label={`Editar ${entityLabel}`}
-                        className='cursor-not-allowed p-1 text-[#434654] opacity-50'
+                        className='cursor-not-allowed p-1 text-[#434654] opacity-50 dark:text-[#94a3b8]'
                       >
                         <Pencil className='size-3.5' />
                       </button>
@@ -220,7 +223,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
                         disabled
                         title={`Excluir ${entityLabel} (em breve)`}
                         aria-label={`Excluir ${entityLabel}`}
-                        className='cursor-not-allowed p-1 text-[#434654] opacity-50'
+                        className='cursor-not-allowed p-1 text-[#434654] opacity-50 dark:text-[#94a3b8]'
                       >
                         <Trash2 className='size-3.5' />
                       </button>

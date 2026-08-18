@@ -46,7 +46,9 @@ const BASE_COLUMNS: DataTableColumn<CompanyListItem, CompanySortField>[] = [
     label: 'Nome - Razão Social',
     field: 'tradeName',
     render: (company) => (
-      <span className='font-semibold text-[#121d22]'>{company.tradeName}</span>
+      <span className='font-semibold text-[#121d22] dark:text-[#f1f5f9]'>
+        {company.tradeName}
+      </span>
     ),
   },
   {
@@ -58,14 +60,18 @@ const BASE_COLUMNS: DataTableColumn<CompanyListItem, CompanySortField>[] = [
     label: 'Email',
     field: 'email',
     render: (company) => (
-      <span className='text-[#121d22]'>{company.email}</span>
+      <span className='text-[#121d22] dark:text-[#f1f5f9]'>
+        {company.email}
+      </span>
     ),
   },
   {
     label: 'Site',
     field: 'website',
     render: (company) => (
-      <span className='text-[#003d9b]'>{company.website ?? '-'}</span>
+      <span className='text-[#003d9b] dark:text-[#60a5fa]'>
+        {company.website ?? '-'}
+      </span>
     ),
   },
   {

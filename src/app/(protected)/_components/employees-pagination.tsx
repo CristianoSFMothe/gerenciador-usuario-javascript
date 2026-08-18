@@ -81,7 +81,7 @@ const EmployeesPagination = ({
   const hasNextPage = currentPage < totalPages
 
   return (
-    <div className='flex items-center justify-between border-t border-[#dfe1e6] px-4 py-4'>
+    <div className='flex items-center justify-between border-t border-[#dfe1e6] px-4 py-4 dark:border-[#1e293b]'>
       <Pagination className='mx-0 w-auto'>
         <PaginationContent>
           <PaginationItem
@@ -117,8 +117,8 @@ const EmployeesPagination = ({
                   className={cn(
                     'cursor-pointer',
                     page === currentPage
-                      ? 'border-[#003d9b]/20 bg-[#003d9b]/10 text-[#003d9b] hover:bg-[#003d9b]/10 hover:text-[#003d9b]'
-                      : 'text-[#434654] hover:bg-[#003d9b]/5',
+                      ? 'border-[#003d9b]/20 bg-[#003d9b]/10 text-[#003d9b] hover:bg-[#003d9b]/10 hover:text-[#003d9b] dark:border-[#60a5fa]/30 dark:bg-[#60a5fa]/10 dark:text-[#60a5fa] dark:hover:bg-[#60a5fa]/10 dark:hover:text-[#60a5fa]'
+                      : 'text-[#434654] hover:bg-[#003d9b]/5 dark:text-[#94a3b8] dark:hover:bg-[#60a5fa]/10',
                   )}
                 >
                   {page}

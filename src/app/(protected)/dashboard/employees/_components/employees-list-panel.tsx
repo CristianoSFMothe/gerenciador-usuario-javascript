@@ -60,8 +60,8 @@ const EmployeesListPanel = ({
   }
 
   return (
-    <div className='w-full rounded-sm border border-[#dfe1e6] bg-white'>
-      <div className='flex items-center justify-between border-b border-[#dfe1e6] p-4'>
+    <div className='w-full rounded-sm border border-[#dfe1e6] bg-white dark:border-[#1e293b] dark:bg-[#0f172a]'>
+      <div className='flex items-center justify-between border-b border-[#dfe1e6] p-4 dark:border-[#1e293b]'>
         <ListSearchInput
           defaultValue={query ?? ''}
           placeholder='Buscar funcionário por nome, CPF ou empresa...'
@@ -72,7 +72,7 @@ const EmployeesListPanel = ({
             variant='outline'
             disabled
             title='Em breve'
-            className='rounded-none border-[#dfe1e6] text-xs text-[#434654]'
+            className='rounded-none border-[#dfe1e6] text-xs text-[#434654] dark:border-[#1e293b] dark:text-[#94a3b8]'
           >
             <Filter className='size-3.5' />
             Filtros

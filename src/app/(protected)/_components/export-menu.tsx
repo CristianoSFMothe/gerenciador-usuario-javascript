@@ -67,7 +67,7 @@ const ExportMenu = ({ selectedCount, onExport }: ExportMenuProps) => {
         <Button
           variant='outline'
           disabled={isExporting}
-          className='rounded-none border-[#dfe1e6] text-xs text-[#434654]'
+          className='rounded-none border-[#dfe1e6] text-xs text-[#434654] dark:border-[#1e293b] dark:text-[#94a3b8]'
         >
           {isExporting ? (
             <Loader2 className='size-3.5 animate-spin' />

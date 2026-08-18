@@ -22,7 +22,7 @@ const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className='focus-visible:ring-ring/50 rounded-full outline-none focus-visible:ring-2'>
-        <Avatar className='border border-slate-200'>
+        <Avatar className='border border-slate-200 dark:border-[#1e293b]'>
           <AvatarImage
             src='/images/avatar-placeholder.png'
             alt='Foto de perfil'

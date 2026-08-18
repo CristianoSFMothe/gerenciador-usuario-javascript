@@ -73,7 +73,7 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
           </Button>
           <Button
             asChild
-            className='bg-[#003d9b] text-xs hover:bg-[#003d9b]/90'
+            className='bg-[#003d9b] text-xs text-white hover:bg-[#003d9b]/90'
           >
             <Link href='/dashboard/employees/new-employee'>
               <Plus className='size-3.5' />

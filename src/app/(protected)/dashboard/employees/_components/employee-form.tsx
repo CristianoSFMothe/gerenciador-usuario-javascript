@@ -614,7 +614,7 @@ const EmployeeForm = ({
             <Button
               type='button'
               variant='outline'
-              className='border-[#003d9b] px-8 text-[#003d9b] hover:bg-[#003d9b]/5 hover:text-[#003d9b]'
+              className='border-[#003d9b] px-8 text-[#003d9b] hover:bg-[#003d9b]/5 hover:text-[#003d9b] dark:border-[#60a5fa] dark:text-[#60a5fa] dark:hover:bg-[#60a5fa]/10 dark:hover:text-[#60a5fa]'
               onClick={() => router.push('/dashboard/employees')}
             >
               Cancelar
@@ -622,7 +622,7 @@ const EmployeeForm = ({
             <Button
               type='submit'
               disabled={form.formState.isSubmitting}
-              className='bg-[#003d9b] px-8 hover:bg-[#003d9b]/90'
+              className='bg-[#003d9b] px-8 text-white hover:bg-[#003d9b]/90'
             >
               {isEditMode ? 'Salvar Alterações' : 'Salvar'}
             </Button>

@@ -62,8 +62,8 @@ const CompaniesListPanel = ({
   }
 
   return (
-    <div className='w-full rounded-sm border border-[#dfe1e6] bg-white'>
-      <div className='flex items-center justify-between border-b border-[#dfe1e6] p-4'>
+    <div className='w-full rounded-sm border border-[#dfe1e6] bg-white dark:border-[#1e293b] dark:bg-[#0f172a]'>
+      <div className='flex items-center justify-between border-b border-[#dfe1e6] p-4 dark:border-[#1e293b]'>
         <ListSearchInput
           defaultValue={query ?? ''}
           placeholder='Buscar empresa por nome ou CNPJ...'

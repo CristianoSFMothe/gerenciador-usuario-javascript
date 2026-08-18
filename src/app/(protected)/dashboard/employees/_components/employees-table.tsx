@@ -30,7 +30,7 @@ const COLUMNS: DataTableColumn<EmployeeListItem, EmployeeSortField>[] = [
     label: 'Nome',
     field: 'firstName',
     render: (employee) => (
-      <span className='font-semibold text-[#121d22]'>
+      <span className='font-semibold text-[#121d22] dark:text-[#f1f5f9]'>
         {employee.firstName} {employee.lastName}
       </span>
     ),
@@ -44,7 +44,9 @@ const COLUMNS: DataTableColumn<EmployeeListItem, EmployeeSortField>[] = [
     label: 'Email',
     field: 'email',
     render: (employee) => (
-      <span className='text-[#121d22]'>{employee.email}</span>
+      <span className='text-[#121d22] dark:text-[#f1f5f9]'>
+        {employee.email}
+      </span>
     ),
   },
   {

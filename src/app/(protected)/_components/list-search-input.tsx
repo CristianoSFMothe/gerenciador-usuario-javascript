@@ -42,13 +42,13 @@ const ListSearchInput = ({
 
   return (
     <div className='relative w-96'>
-      <Search className='absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-[#6b7280]' />
+      <Search className='absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-[#6b7280] dark:text-[#94a3b8]' />
       <Input
         type='search'
         value={value}
         onChange={(event) => setValue(event.target.value)}
         placeholder={placeholder}
-        className='rounded-none border-[#dfe1e6] bg-[#f3faff] pl-9 text-sm'
+        className='rounded-none border-[#dfe1e6] bg-[#f3faff] pl-9 text-sm dark:border-[#1e293b] dark:bg-[#1e293b]'
       />
     </div>
   )

@@ -11,7 +11,7 @@ type TopNavbarProps = {
 
 const TopNavbar = ({ onMenuClick }: TopNavbarProps) => {
   return (
-    <header className='flex h-16 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 sm:px-6'>
+    <header className='flex h-16 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 sm:px-6 dark:border-[#1e293b] dark:bg-[#0f172a]'>
       <div className='flex min-w-0 items-center gap-2'>
         <Button
           variant='ghost'
@@ -24,11 +24,11 @@ const TopNavbar = ({ onMenuClick }: TopNavbarProps) => {
         </Button>
 
         <div className='relative min-w-0 flex-1 sm:w-72 sm:flex-none'>
-          <Search className='absolute top-1/2 left-3 size-4 -translate-y-1/2 text-neutral-500' />
+          <Search className='absolute top-1/2 left-3 size-4 -translate-y-1/2 text-neutral-500 dark:text-[#94a3b8]' />
           <Input
             type='search'
             placeholder='Pesquisar...'
-            className='rounded-xl border-slate-200 bg-sky-50 pl-9'
+            className='rounded-xl border-slate-200 bg-sky-50 pl-9 dark:border-[#1e293b] dark:bg-[#1e293b]'
           />
         </div>
       </div>

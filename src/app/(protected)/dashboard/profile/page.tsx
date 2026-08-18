@@ -36,7 +36,7 @@ const ProfilePage = async () => {
             variant='outline'
             disabled
             title='Disponível em breve'
-            className='border-[#003d9b] text-[#003d9b]'
+            className='border-[#003d9b] text-[#003d9b] dark:border-[#60a5fa] dark:text-[#60a5fa]'
           >
             Editar Perfil
           </Button>
@@ -44,7 +44,7 @@ const ProfilePage = async () => {
           <form action={logoutAction}>
             <Button
               type='submit'
-              className='bg-[#003d9b] hover:bg-[#003d9b]/90'
+              className='bg-[#003d9b] text-white hover:bg-[#003d9b]/90'
             >
               Sair
             </Button>

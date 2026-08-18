@@ -58,9 +58,9 @@ const CompanyStatusFilter = ({
         <Button
           variant='outline'
           className={cn(
-            'rounded-none border-[#dfe1e6] text-xs text-[#434654]',
+            'rounded-none border-[#dfe1e6] text-xs text-[#434654] dark:border-[#1e293b] dark:text-[#94a3b8]',
             status !== 'active' &&
-              'border-[#003d9b]/40 bg-[#003d9b]/5 text-[#003d9b]',
+              'border-[#003d9b]/40 bg-[#003d9b]/5 text-[#003d9b] dark:border-[#60a5fa]/40 dark:bg-[#60a5fa]/10 dark:text-[#60a5fa]',
           )}
         >
           <Filter className='size-3.5' />
@@ -73,7 +73,8 @@ const CompanyStatusFilter = ({
             <Link
               href={buildStatusHref(option.value, query, sortBy, sortOrder)}
               className={cn(
-                option.value === status && 'font-semibold text-[#003d9b]',
+                option.value === status &&
+                  'font-semibold text-[#003d9b] dark:text-[#60a5fa]',
               )}
             >
               {option.label}

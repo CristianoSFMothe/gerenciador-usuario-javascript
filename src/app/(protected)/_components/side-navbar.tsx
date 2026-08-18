@@ -33,8 +33,8 @@ const navItemClassName = (active: boolean) =>
   cn(
     'flex items-center gap-2 rounded-sm py-2 pr-[18px] pl-4 text-xs font-semibold tracking-[0.6px]',
     active
-      ? 'border-r-2 border-[#003d9b] bg-[#003d9b]/5 text-[#003d9b]'
-      : 'text-[#434654] hover:bg-[#003d9b]/5',
+      ? 'border-r-2 border-[#003d9b] bg-[#003d9b]/5 text-[#003d9b] dark:border-[#60a5fa] dark:bg-[#60a5fa]/10 dark:text-[#60a5fa]'
+      : 'text-[#434654] hover:bg-[#003d9b]/5 dark:text-[#94a3b8] dark:hover:bg-[#60a5fa]/10',
   )
 
 type SideNavBarProps = {
@@ -59,7 +59,7 @@ const SideNavBar = ({ open, onClose }: SideNavBarProps) => {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex h-full w-64 shrink-0 flex-col justify-between border-r border-[#dfe1e6] bg-[#f3faff] py-6 transition-transform duration-200 ease-out',
+          'fixed inset-y-0 left-0 z-50 flex h-full w-64 shrink-0 flex-col justify-between border-r border-[#dfe1e6] bg-[#f3faff] py-6 transition-transform duration-200 ease-out dark:border-[#1e293b] dark:bg-[#0f172a]',
           'lg:static lg:translate-x-0',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
@@ -67,14 +67,14 @@ const SideNavBar = ({ open, onClose }: SideNavBarProps) => {
         <div className='flex flex-col gap-8 pb-8'>
           <div className='flex items-center justify-between gap-2 px-4'>
             <div className='flex items-center gap-2'>
-              <div className='flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#003d9b]/10'>
-                <Briefcase className='size-5 text-[#003d9b]' />
+              <div className='flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#003d9b]/10 dark:bg-[#60a5fa]/10'>
+                <Briefcase className='size-5 text-[#003d9b] dark:text-[#60a5fa]' />
               </div>
               <div className='flex flex-col'>
-                <span className='text-xl leading-7 font-semibold tracking-[0.6px] text-[#003d9b]'>
+                <span className='text-xl leading-7 font-semibold tracking-[0.6px] text-[#003d9b] dark:text-[#60a5fa]'>
                   Enterprise System
                 </span>
-                <span className='text-xs tracking-[0.6px] text-[#434654]'>
+                <span className='text-xs tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                   Management Hub
                 </span>
               </div>
@@ -84,7 +84,7 @@ const SideNavBar = ({ open, onClose }: SideNavBarProps) => {
               type='button'
               onClick={onClose}
               aria-label='Fechar menu'
-              className='shrink-0 rounded-md p-1 text-[#434654] hover:bg-[#003d9b]/5 lg:hidden'
+              className='shrink-0 rounded-md p-1 text-[#434654] hover:bg-[#003d9b]/5 lg:hidden dark:text-[#94a3b8] dark:hover:bg-[#60a5fa]/10'
             >
               <X className='size-5' />
             </button>
