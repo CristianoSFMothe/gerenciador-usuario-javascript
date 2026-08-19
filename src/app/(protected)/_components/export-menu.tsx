@@ -12,14 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/app/_components/ui/dropdown-menu'
-
-type ExportResult =
-  | { success: true; base64: string; filename: string }
-  | { success: false; message: string }
+import type { ExportPdfResult } from '@/app/(protected)/_actions/export-pdf-action'
 
 type ExportMenuProps = {
   selectedCount: number
-  onExport: (mode: 'selected' | 'all') => Promise<ExportResult>
+  onExport: (mode: 'selected' | 'all') => Promise<ExportPdfResult>
 }
 
 const downloadBase64Pdf = (base64: string, filename: string) => {
