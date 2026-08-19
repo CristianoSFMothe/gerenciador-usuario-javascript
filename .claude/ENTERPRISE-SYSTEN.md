@@ -82,3 +82,17 @@ Campos: Nome Fantasia, CNPJ, Razão Social, Inscrição Estadual, Inscrição Mu
 - Layout admin: sidebar fixa à esquerda (logo + nome do sistema + nav: Dashboard, Users (Pessoas), Companies (Empresas), Settings, Logout) + topbar com busca, notificações e avatar do usuário.
 - Fundo da área de conteúdo levemente acinzentado/azulado, cards em branco com borda sutil e cantos arredondados (`rounded-xl`/`rounded-2xl`), inputs com fundo levemente cinza quando "preenchido automaticamente" (readonly).
 - Cor de destaque: azul (ações primárias, itens ativos do menu, botões principais). Não copiar tons exatos do Figma pixel a pixel — adaptar à paleta de tokens já definida em `globals.css` (`--primary`, `--accent` etc.) para manter consistência com o resto do app (incluindo as telas de login/registro).
+
+## Backlog de melhorias (não planejado em nenhuma fase)
+
+Ideias discutidas e ainda não implementadas. Antes de puxar qualquer item daqui para execução, confirmar com o usuário e identificar em qual fase/issue ela se encaixa — não são compromissos, são estudos.
+
+### Cadastro em massa via importação de Excel (2026-08-18)
+
+Componente de importação em `dashboard/companies/page.tsx` e `dashboard/employees/page.tsx`, análogo ao `ExportMenu` que já existe nas duas telas:
+
+- Botão "Baixar modelo" gera um `.xlsx` com o cabeçalho das colunas do cadastro (mesmos campos do formulário de criação).
+- Botão "Importar" sobe o arquivo preenchido; o servidor lê linha a linha, valida cada uma com o schema Zod já existente (`employeeSchema` / `companySchema`) e chama a Server Action de criação por linha, retornando um relatório de sucesso/erro por linha (não travar a importação inteira por causa de uma linha inválida).
+- Dependência nova necessária: nenhum parser de Excel está na stack hoje. Recomendação: `exceljs` (sem os CVEs conhecidos do `xlsx`/SheetJS) — justificar a adição na PR, conforme a seção 2 do `AGENTS.md`.
+- Funcionário tem FK para Empresa, Departamento e Cargo: o modelo de planilha usaria nome em vez de ID, e a importação precisa resolver nome → ID, reportando erro de linha quando não encontrar correspondência. Empresa não tem esse problema (sem FK obrigatória).
+- Reaproveitar `ExportMenu` (`src/app/(protected)/_components/export-menu.tsx`) e o padrão de helper compartilhado usado em `exportPdfAction` (`src/app/(protected)/_actions/export-pdf-action.ts`) como referência de estrutura para o componente/action de importação — um único componente `ImportMenu` genérico usado nas duas telas, não duplicado.

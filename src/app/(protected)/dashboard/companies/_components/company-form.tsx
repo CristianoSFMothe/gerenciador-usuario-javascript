@@ -552,6 +552,9 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
               disabled={form.formState.isSubmitting}
               className='bg-[#003d9b] px-8 text-white hover:bg-[#003d9b]/90'
             >
+              {form.formState.isSubmitting ? (
+                <Loader2 className='size-3.5 animate-spin' />
+              ) : null}
               {isEditMode ? 'Salvar Alterações' : 'Salvar Empresa'}
             </Button>
           </div>
