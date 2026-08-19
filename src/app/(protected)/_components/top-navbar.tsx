@@ -1,4 +1,5 @@
 import { Bell, CircleHelp, Menu, Search } from 'lucide-react'
+import Link from 'next/link'
 
 import { Button } from '@/app/_components/ui/button'
 import { Input } from '@/app/_components/ui/input'
@@ -44,11 +45,14 @@ const TopNavbar = ({ onMenuClick }: TopNavbarProps) => {
         </Button>
 
         <Button
+          asChild
           variant='ghost'
           size='icon'
           className='hidden rounded-xl sm:inline-flex'
         >
-          <CircleHelp className='size-5' />
+          <Link href='/dashboard/help' aria-label='Central de Ajuda'>
+            <CircleHelp className='size-5' />
+          </Link>
         </Button>
 
         <UserMenu />
