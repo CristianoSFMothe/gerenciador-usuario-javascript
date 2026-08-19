@@ -6,7 +6,7 @@ import { headers } from 'next/headers'
 
 import { auth } from '@/app/_lib/auth'
 import { prisma } from '@/app/_lib/prisma'
-import { onlyDigits } from '@/app/_utils/masks'
+import { onlyDigits, parseCurrency } from '@/app/_utils/masks'
 import { Prisma } from '@/generated/prisma/client'
 
 import {
@@ -61,6 +61,8 @@ export const createEmployeeAction = async (
     },
   })
 
+  const salary = parseCurrency(parsed.data.salary)
+
   try {
     await prisma.$transaction(async (tx) => {
       const employee = await tx.employee.create({
@@ -75,6 +77,7 @@ export const createEmployeeAction = async (
           companyId: parsed.data.companyId,
           position: parsed.data.position,
           departmentId: department.id,
+          salary,
           postalCode: parsed.data.postalCode
             ? onlyDigits(parsed.data.postalCode)
             : '',
@@ -93,6 +96,26 @@ export const createEmployeeAction = async (
           registrationNumber: `${REGISTRATION_NUMBER_PREFIX}${String(
             employee.sequentialNumber,
           ).padStart(6, '0')}`,
+        },
+      })
+
+      const now = new Date()
+
+      await tx.employmentHistory.create({
+        data: {
+          employeeId: employee.id,
+          position: parsed.data.position,
+          description: parsed.data.positionDescription || null,
+          startDate: now,
+        },
+      })
+
+      await tx.salaryHistory.create({
+        data: {
+          employeeId: employee.id,
+          amount: salary,
+          reason: 'INITIAL',
+          effectiveDate: now,
         },
       })
     })
