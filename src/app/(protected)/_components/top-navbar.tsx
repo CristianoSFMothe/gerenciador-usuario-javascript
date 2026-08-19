@@ -7,10 +7,11 @@ import { Input } from '@/app/_components/ui/input'
 import UserMenu from './user-menu'
 
 type TopNavbarProps = {
+  user: { name: string; image?: string | null }
   onMenuClick: () => void
 }
 
-const TopNavbar = ({ onMenuClick }: TopNavbarProps) => {
+const TopNavbar = ({ user, onMenuClick }: TopNavbarProps) => {
   return (
     <header className='flex h-16 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 sm:px-6 dark:border-[#1e293b] dark:bg-[#0f172a]'>
       <div className='flex min-w-0 items-center gap-2'>
@@ -55,7 +56,7 @@ const TopNavbar = ({ onMenuClick }: TopNavbarProps) => {
           </Link>
         </Button>
 
-        <UserMenu />
+        <UserMenu user={user} />
       </div>
     </header>
   )

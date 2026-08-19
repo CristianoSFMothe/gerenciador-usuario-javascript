@@ -16,5 +16,11 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  return <DashboardShell>{children}</DashboardShell>
+  return (
+    <DashboardShell
+      user={{ name: session.user.name, image: session.user.image }}
+    >
+      {children}
+    </DashboardShell>
+  )
 }

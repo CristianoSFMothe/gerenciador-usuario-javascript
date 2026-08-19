@@ -10,7 +10,7 @@ const buildCspHeader = (nonce: string) => {
       process.env.NODE_ENV !== 'production' ? ` 'unsafe-eval'` : ''
     }`,
     `style-src 'self' 'unsafe-inline'`,
-    `img-src 'self' blob: data:`,
+    `img-src 'self' blob: data: https://res.cloudinary.com`,
     `font-src 'self'`,
     `connect-src 'self'`,
     `object-src 'none'`,

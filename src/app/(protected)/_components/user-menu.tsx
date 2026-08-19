@@ -15,19 +15,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/app/_components/ui/dropdown-menu'
+import { getInitials } from '@/app/_utils/get-initials'
 
 import { logoutAction } from '../_actions/auth/logout-action'
 
-const UserMenu = () => {
+type UserMenuProps = {
+  user: { name: string; image?: string | null }
+}
+
+const UserMenu = ({ user }: UserMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className='focus-visible:ring-ring/50 rounded-full outline-none focus-visible:ring-2'>
         <Avatar className='border border-slate-200 dark:border-[#1e293b]'>
-          <AvatarImage
-            src='/images/avatar-placeholder.png'
-            alt='Foto de perfil'
-          />
-          <AvatarFallback>US</AvatarFallback>
+          <AvatarImage src={user.image ?? undefined} alt={user.name} />
+          <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
 

@@ -31,16 +31,6 @@ const ProfilePage = async () => {
         </div>
 
         <div className='flex gap-3'>
-          <Button
-            type='button'
-            variant='outline'
-            disabled
-            title='Disponível em breve'
-            className='border-[#003d9b] text-[#003d9b] dark:border-[#60a5fa] dark:text-[#60a5fa]'
-          >
-            Editar Perfil
-          </Button>
-
           <form action={logoutAction}>
             <Button
               type='submit'
