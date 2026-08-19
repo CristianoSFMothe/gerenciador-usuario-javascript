@@ -18,6 +18,8 @@ export type EmployeeSortField =
 
 export type EmployeeSortOrder = 'asc' | 'desc'
 
+export type EmployeeStatusFilter = 'active' | 'inactive' | 'all'
+
 const SORTABLE_FIELDS: EmployeeSortField[] = [
   'registrationNumber',
   'firstName',
@@ -31,8 +33,13 @@ const SORTABLE_FIELDS: EmployeeSortField[] = [
   'status',
 ]
 
+const STATUS_FILTERS: EmployeeStatusFilter[] = ['active', 'inactive', 'all']
+
 const isSortableField = (value: string): value is EmployeeSortField =>
   SORTABLE_FIELDS.includes(value as EmployeeSortField)
+
+const isStatusFilter = (value: string): value is EmployeeStatusFilter =>
+  STATUS_FILTERS.includes(value as EmployeeStatusFilter)
 
 const EMPLOYEE_INCLUDE = {
   company: { select: { tradeName: true } },
@@ -43,12 +50,14 @@ type BuildEmployeesQueryParams = {
   query?: string
   sortBy?: string
   sortOrder?: string
+  status?: string
 }
 
 const buildEmployeesQuery = ({
   query = '',
   sortBy,
   sortOrder,
+  status,
 }: BuildEmployeesQueryParams) => {
   const trimmedQuery = query.trim()
   const queryDigits = onlyDigits(trimmedQuery)
@@ -56,22 +65,28 @@ const buildEmployeesQuery = ({
   const safeSortBy: EmployeeSortField =
     sortBy && isSortableField(sortBy) ? sortBy : 'firstName'
   const safeSortOrder: EmployeeSortOrder = sortOrder === 'desc' ? 'desc' : 'asc'
+  const safeStatus: EmployeeStatusFilter =
+    status && isStatusFilter(status) ? status : 'active'
 
-  const where: Prisma.EmployeeWhereInput = trimmedQuery
-    ? {
-        OR: [
-          { firstName: { contains: trimmedQuery, mode: 'insensitive' } },
-          { lastName: { contains: trimmedQuery, mode: 'insensitive' } },
-          { email: { contains: trimmedQuery, mode: 'insensitive' } },
-          ...(queryDigits ? [{ cpf: { contains: queryDigits } }] : []),
-          {
-            company: {
-              tradeName: { contains: trimmedQuery, mode: 'insensitive' },
+  const where: Prisma.EmployeeWhereInput = {
+    ...(safeStatus === 'active' && { status: 'ACTIVE' }),
+    ...(safeStatus === 'inactive' && { status: 'INACTIVE' }),
+    ...(trimmedQuery
+      ? {
+          OR: [
+            { firstName: { contains: trimmedQuery, mode: 'insensitive' } },
+            { lastName: { contains: trimmedQuery, mode: 'insensitive' } },
+            { email: { contains: trimmedQuery, mode: 'insensitive' } },
+            ...(queryDigits ? [{ cpf: { contains: queryDigits } }] : []),
+            {
+              company: {
+                tradeName: { contains: trimmedQuery, mode: 'insensitive' },
+              },
             },
-          },
-        ],
-      }
-    : {}
+          ],
+        }
+      : {}),
+  }
 
   const orderBy: Prisma.EmployeeOrderByWithRelationInput = (() => {
     switch (safeSortBy) {
@@ -86,7 +101,7 @@ const buildEmployeesQuery = ({
     }
   })()
 
-  return { where, orderBy, safeSortBy, safeSortOrder }
+  return { where, orderBy, safeSortBy, safeSortOrder, safeStatus }
 }
 
 type GetEmployeesParams = BuildEmployeesQueryParams & {
@@ -98,12 +113,10 @@ export const getEmployees = async ({
   page = 1,
   sortBy,
   sortOrder,
+  status,
 }: GetEmployeesParams) => {
-  const { where, orderBy, safeSortBy, safeSortOrder } = buildEmployeesQuery({
-    query,
-    sortBy,
-    sortOrder,
-  })
+  const { where, orderBy, safeSortBy, safeSortOrder, safeStatus } =
+    buildEmployeesQuery({ query, sortBy, sortOrder, status })
 
   const [employees, totalCount] = await Promise.all([
     prisma.employee.findMany({
@@ -122,6 +135,7 @@ export const getEmployees = async ({
     pageSize: PAGE_SIZE,
     sortBy: safeSortBy,
     sortOrder: safeSortOrder,
+    status: safeStatus,
   }
 }
 
@@ -137,6 +151,7 @@ export const getEmployeesForExport = async ({
   query,
   sortBy,
   sortOrder,
+  status,
   ids,
 }: GetEmployeesForExportParams) => {
   if (ids && ids.length > 0) {
@@ -146,7 +161,12 @@ export const getEmployeesForExport = async ({
     })
   }
 
-  const { where, orderBy } = buildEmployeesQuery({ query, sortBy, sortOrder })
+  const { where, orderBy } = buildEmployeesQuery({
+    query,
+    sortBy,
+    sortOrder,
+    status,
+  })
 
   return prisma.employee.findMany({ where, orderBy, include: EMPLOYEE_INCLUDE })
 }

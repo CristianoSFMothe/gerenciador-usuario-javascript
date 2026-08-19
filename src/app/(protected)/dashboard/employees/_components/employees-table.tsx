@@ -4,6 +4,7 @@ import type {
   EmployeeListItem,
   EmployeeSortField,
   EmployeeSortOrder,
+  EmployeeStatusFilter,
 } from '@/app/(protected)/_actions/employees/get-employees'
 import DataTable, {
   type DataTableColumn,
@@ -20,12 +21,28 @@ type EmployeesTableProps = {
   query?: string
   sortBy: EmployeeSortField
   sortOrder: EmployeeSortOrder
+  status: EmployeeStatusFilter
   selectedIds: Set<string>
   onToggleRow: (id: string) => void
   onToggleAll: () => void
 }
 
-const COLUMNS: DataTableColumn<EmployeeListItem, EmployeeSortField>[] = [
+const STATUS_COLUMN: DataTableColumn<EmployeeListItem, EmployeeSortField> = {
+  label: 'Status',
+  field: 'status',
+  render: (employee) => (
+    <span
+      className={cn(
+        'rounded-full px-2.25 py-0.75 text-xs font-semibold',
+        EMPLOYEE_STATUS_BADGE_CLASSNAME[employee.status],
+      )}
+    >
+      {EMPLOYEE_STATUS_LABEL[employee.status]}
+    </span>
+  ),
+}
+
+const BASE_COLUMNS: DataTableColumn<EmployeeListItem, EmployeeSortField>[] = [
   {
     label: 'Nome',
     field: 'firstName',
@@ -69,20 +86,6 @@ const COLUMNS: DataTableColumn<EmployeeListItem, EmployeeSortField>[] = [
     field: 'department',
     render: (employee) => employee.department.departmentType.name,
   },
-  {
-    label: 'Status',
-    field: 'status',
-    render: (employee) => (
-      <span
-        className={cn(
-          'rounded-full px-2.25 py-0.75 text-xs font-semibold',
-          EMPLOYEE_STATUS_BADGE_CLASSNAME[employee.status],
-        )}
-      >
-        {EMPLOYEE_STATUS_LABEL[employee.status]}
-      </span>
-    ),
-  },
 ]
 
 const EmployeesTable = ({
@@ -90,14 +93,18 @@ const EmployeesTable = ({
   query,
   sortBy,
   sortOrder,
+  status,
   selectedIds,
   onToggleRow,
   onToggleAll,
 }: EmployeesTableProps) => {
+  const columns =
+    status === 'active' ? BASE_COLUMNS : [...BASE_COLUMNS, STATUS_COLUMN]
+
   return (
     <DataTable
       items={employees}
-      columns={COLUMNS}
+      columns={columns}
       query={query}
       sortBy={sortBy}
       sortOrder={sortOrder}
@@ -105,6 +112,7 @@ const EmployeesTable = ({
       entityLabel='funcionário'
       editHref={(employee) => `/dashboard/employees/${employee.id}/edit`}
       deleteAction={(employee) => <EmployeeStatusDialog employee={employee} />}
+      extraParams={status !== 'active' ? { status } : undefined}
       selectedIds={selectedIds}
       onToggleRow={onToggleRow}
       onToggleAll={onToggleAll}

@@ -9,49 +9,56 @@ import {
   DropdownMenuTrigger,
 } from '@/app/_components/ui/dropdown-menu'
 import { cn } from '@/app/_lib/utils'
-import type {
-  CompanySortField,
-  CompanySortOrder,
-  CompanyStatusFilter as CompanyStatusFilterValue,
-} from '@/app/(protected)/_actions/companies/get-companies'
 
-type CompanyStatusFilterProps = {
-  status: CompanyStatusFilterValue
-  query?: string
-  sortBy: CompanySortField
-  sortOrder: CompanySortOrder
+export type StatusFilterOption<TStatus extends string> = {
+  value: TStatus
+  label: string
 }
 
-const STATUS_OPTIONS: { value: CompanyStatusFilterValue; label: string }[] = [
-  { value: 'active', label: 'Ativas' },
-  { value: 'inactive', label: 'Inativas' },
-  { value: 'all', label: 'Todas' },
-]
+type BuildStatusFilterHrefParams<TStatus extends string> = {
+  status: TStatus
+  defaultStatus: TStatus
+  query?: string
+  sortBy: string
+  sortOrder: string
+}
 
-const buildStatusHref = (
-  status: CompanyStatusFilterValue,
-  query: string | undefined,
-  sortBy: CompanySortField,
-  sortOrder: CompanySortOrder,
-) => {
+export const buildStatusFilterHref = <TStatus extends string>({
+  status,
+  defaultStatus,
+  query,
+  sortBy,
+  sortOrder,
+}: BuildStatusFilterHrefParams<TStatus>) => {
   const params = new URLSearchParams()
 
   if (query) params.set('q', query)
   params.set('sortBy', sortBy)
   params.set('sortOrder', sortOrder)
-  if (status !== 'active') params.set('status', status)
+  if (status !== defaultStatus) params.set('status', status)
 
   const search = params.toString()
 
   return search ? `?${search}` : '?'
 }
 
-const CompanyStatusFilter = ({
+type StatusFilterProps<TStatus extends string> = {
+  status: TStatus
+  options: StatusFilterOption<TStatus>[]
+  query?: string
+  sortBy: string
+  sortOrder: string
+  defaultStatus: TStatus
+}
+
+const StatusFilter = <TStatus extends string>({
   status,
+  options,
   query,
   sortBy,
   sortOrder,
-}: CompanyStatusFilterProps) => {
+  defaultStatus,
+}: StatusFilterProps<TStatus>) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -59,7 +66,7 @@ const CompanyStatusFilter = ({
           variant='outline'
           className={cn(
             'rounded-none border-[#dfe1e6] text-xs text-[#434654] dark:border-[#1e293b] dark:text-[#94a3b8]',
-            status !== 'active' &&
+            status !== defaultStatus &&
               'border-[#003d9b]/40 bg-[#003d9b]/5 text-[#003d9b] dark:border-[#60a5fa]/40 dark:bg-[#60a5fa]/10 dark:text-[#60a5fa]',
           )}
         >
@@ -68,10 +75,16 @@ const CompanyStatusFilter = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
-        {STATUS_OPTIONS.map((option) => (
+        {options.map((option) => (
           <DropdownMenuItem key={option.value} asChild>
             <Link
-              href={buildStatusHref(option.value, query, sortBy, sortOrder)}
+              href={buildStatusFilterHref({
+                status: option.value,
+                defaultStatus,
+                query,
+                sortBy,
+                sortOrder,
+              })}
               className={cn(
                 option.value === status &&
                   'font-semibold text-[#003d9b] dark:text-[#60a5fa]',
@@ -86,4 +99,4 @@ const CompanyStatusFilter = ({
   )
 }
 
-export default CompanyStatusFilter
+export default StatusFilter

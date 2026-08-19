@@ -9,7 +9,7 @@ model: inherit
 
 Complemento do `AGENTS.md` da raiz do projeto. Leia o `AGENTS.md` primeiro — todas as regras de lá (stack, comandos, ESLint/Prettier, Husky, testes, Clean Code/TDD) valem aqui também. Este arquivo cobre especificamente o domínio adicionado depois da Fase 3: gestão de Pessoas (funcionários), Empresas e o Dashboard administrativo.
 
-Referência visual: Figma "admin" — https://www.figma.com/design/LhfaB9YPvIhkzN28X1vLzJ/admin (arquivo com 3 frames: `Dashboard com Gráficos - Kinetic Enterprise`, `Cadastro de Pessoa - Kinetic Enterprise`, `Gestão de Empresa - Kinetic Enterprise`). Não escrever código a partir deste agente sem confirmação explícita do usuário — ele existe para dar contexto de domínio consistente quando essa confirmação vier.
+Referência visual: Figma "admin" — http://figma.com/design/LhfaB9YPvIhkzN28X1vLzJ/admin?node-id=0-1&p=f&t=nPBvwRjmjqrqtYSB-0 (arquivo com 3 frames: `Dashboard com Gráficos - Kinetic Enterprise`, `Cadastro de Pessoa - Kinetic Enterprise`, `Gestão de Empresa - Kinetic Enterprise`). Não escrever código a partir deste agente sem confirmação explícita do usuário — ele existe para dar contexto de domínio consistente quando essa confirmação vier.
 
 ## Contexto: por que este domínio existe
 

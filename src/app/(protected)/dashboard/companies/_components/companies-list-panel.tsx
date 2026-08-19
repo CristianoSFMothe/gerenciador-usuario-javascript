@@ -11,10 +11,18 @@ import type {
 } from '@/app/(protected)/_actions/companies/get-companies'
 import ExportMenu from '@/app/(protected)/_components/export-menu'
 import ListSearchInput from '@/app/(protected)/_components/list-search-input'
+import StatusFilter, {
+  type StatusFilterOption,
+} from '@/app/(protected)/_components/status-filter'
 
 import CompaniesPagination from './companies-pagination'
 import CompaniesTable from './companies-table'
-import CompanyStatusFilter from './company-status-filter'
+
+const COMPANY_STATUS_OPTIONS: StatusFilterOption<CompanyStatusFilterValue>[] = [
+  { value: 'active', label: 'Ativas' },
+  { value: 'inactive', label: 'Inativas' },
+  { value: 'all', label: 'Todas' },
+]
 
 type CompaniesListPanelProps = {
   companies: CompanyListItem[]
@@ -70,11 +78,13 @@ const CompaniesListPanel = ({
         />
 
         <div className='flex gap-2'>
-          <CompanyStatusFilter
+          <StatusFilter
             status={status}
+            options={COMPANY_STATUS_OPTIONS}
             query={query}
             sortBy={sortBy}
             sortOrder={sortOrder}
+            defaultStatus='active'
           />
           <ExportMenu
             selectedCount={selectedIds.size}

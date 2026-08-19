@@ -11,7 +11,13 @@ import { getEmployeesForExport } from './get-employees'
 
 type ExportEmployeesActionInput =
   | { mode: 'selected'; ids: string[] }
-  | { mode: 'all'; query?: string; sortBy?: string; sortOrder?: string }
+  | {
+      mode: 'all'
+      query?: string
+      sortBy?: string
+      sortOrder?: string
+      status?: string
+    }
 
 type ExportEmployeesActionResult =
   | { success: true; base64: string; filename: string }
@@ -41,6 +47,7 @@ export const exportEmployeesAction = async (
           query: input.query,
           sortBy: input.sortBy,
           sortOrder: input.sortOrder,
+          status: input.status,
         },
   )
 

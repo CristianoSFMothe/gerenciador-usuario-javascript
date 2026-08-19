@@ -9,11 +9,12 @@ type EmployeesPageProps = {
     page?: string
     sortBy?: string
     sortOrder?: string
+    status?: string
   }>
 }
 
 const Employees = async ({ searchParams }: EmployeesPageProps) => {
-  const { q, page, sortBy, sortOrder } = await searchParams
+  const { q, page, sortBy, sortOrder, status } = await searchParams
   const currentPage = Number(page) > 0 ? Number(page) : 1
 
   const {
@@ -22,11 +23,13 @@ const Employees = async ({ searchParams }: EmployeesPageProps) => {
     pageSize,
     sortBy: currentSortBy,
     sortOrder: currentSortOrder,
+    status: currentStatus,
   } = await getEmployees({
     query: q,
     page: currentPage,
     sortBy,
     sortOrder,
+    status,
   })
 
   return (
@@ -43,6 +46,7 @@ const Employees = async ({ searchParams }: EmployeesPageProps) => {
         query={q}
         sortBy={currentSortBy}
         sortOrder={currentSortOrder}
+        status={currentStatus}
         totalCount={totalCount}
         pageSize={pageSize}
         currentPage={currentPage}

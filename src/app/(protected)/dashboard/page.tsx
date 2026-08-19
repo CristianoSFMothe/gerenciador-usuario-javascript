@@ -35,7 +35,13 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
 
   const [metrics, employeesResult] = await Promise.all([
     getDashboardMetrics(),
-    getEmployees({ query: q, page: currentPage, sortBy, sortOrder }),
+    getEmployees({
+      query: q,
+      page: currentPage,
+      sortBy,
+      sortOrder,
+      status: 'all',
+    }),
   ])
 
   const {
@@ -161,6 +167,7 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
           query={q}
           sortBy={currentSortBy}
           sortOrder={currentSortOrder}
+          status='all'
         />
       </div>
     </div>
