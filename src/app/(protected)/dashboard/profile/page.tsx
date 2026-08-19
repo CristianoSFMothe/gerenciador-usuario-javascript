@@ -22,10 +22,10 @@ const ProfilePage = async () => {
     <div className='flex flex-col gap-8 p-4 sm:p-8'>
       <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
         <div className='flex flex-col gap-2'>
-          <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px]'>
+          <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px] dark:text-[#f1f5f9]'>
             Meu Perfil
           </h1>
-          <p className='text-sm text-[#434654]'>
+          <p className='text-sm text-[#434654] dark:text-[#94a3b8]'>
             Gerencie os detalhes e atividades de {session.user.name}.
           </p>
         </div>
