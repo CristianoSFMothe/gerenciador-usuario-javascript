@@ -95,6 +95,48 @@ export const maskCNPJ = (value: string) => {
 }
 
 /**
+ * Formats a value as Brazilian currency (without the `R$` prefix) as the
+ * user types.
+ *
+ * Strips every non-digit character and treats the digits as cents, so
+ * typing progressively builds the amount from the right (e.g. `5`, `50`,
+ * `500` become `0,05`, `0,50`, `5,00`).
+ *
+ * @param value - Raw input value, digits and/or mask characters.
+ * @returns The value formatted as `1.234,56` (or a partial prefix of it).
+ *
+ * @example
+ * maskCurrency('500000') // '5.000,00'
+ */
+export const maskCurrency = (value: string) => {
+  const digits = value.replace(/\D/g, '')
+
+  if (!digits) return ''
+
+  const cents = digits.padStart(3, '0')
+  const integerPart = cents.slice(0, -2).replace(/^0+(?=\d)/, '')
+  const decimalPart = cents.slice(-2)
+
+  return `${integerPart.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')},${decimalPart}`
+}
+
+/**
+ * Parses a `maskCurrency`-formatted value (e.g. `1.234,56`) back into a
+ * plain number (`1234.56`), suitable for a Prisma `Decimal` field.
+ *
+ * @param value - A `maskCurrency`-formatted value.
+ * @returns The numeric amount, or `0` if `value` is empty.
+ *
+ * @example
+ * parseCurrency('5.000,00') // 5000
+ */
+export const parseCurrency = (value: string) => {
+  const normalized = value.replace(/\./g, '').replace(',', '.')
+
+  return normalized ? Number(normalized) : 0
+}
+
+/**
  * Strips every non-digit character from a value.
  *
  * The inverse of the `mask*` helpers in this module — use it to normalize
