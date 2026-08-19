@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { Eye } from 'lucide-react'
 
 import {
   Table,
@@ -14,26 +15,44 @@ import {
   EMPLOYMENT_STATUS_BADGE_CLASSNAME,
   EMPLOYMENT_STATUS_LABEL,
 } from '../_lib/employment-status'
+import type { SalaryChangeReasonValue } from '../_lib/salary-reason'
+import EmploymentHistoryDetailDialog from './employment-history-detail-dialog'
 
-const COLUMN_LABELS = ['Empresa', 'Cargo', 'Período', 'Status']
+const COLUMN_LABELS = ['Empresa', 'Cargo', 'Período', 'Status', 'Ações']
 
 type HistoryRow = {
   id: string
   position: string
+  description: string | null
   startDate: Date
   endDate: Date | null
+}
+
+type SalaryHistoryRow = {
+  id: string
+  amount: { toNumber: () => number }
+  reason: SalaryChangeReasonValue
+  effectiveDate: Date
 }
 
 type ProfileEmploymentHistoryCardProps = {
   history?: HistoryRow[]
   companyName?: string
+  salaryHistory?: SalaryHistoryRow[]
 }
 
 const ProfileEmploymentHistoryCard = ({
   history,
   companyName,
+  salaryHistory,
 }: ProfileEmploymentHistoryCardProps) => {
   const hasHistory = Boolean(history && history.length > 0)
+  const salaryHistoryForDialog = salaryHistory?.map((row) => ({
+    id: row.id,
+    amount: row.amount.toNumber(),
+    reason: row.reason,
+    effectiveDate: row.effectiveDate,
+  }))
 
   return (
     <div className='flex flex-col gap-4 rounded-lg border border-[#dfe1e6] bg-white p-6 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] dark:border-[#1e293b] dark:bg-[#0f172a]'>
@@ -83,6 +102,23 @@ const ProfileEmploymentHistoryCard = ({
                     >
                       {EMPLOYMENT_STATUS_LABEL[status]}
                     </span>
+                  </TableCell>
+                  <TableCell className='p-4'>
+                    <EmploymentHistoryDetailDialog
+                      companyName={companyName}
+                      entry={row}
+                      salaryHistory={salaryHistoryForDialog}
+                      trigger={
+                        <button
+                          type='button'
+                          title='Visualizar cargo'
+                          aria-label='Visualizar cargo'
+                          className='p-1 text-[#434654] hover:text-[#003d9b] dark:text-[#94a3b8] dark:hover:text-[#60a5fa]'
+                        >
+                          <Eye className='size-3.5' />
+                        </button>
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               )

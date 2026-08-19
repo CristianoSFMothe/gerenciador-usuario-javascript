@@ -10,6 +10,8 @@ import ProfileActivityCard from './_components/profile-activity-card'
 import ProfileContactCard from './_components/profile-contact-card'
 import ProfileDocumentsCard from './_components/profile-documents-card'
 import ProfileEmploymentHistoryCard from './_components/profile-employment-history-card'
+import ProfileNotesCard from './_components/profile-notes-card'
+import ProfileSalaryHistoryCard from './_components/profile-salary-history-card'
 
 const ProfilePage = async () => {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -55,8 +57,13 @@ const ProfilePage = async () => {
           <ProfileEmploymentHistoryCard
             history={employee?.employmentHistory}
             companyName={employee?.company.tradeName}
+            salaryHistory={employee?.salaryHistory}
           />
-          <ProfileActivityCard />
+          <ProfileSalaryHistoryCard history={employee?.salaryHistory} />
+          {employee ? (
+            <ProfileNotesCard employeeId={employee.id} notes={employee.notes} />
+          ) : null}
+          <ProfileActivityCard logs={employee?.auditLogs} />
         </div>
       </div>
     </div>
