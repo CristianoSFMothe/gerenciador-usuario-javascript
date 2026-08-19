@@ -26,13 +26,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/app/_components/ui/select'
+import { Textarea } from '@/app/_components/ui/textarea'
 import { BRAZIL_STATES } from '@/app/_lib/brazil-states'
 import { GENDER_OPTIONS } from '@/app/_lib/gender-options'
 import { cn } from '@/app/_lib/utils'
 import { addressInputClassName } from '@/app/_utils/address-input-class-name'
 import { calculateAge } from '@/app/_utils/calculate-age'
 import { fetchAddressByCEP } from '@/app/_utils/fetch-address-by-cep'
-import { maskCEP, maskCPF, maskPhone, onlyDigits } from '@/app/_utils/masks'
+import {
+  maskCEP,
+  maskCPF,
+  maskCurrency,
+  maskPhone,
+  onlyDigits,
+} from '@/app/_utils/masks'
 import type { CompanyOption } from '@/app/(protected)/_actions/companies/get-company-options'
 import { OTHER_DEPARTMENT_TYPE_VALUE } from '@/app/(protected)/_actions/departments/department-type-constants'
 import type { DepartmentTypeOption } from '@/app/(protected)/_actions/departments/get-department-types'
@@ -51,8 +58,10 @@ const EMPTY_DEFAULT_VALUES: Partial<EmployeeInput> = {
   email: '',
   birthDate: '',
   position: '',
+  positionDescription: '',
   departmentTypeId: '',
   customDepartmentName: '',
+  salary: '',
   postalCode: '',
   hasNoPostalCode: false,
   street: '',
@@ -73,8 +82,15 @@ const buildDefaultValues = (employee: EmployeeDetail): EmployeeInput => ({
   gender: employee.gender,
   companyId: employee.companyId,
   position: employee.position,
+  positionDescription: employee.employmentHistory[0]?.description ?? '',
   departmentTypeId: employee.department.departmentTypeId,
   customDepartmentName: '',
+  salary: employee.salary
+    ? new Intl.NumberFormat('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(employee.salary.toNumber())
+    : '',
   postalCode: maskCEP(employee.postalCode),
   hasNoPostalCode: false,
   street: employee.street,
@@ -244,7 +260,7 @@ const EmployeeForm = ({
               control={form.control}
               name='gender'
               render={({ field }) => (
-                <FormItem className='lg:col-span-2'>
+                <FormItem className='lg:col-span-1'>
                   <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                     Sexo
                   </FormLabel>
@@ -274,7 +290,7 @@ const EmployeeForm = ({
               control={form.control}
               name='companyId'
               render={({ field }) => (
-                <FormItem className='lg:col-span-3'>
+                <FormItem className='lg:col-span-2'>
                   <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                     Empresa
                   </FormLabel>
@@ -344,12 +360,22 @@ const EmployeeForm = ({
               )}
             />
 
-            <div className='lg:col-span-4'>
+            <div className='lg:col-span-3'>
               <EmployeeTextField
                 control={form.control}
                 name='position'
                 label='Cargo'
                 placeholder='Digite o cargo'
+              />
+            </div>
+
+            <div className='lg:col-span-3'>
+              <EmployeeTextField
+                control={form.control}
+                name='salary'
+                label='Salário'
+                placeholder='0,00'
+                mask={maskCurrency}
               />
             </div>
 
@@ -370,6 +396,26 @@ const EmployeeForm = ({
                 )}
               />
             )}
+
+            <FormField
+              control={form.control}
+              name='positionDescription'
+              render={({ field }) => (
+                <FormItem className='lg:col-span-12'>
+                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
+                    Descrição do Cargo
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder='Principais responsabilidades e atribuições do cargo'
+                      className='min-h-24 resize-none'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className='flex flex-col gap-4 border-t border-[#dfe1e6] pt-8 dark:border-[#1e293b]'>
