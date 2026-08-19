@@ -27,13 +27,13 @@ const FormSectionCard = ({
   return (
     <Card
       className={cn(
-        'gap-4 rounded-lg border-[#dfe1e6] bg-white py-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sm:py-8',
+        'gap-4 rounded-lg border-[#dfe1e6] bg-white py-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sm:py-8 dark:border-[#1e293b] dark:bg-[#0f172a]',
         className,
       )}
     >
-      <CardHeader className='border-b border-[#dfe1e6]/50 px-4 pb-3! sm:px-8'>
-        <CardTitle className='flex items-center gap-2 text-lg font-semibold text-[#121d22]'>
-          <Icon className='size-5 text-[#003d9b]' />
+      <CardHeader className='border-b border-[#dfe1e6]/50 px-4 pb-3! sm:px-8 dark:border-[#1e293b]/50'>
+        <CardTitle className='flex items-center gap-2 text-lg font-semibold text-[#121d22] dark:text-[#f1f5f9]'>
+          <Icon className='size-5 text-[#003d9b] dark:text-[#60a5fa]' />
           {title}
         </CardTitle>
       </CardHeader>

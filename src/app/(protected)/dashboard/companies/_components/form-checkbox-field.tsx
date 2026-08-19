@@ -37,7 +37,7 @@ const FormCheckboxField = ({
           </FormControl>
           <label
             htmlFor={name}
-            className='cursor-pointer text-xs text-[#434654]'
+            className='cursor-pointer text-xs text-[#434654] dark:text-[#94a3b8]'
           >
             {label}
           </label>

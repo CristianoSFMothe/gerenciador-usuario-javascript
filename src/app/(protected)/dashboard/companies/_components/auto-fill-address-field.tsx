@@ -33,7 +33,7 @@ const AutoFillAddressField = ({
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+          <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
             {label}
           </FormLabel>
           <FormControl>

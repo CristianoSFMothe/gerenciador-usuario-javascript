@@ -14,4 +14,4 @@ import { cn } from '@/app/_lib/utils'
  * <Input disabled={locked} className={addressInputClassName(locked)} />
  */
 export const addressInputClassName = (locked: boolean) =>
-  cn(locked && 'bg-[#deeaf1]', 'disabled:opacity-100')
+  cn(locked && 'bg-[#deeaf1] dark:bg-[#1e293b]', 'disabled:opacity-100')

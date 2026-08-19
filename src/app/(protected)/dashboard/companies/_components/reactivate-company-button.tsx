@@ -40,7 +40,7 @@ const ReactivateCompanyButton = ({
       size='icon-xs'
       title='Reativar empresa'
       aria-label='Reativar empresa'
-      className='p-1 text-[#434654] hover:text-emerald-600'
+      className='p-1 text-[#434654] hover:text-emerald-600 dark:text-[#94a3b8] dark:hover:text-emerald-400'
       disabled={isSubmitting}
       onClick={handleReactivate}
     >

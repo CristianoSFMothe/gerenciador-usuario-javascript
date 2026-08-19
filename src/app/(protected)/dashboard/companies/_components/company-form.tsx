@@ -179,10 +179,10 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
     <div className='flex flex-col gap-8'>
       <div className='flex items-center justify-between'>
         <div className='flex flex-col gap-1'>
-          <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px]'>
+          <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px] dark:text-[#f1f5f9]'>
             {isEditMode ? 'Edição de Empresa' : 'Cadastro de Empresa'}
           </h1>
-          <p className='text-sm text-[#434654]'>
+          <p className='text-sm text-[#434654] dark:text-[#94a3b8]'>
             {isEditMode
               ? 'Atualize os dados da entidade corporativa selecionada.'
               : 'Preencha os dados abaixo para registrar uma nova entidade corporativa no sistema.'}
@@ -263,11 +263,11 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                   name='email'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                      <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                         Email Corporativo *
                       </FormLabel>
                       <div className='relative'>
-                        <Mail className='absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#434654]/70' />
+                        <Mail className='absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#434654]/70 dark:text-[#94a3b8]/70' />
                         <FormControl>
                           <Input
                             type='email'
@@ -287,11 +287,11 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                   name='website'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                      <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                         Site Institucional
                       </FormLabel>
                       <div className='relative'>
-                        <span className='pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-[#434654]/70'>
+                        <span className='pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-[#434654]/70 dark:text-[#94a3b8]/70'>
                           https://
                         </span>
                         <FormControl>
@@ -323,17 +323,17 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
               </div>
 
               <FormItem>
-                <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                   Setores / Áreas de Atuação
                 </FormLabel>
-                <div className='flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-[#dfe1e6] bg-[#f3faff] p-2'>
+                <div className='flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-[#dfe1e6] bg-[#f3faff] p-2 dark:border-[#1e293b] dark:bg-[#1e293b]/40'>
                   {sectors.map((sector) => (
                     <span
                       key={sector}
                       className={cn(
                         'flex items-center gap-1 rounded-full border',
                         'border-[#0052cc]/20 bg-[#0052cc]/10 px-2.25 py-0.75',
-                        'text-xs font-semibold tracking-[0.6px] text-[#0052cc]',
+                        'text-xs font-semibold tracking-[0.6px] text-[#0052cc] dark:border-[#60a5fa]/20 dark:bg-[#60a5fa]/10 dark:text-[#60a5fa]',
                       )}
                     >
                       {sector}
@@ -359,10 +359,10 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                       }
                     }}
                     placeholder='Adicionar área...'
-                    className='min-w-30 flex-1 bg-transparent text-sm outline-none placeholder:text-[#434654]/50'
+                    className='min-w-30 flex-1 bg-transparent text-sm text-[#121d22] outline-none placeholder:text-[#434654]/50 dark:text-[#f1f5f9] dark:placeholder:text-[#94a3b8]/50'
                   />
                 </div>
-                <p className='text-xs text-[#434654]/70'>
+                <p className='text-xs text-[#434654]/70 dark:text-[#94a3b8]/70'>
                   Pressione &apos;Enter&apos; para adicionar uma nova tag.
                 </p>
               </FormItem>
@@ -380,7 +380,7 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                   name='postalCode'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                      <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                         CEP *
                       </FormLabel>
                       <div className='flex flex-wrap items-center gap-3'>
@@ -407,7 +407,7 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                             variant='outline'
                             disabled={manualAddress || isSearchingCep}
                             onClick={searchCep}
-                            className='shrink-0 gap-1 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
+                            className='shrink-0 gap-1 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80 dark:border-[#60a5fa]/20 dark:bg-[#1e293b] dark:text-[#60a5fa] dark:hover:bg-[#1e293b]/80'
                           >
                             {isSearchingCep ? (
                               <Loader2 className='size-3.5 animate-spin' />
@@ -448,7 +448,7 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                 name='number'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                       Número *
                     </FormLabel>
                     <FormControl>
@@ -505,7 +505,7 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
                 name='state'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                       Estado (UF) *
                     </FormLabel>
                     <Select
@@ -538,7 +538,7 @@ const CompanyForm = ({ company }: CompanyFormProps) => {
             </FormSectionCard>
           </div>
 
-          <div className='flex justify-end gap-4 border-t border-[#dfe1e6] pt-6'>
+          <div className='flex justify-end gap-4 border-t border-[#dfe1e6] pt-6 dark:border-[#1e293b]'>
             <Button
               type='button'
               variant='outline'

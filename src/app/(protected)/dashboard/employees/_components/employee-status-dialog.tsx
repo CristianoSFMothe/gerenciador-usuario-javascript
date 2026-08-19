@@ -61,8 +61,8 @@ const EmployeeStatusDialog = ({ employee }: EmployeeStatusDialogProps) => {
           aria-label={isActive ? 'Excluir funcionário' : 'Ativar funcionário'}
           className={
             isActive
-              ? 'p-1 text-[#434654] hover:text-red-600'
-              : 'p-1 text-[#434654] hover:text-emerald-600'
+              ? 'p-1 text-[#434654] hover:text-red-600 dark:text-[#94a3b8] dark:hover:text-red-400'
+              : 'p-1 text-[#434654] hover:text-emerald-600 dark:text-[#94a3b8] dark:hover:text-emerald-400'
           }
         >
           {isActive ? (

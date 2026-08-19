@@ -20,17 +20,17 @@ const TONE_CLASSES: Record<
   blue: {
     overlay: 'bg-[#003d9b]/5',
     iconBg: 'bg-[#003d9b]/10',
-    icon: 'text-[#003d9b]',
+    icon: 'text-[#003d9b] dark:text-[#60a5fa]',
   },
   green: {
     overlay: 'bg-[#00a65a]/5',
     iconBg: 'bg-[#00a65a]/10',
-    icon: 'text-[#00a65a]',
+    icon: 'text-[#00a65a] dark:text-emerald-400',
   },
   red: {
     overlay: 'bg-[#d93025]/5',
     iconBg: 'bg-[#d93025]/10',
-    icon: 'text-[#d93025]',
+    icon: 'text-[#d93025] dark:text-red-400',
   },
 }
 

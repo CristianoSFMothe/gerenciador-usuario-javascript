@@ -69,7 +69,7 @@ const DeleteCompanyDialog = ({ company }: DeleteCompanyDialogProps) => {
           size='icon-xs'
           title='Excluir empresa'
           aria-label='Excluir empresa'
-          className='p-1 text-[#434654] hover:text-red-600'
+          className='p-1 text-[#434654] hover:text-red-600 dark:text-[#94a3b8] dark:hover:text-red-400'
         >
           <Trash2 className='size-3.5' />
         </Button>

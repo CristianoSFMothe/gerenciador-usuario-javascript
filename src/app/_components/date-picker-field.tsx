@@ -48,7 +48,7 @@ const DatePickerField = <TFieldValues extends FieldValues>({
 
         return (
           <FormItem className={cn('flex flex-col', className)}>
-            <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+            <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
               {label}
             </FormLabel>
             <Popover>
@@ -59,7 +59,7 @@ const DatePickerField = <TFieldValues extends FieldValues>({
                     variant='outline'
                     className={cn(
                       'w-full justify-start gap-2 font-normal',
-                      !value && 'text-[#434654]/50',
+                      !value && 'text-[#434654]/50 dark:text-[#94a3b8]/50',
                       triggerClassName,
                     )}
                   >

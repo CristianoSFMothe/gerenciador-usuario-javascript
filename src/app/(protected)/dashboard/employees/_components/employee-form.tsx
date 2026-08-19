@@ -166,7 +166,7 @@ const EmployeeForm = ({
 
   return (
     <div className='flex flex-col gap-8'>
-      <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px]'>
+      <h1 className='text-2xl leading-9 font-semibold tracking-[-0.28px] text-[#121d22] sm:text-[28px] dark:text-[#f1f5f9]'>
         {isEditMode ? 'Edição de Funcionário' : 'Cadastro de Novo Funcionário'}
       </h1>
 
@@ -174,7 +174,7 @@ const EmployeeForm = ({
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           noValidate
-          className='flex flex-col gap-8 rounded-lg border border-[#dfe1e6] bg-white p-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sm:p-8'
+          className='flex flex-col gap-8 rounded-lg border border-[#dfe1e6] bg-white p-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sm:p-8 dark:border-[#1e293b] dark:bg-[#0f172a]'
         >
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
             <EmployeeTextField
@@ -223,21 +223,21 @@ const EmployeeForm = ({
               />
 
               <FormItem className='w-16 shrink-0'>
-                <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                   Idade
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled
                     value={age !== null ? String(age) : ''}
-                    className='bg-[#deeaf1] px-2 text-center text-[#434654] disabled:opacity-100'
+                    className='bg-[#deeaf1] px-2 text-center text-[#434654] disabled:opacity-100 dark:bg-[#1e293b] dark:text-[#94a3b8]'
                   />
                 </FormControl>
               </FormItem>
             </div>
           </div>
 
-          <div className='border-t border-[#dfe1e6]' />
+          <div className='border-t border-[#dfe1e6] dark:border-[#1e293b]' />
 
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-12'>
             <FormField
@@ -245,7 +245,7 @@ const EmployeeForm = ({
               name='gender'
               render={({ field }) => (
                 <FormItem className='lg:col-span-2'>
-                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                     Sexo
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
@@ -275,7 +275,7 @@ const EmployeeForm = ({
               name='companyId'
               render={({ field }) => (
                 <FormItem className='lg:col-span-3'>
-                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                     Empresa
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
@@ -313,7 +313,7 @@ const EmployeeForm = ({
               name='departmentTypeId'
               render={({ field }) => (
                 <FormItem className='lg:col-span-3'>
-                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                  <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                     Departamento
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
@@ -359,7 +359,7 @@ const EmployeeForm = ({
                 name='customDepartmentName'
                 render={({ field }) => (
                   <FormItem className='lg:col-span-3'>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                       Nome do Departamento
                     </FormLabel>
                     <FormControl>
@@ -372,8 +372,10 @@ const EmployeeForm = ({
             )}
           </div>
 
-          <div className='flex flex-col gap-4 border-t border-[#dfe1e6] pt-8'>
-            <h2 className='text-lg font-semibold text-[#121d22]'>Endereço</h2>
+          <div className='flex flex-col gap-4 border-t border-[#dfe1e6] pt-8 dark:border-[#1e293b]'>
+            <h2 className='text-lg font-semibold text-[#121d22] dark:text-[#f1f5f9]'>
+              Endereço
+            </h2>
 
             <div className='grid grid-cols-1 gap-6 sm:grid-cols-12'>
               <FormField
@@ -381,7 +383,7 @@ const EmployeeForm = ({
                 name='postalCode'
                 render={({ field }) => (
                   <FormItem className='sm:col-span-12'>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                       CEP
                     </FormLabel>
                     <div className='flex flex-wrap items-center gap-3'>
@@ -408,7 +410,7 @@ const EmployeeForm = ({
                           variant='outline'
                           disabled={hasNoPostalCode || isSearchingCep}
                           onClick={searchCep}
-                          className='shrink-0 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80'
+                          className='shrink-0 border-[#003d9b]/20 bg-[#deeaf1] text-[#003d9b] hover:bg-[#deeaf1]/80 dark:border-[#60a5fa]/20 dark:bg-[#1e293b] dark:text-[#60a5fa] dark:hover:bg-[#1e293b]/80'
                         >
                           {isSearchingCep ? (
                             <Loader2 className='size-3.5 animate-spin' />
@@ -435,7 +437,7 @@ const EmployeeForm = ({
                             </FormControl>
                             <label
                               htmlFor='has-no-postal-code'
-                              className='cursor-pointer text-xs whitespace-nowrap text-[#434654]'
+                              className='cursor-pointer text-xs whitespace-nowrap text-[#434654] dark:text-[#94a3b8]'
                             >
                               CEP não encontrado
                             </label>
@@ -453,7 +455,7 @@ const EmployeeForm = ({
                 name='street'
                 render={({ field }) => (
                   <FormItem className='sm:col-span-5'>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                       Logradouro
                     </FormLabel>
                     <FormControl>
@@ -478,7 +480,7 @@ const EmployeeForm = ({
                 name='streetNumber'
                 render={({ field }) => (
                   <FormItem className='sm:col-span-3'>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                       Número
                     </FormLabel>
                     <FormControl>
@@ -514,7 +516,7 @@ const EmployeeForm = ({
                     </FormControl>
                     <label
                       htmlFor='no-street-number'
-                      className='cursor-pointer text-xs text-[#434654]'
+                      className='cursor-pointer text-xs text-[#434654] dark:text-[#94a3b8]'
                     >
                       Sem número
                     </label>
@@ -527,7 +529,7 @@ const EmployeeForm = ({
                 name='neighborhood'
                 render={({ field }) => (
                   <FormItem className='sm:col-span-5'>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                       Bairro
                     </FormLabel>
                     <FormControl>
@@ -552,7 +554,7 @@ const EmployeeForm = ({
                 name='city'
                 render={({ field }) => (
                   <FormItem className='sm:col-span-5'>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                       Cidade
                     </FormLabel>
                     <FormControl>
@@ -577,7 +579,7 @@ const EmployeeForm = ({
                 name='state'
                 render={({ field }) => (
                   <FormItem className='sm:col-span-2'>
-                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654]'>
+                    <FormLabel className='text-xs font-semibold tracking-[0.6px] text-[#434654] dark:text-[#94a3b8]'>
                       Estado
                     </FormLabel>
                     <Select
@@ -610,7 +612,7 @@ const EmployeeForm = ({
             </div>
           </div>
 
-          <div className='flex justify-end gap-4 border-t border-[#dfe1e6] pt-6'>
+          <div className='flex justify-end gap-4 border-t border-[#dfe1e6] pt-6 dark:border-[#1e293b]'>
             <Button
               type='button'
               variant='outline'
