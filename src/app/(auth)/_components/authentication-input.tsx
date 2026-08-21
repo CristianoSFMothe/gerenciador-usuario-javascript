@@ -8,12 +8,14 @@ import { cn } from '@/app/_lib/utils'
 
 type AuthenticationInputProps = ComponentProps<typeof Input> & {
   isPassword?: boolean
+  'data-testid'?: string
 }
 
 const AuthenticationInput = ({
   className,
   isPassword,
   type,
+  'data-testid': dataTestId,
   ...props
 }: AuthenticationInputProps) => {
   const [showPassword, setShowPassword] = useState(false)
@@ -22,6 +24,7 @@ const AuthenticationInput = ({
     <div className='relative'>
       <Input
         type={isPassword ? (showPassword ? 'text' : 'password') : type}
+        data-testid={dataTestId}
         className={cn(
           'h-14 w-full rounded-xl px-6 text-sm',
           isPassword && 'pr-14',
@@ -35,6 +38,7 @@ const AuthenticationInput = ({
           type='button'
           onClick={() => setShowPassword((value) => !value)}
           aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+          data-testid={dataTestId ? `${dataTestId}-toggle` : undefined}
           className='text-muted-foreground hover:text-foreground absolute inset-y-0 right-5 flex items-center'
         >
           {showPassword ? (

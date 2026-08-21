@@ -29,9 +29,16 @@ import {
 import AuthenticationButton from './authentication-button'
 import AuthenticationInput from './authentication-input'
 
-const FormError = ({ message }: { message: string }) => (
+const FormError = ({
+  message,
+  testId,
+}: {
+  message: string
+  testId: string
+}) => (
   <p
     role='alert'
+    data-testid={testId}
     className='rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400'
   >
     {message}
@@ -70,11 +77,17 @@ const RequestOtpStep = ({
   return (
     <Form {...form}>
       <form
+        data-testid='forgot-password-form'
         onSubmit={form.handleSubmit(onSubmit)}
         noValidate
         className='space-y-6'
       >
-        {formError ? <FormError message={formError} /> : null}
+        {formError ? (
+          <FormError
+            message={formError}
+            testId='forgot-password-error-message'
+          />
+        ) : null}
 
         <FormField
           control={form.control}
@@ -84,6 +97,7 @@ const RequestOtpStep = ({
               <FormLabel>E-mail</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='forgot-password-email-input'
                   type='email'
                   autoComplete='email'
                   autoFocus
@@ -96,7 +110,10 @@ const RequestOtpStep = ({
           )}
         />
 
-        <AuthenticationButton isSubmitting={form.formState.isSubmitting}>
+        <AuthenticationButton
+          data-testid='forgot-password-submit-button'
+          isSubmitting={form.formState.isSubmitting}
+        >
           Enviar código
         </AuthenticationButton>
 
@@ -104,6 +121,7 @@ const RequestOtpStep = ({
           Lembrou sua senha?{' '}
           <Link
             href='/login'
+            data-testid='forgot-password-login-link'
             className='font-semibold text-[#003d9b] hover:underline dark:text-[#60a5fa]'
           >
             Entrar
@@ -159,11 +177,17 @@ const ResetPasswordStep = ({
   return (
     <Form {...form}>
       <form
+        data-testid='reset-password-form'
         onSubmit={form.handleSubmit(onSubmit)}
         noValidate
         className='space-y-6'
       >
-        {formError ? <FormError message={formError} /> : null}
+        {formError ? (
+          <FormError
+            message={formError}
+            testId='reset-password-error-message'
+          />
+        ) : null}
 
         <p className='text-sm text-[#434654] dark:text-[#94a3b8]'>
           Enviamos um código para <strong>{email}</strong>. Confira sua caixa de
@@ -178,6 +202,7 @@ const ResetPasswordStep = ({
               <FormLabel>Código</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='reset-password-otp-input'
                   type='text'
                   inputMode='numeric'
                   autoComplete='one-time-code'
@@ -200,6 +225,7 @@ const ResetPasswordStep = ({
               <FormLabel>Nova senha</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='reset-password-password-input'
                   isPassword
                   autoComplete='new-password'
                   placeholder='••••••••'
@@ -219,6 +245,7 @@ const ResetPasswordStep = ({
               <FormLabel>Confirmar nova senha</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='reset-password-confirm-password-input'
                   isPassword
                   autoComplete='new-password'
                   placeholder='••••••••'
@@ -230,7 +257,10 @@ const ResetPasswordStep = ({
           )}
         />
 
-        <AuthenticationButton isSubmitting={form.formState.isSubmitting}>
+        <AuthenticationButton
+          data-testid='reset-password-submit-button'
+          isSubmitting={form.formState.isSubmitting}
+        >
           Redefinir senha
         </AuthenticationButton>
 
@@ -240,6 +270,7 @@ const ResetPasswordStep = ({
             type='button'
             onClick={handleResend}
             disabled={isResending}
+            data-testid='reset-password-resend-button'
             className='font-semibold text-[#003d9b] underline underline-offset-2 disabled:opacity-60 dark:text-[#60a5fa]'
           >
             {isResending ? 'Enviando...' : 'Reenviar código'}

@@ -97,6 +97,7 @@ const CredentialsStep = ({ onTwoFactorRequired }: CredentialsStepProps) => {
   return (
     <Form {...form}>
       <form
+        data-testid='login-form'
         onSubmit={form.handleSubmit(onSubmit)}
         noValidate
         className='space-y-6'
@@ -104,6 +105,7 @@ const CredentialsStep = ({ onTwoFactorRequired }: CredentialsStepProps) => {
         {formError ? (
           <div
             role='alert'
+            data-testid='login-error-message'
             className='space-y-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400'
           >
             <p>{formError}</p>
@@ -113,6 +115,7 @@ const CredentialsStep = ({ onTwoFactorRequired }: CredentialsStepProps) => {
                 type='button'
                 onClick={handleResend}
                 disabled={isResending}
+                data-testid='login-resend-verification-button'
                 className='font-semibold underline underline-offset-2 disabled:opacity-60'
               >
                 {isResending ? 'Enviando...' : 'Reenviar e-mail de confirmação'}
@@ -129,6 +132,7 @@ const CredentialsStep = ({ onTwoFactorRequired }: CredentialsStepProps) => {
               <FormLabel>E-mail</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='login-email-input'
                   type='email'
                   autoComplete='email'
                   autoFocus
@@ -149,6 +153,7 @@ const CredentialsStep = ({ onTwoFactorRequired }: CredentialsStepProps) => {
               <FormLabel>Senha</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='login-password-input'
                   isPassword
                   autoComplete='current-password'
                   placeholder='••••••••'
@@ -160,6 +165,7 @@ const CredentialsStep = ({ onTwoFactorRequired }: CredentialsStepProps) => {
               <div className='flex justify-end'>
                 <Link
                   href='/forgot-password'
+                  data-testid='login-forgot-password-link'
                   className='text-xs font-semibold text-[#003d9b] hover:underline dark:text-[#60a5fa]'
                 >
                   Esqueceu a senha?
@@ -169,7 +175,10 @@ const CredentialsStep = ({ onTwoFactorRequired }: CredentialsStepProps) => {
           )}
         />
 
-        <AuthenticationButton isSubmitting={form.formState.isSubmitting}>
+        <AuthenticationButton
+          data-testid='login-submit-button'
+          isSubmitting={form.formState.isSubmitting}
+        >
           Entrar
         </AuthenticationButton>
 
@@ -177,6 +186,7 @@ const CredentialsStep = ({ onTwoFactorRequired }: CredentialsStepProps) => {
           Não tem uma conta?{' '}
           <Link
             href='/register'
+            data-testid='login-register-link'
             className='font-semibold text-[#003d9b] hover:underline dark:text-[#60a5fa]'
           >
             Cadastre-se
@@ -226,6 +236,7 @@ const OtpStep = ({ onBack }: OtpStepProps) => {
   return (
     <Form {...form}>
       <form
+        data-testid='login-otp-form'
         onSubmit={form.handleSubmit(onSubmit)}
         noValidate
         className='space-y-6'
@@ -233,6 +244,7 @@ const OtpStep = ({ onBack }: OtpStepProps) => {
         {formError ? (
           <p
             role='alert'
+            data-testid='login-otp-error-message'
             className='rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400'
           >
             {formError}
@@ -252,6 +264,7 @@ const OtpStep = ({ onBack }: OtpStepProps) => {
               <FormLabel>Código</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='login-otp-code-input'
                   type='text'
                   inputMode='numeric'
                   autoComplete='one-time-code'
@@ -266,7 +279,10 @@ const OtpStep = ({ onBack }: OtpStepProps) => {
           )}
         />
 
-        <AuthenticationButton isSubmitting={form.formState.isSubmitting}>
+        <AuthenticationButton
+          data-testid='login-otp-submit-button'
+          isSubmitting={form.formState.isSubmitting}
+        >
           Confirmar
         </AuthenticationButton>
 
@@ -274,6 +290,7 @@ const OtpStep = ({ onBack }: OtpStepProps) => {
           <button
             type='button'
             onClick={onBack}
+            data-testid='login-otp-back-button'
             className='font-semibold text-[#003d9b] hover:underline dark:text-[#60a5fa]'
           >
             Voltar
@@ -283,6 +300,7 @@ const OtpStep = ({ onBack }: OtpStepProps) => {
             type='button'
             onClick={handleResend}
             disabled={isResending}
+            data-testid='login-otp-resend-button'
             className='font-semibold text-[#003d9b] underline underline-offset-2 disabled:opacity-60 dark:text-[#60a5fa]'
           >
             {isResending ? 'Enviando...' : 'Reenviar código'}

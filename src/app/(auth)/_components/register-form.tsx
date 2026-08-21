@@ -51,6 +51,7 @@ const RegisterForm = () => {
   return (
     <Form {...form}>
       <form
+        data-testid='register-form'
         onSubmit={form.handleSubmit(onSubmit)}
         noValidate
         className='space-y-6'
@@ -58,6 +59,7 @@ const RegisterForm = () => {
         {formError ? (
           <p
             role='alert'
+            data-testid='register-error-message'
             className='rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400'
           >
             {formError}
@@ -72,6 +74,7 @@ const RegisterForm = () => {
               <FormLabel>Nome completo</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='register-name-input'
                   type='text'
                   autoComplete='name'
                   placeholder='Seu nome'
@@ -91,6 +94,7 @@ const RegisterForm = () => {
               <FormLabel>E-mail</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='register-email-input'
                   type='email'
                   autoComplete='email'
                   placeholder='voce@empresa.com'
@@ -110,6 +114,7 @@ const RegisterForm = () => {
               <FormLabel>Senha</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='register-password-input'
                   isPassword
                   autoComplete='new-password'
                   placeholder='••••••••'
@@ -129,6 +134,7 @@ const RegisterForm = () => {
               <FormLabel>Confirmar Senha</FormLabel>
               <FormControl>
                 <AuthenticationInput
+                  data-testid='register-confirm-password-input'
                   isPassword
                   autoComplete='new-password'
                   placeholder='••••••••'
@@ -140,7 +146,10 @@ const RegisterForm = () => {
           )}
         />
 
-        <AuthenticationButton isSubmitting={form.formState.isSubmitting}>
+        <AuthenticationButton
+          data-testid='register-submit-button'
+          isSubmitting={form.formState.isSubmitting}
+        >
           Cadastrar
         </AuthenticationButton>
 
@@ -148,6 +157,7 @@ const RegisterForm = () => {
           Já tem uma conta?{' '}
           <Link
             href='/login'
+            data-testid='register-login-link'
             className='font-semibold text-[#003d9b] hover:underline dark:text-[#60a5fa]'
           >
             Entrar
