@@ -1,8 +1,9 @@
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { nextCookies } from 'better-auth/next-js'
+import { emailOTP } from 'better-auth/plugins'
 
-import { sendVerificationEmail } from './email'
+import { sendPasswordResetOTP, sendVerificationEmail } from './email'
 import { prisma } from './prisma'
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24
@@ -41,7 +42,20 @@ export const auth = betterAuth({
       '/sign-in/email': { window: 60, max: 5 },
       '/sign-up/email': { window: 60, max: 3 },
       '/send-verification-email': { window: 60, max: 3 },
+      '/email-otp/request-password-reset': { window: 60, max: 3 },
+      '/email-otp/reset-password': { window: 60, max: 5 },
     },
   },
-  plugins: [nextCookies()],
+  plugins: [
+    emailOTP({
+      // Usado só para recuperação de senha — a verificação de cadastro
+      // continua no fluxo de link (emailVerification acima).
+      sendVerificationOTP: async ({ email, otp, type }) => {
+        if (type === 'forget-password') {
+          await sendPasswordResetOTP(email, otp)
+        }
+      },
+    }),
+    nextCookies(),
+  ],
 })

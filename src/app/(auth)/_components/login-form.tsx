@@ -145,7 +145,7 @@ const LoginForm = () => {
 
               <div className='flex justify-end'>
                 <Link
-                  href='#'
+                  href='/forgot-password'
                   className='text-xs font-semibold text-[#003d9b] hover:underline dark:text-[#60a5fa]'
                 >
                   Esqueceu a senha?
