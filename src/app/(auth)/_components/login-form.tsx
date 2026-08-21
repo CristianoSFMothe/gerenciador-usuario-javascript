@@ -3,9 +3,10 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import {
   Form,
@@ -17,13 +18,29 @@ import {
 } from '@/app/_components/ui/form'
 
 import { loginAction } from '../_actions/auth/login-action'
+import { resendVerificationAction } from '../_actions/auth/resend-verification-action'
 import { type LoginInput, loginSchema } from '../_schema/login-schema'
 import AuthenticationButton from './authentication-button'
 import AuthenticationInput from './authentication-input'
 
+const VERIFICATION_ERROR_MESSAGES: Record<string, string> = {
+  TOKEN_EXPIRED: 'O link de confirmação expirou. Solicite um novo abaixo.',
+  INVALID_TOKEN: 'O link de confirmação é inválido. Solicite um novo abaixo.',
+}
+
 const LoginForm = () => {
   const router = useRouter()
-  const [formError, setFormError] = useState<string | null>(null)
+  const searchParams = useSearchParams()
+  const verificationError = searchParams.get('error')
+
+  const [formError, setFormError] = useState<string | null>(() =>
+    verificationError
+      ? (VERIFICATION_ERROR_MESSAGES[verificationError] ??
+        'Não foi possível confirmar seu e-mail.')
+      : null,
+  )
+  const [showResend, setShowResend] = useState(() => Boolean(verificationError))
+  const [isResending, setIsResending] = useState(false)
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -33,17 +50,34 @@ const LoginForm = () => {
     },
   })
 
+  useEffect(() => {
+    if (!verificationError && searchParams.get('verified') === '1') {
+      toast.success('E-mail confirmado! Faça login para continuar.')
+    }
+  }, [searchParams, verificationError])
+
   const onSubmit = async (data: LoginInput) => {
     setFormError(null)
+    setShowResend(false)
 
     const result = await loginAction(data)
 
     if (!result.success) {
       setFormError(result.message)
+      setShowResend(result.code === 'EMAIL_NOT_VERIFIED')
       return
     }
 
     router.push('/dashboard')
+  }
+
+  const handleResend = async () => {
+    setIsResending(true)
+
+    const result = await resendVerificationAction(form.getValues('email'))
+
+    toast[result.success ? 'success' : 'error'](result.message)
+    setIsResending(false)
   }
 
   return (
@@ -54,12 +88,23 @@ const LoginForm = () => {
         className='space-y-6'
       >
         {formError ? (
-          <p
+          <div
             role='alert'
-            className='rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400'
+            className='space-y-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400'
           >
-            {formError}
-          </p>
+            <p>{formError}</p>
+
+            {showResend ? (
+              <button
+                type='button'
+                onClick={handleResend}
+                disabled={isResending}
+                className='font-semibold underline underline-offset-2 disabled:opacity-60'
+              >
+                {isResending ? 'Enviando...' : 'Reenviar e-mail de confirmação'}
+              </button>
+            ) : null}
+          </div>
         ) : null}
 
         <FormField

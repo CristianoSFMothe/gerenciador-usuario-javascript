@@ -1,3 +1,5 @@
+import { Suspense } from 'react'
+
 import AuthenticationCard from '../_components/authentication-card'
 import LoginForm from '../_components/login-form'
 
@@ -11,7 +13,9 @@ const LoginPage = () => {
       quoteAuthor='Pam Hand'
       quoteAuthorEmail='pam.hand@gmail.com'
     >
-      <LoginForm />
+      <Suspense fallback={null}>
+        <LoginForm />
+      </Suspense>
     </AuthenticationCard>
   )
 }

@@ -8,7 +8,8 @@ import { auth } from '@/app/_lib/auth'
 import { type LoginInput, loginSchema } from '../../_schema/login-schema'
 
 type LoginActionResult =
-  { success: true; message: string } | { success: false; message: string }
+  | { success: true; message: string }
+  | { success: false; message: string; code?: 'EMAIL_NOT_VERIFIED' }
 
 export const loginAction = async (
   data: LoginInput,
@@ -33,6 +34,15 @@ export const loginAction = async (
     if (error instanceof APIError) {
       if (error.body?.code === 'INVALID_EMAIL_OR_PASSWORD') {
         return { success: false, message: 'E-mail ou senha inválidos.' }
+      }
+
+      if (error.body?.code === 'EMAIL_NOT_VERIFIED') {
+        return {
+          success: false,
+          message:
+            'Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada.',
+          code: 'EMAIL_NOT_VERIFIED',
+        }
       }
 
       return { success: false, message: error.message }

@@ -33,10 +33,14 @@ export const registerAction = async (
         name: parsed.data.name,
         email: parsed.data.email,
         password: parsed.data.password,
+        callbackURL: '/login?verified=1',
       },
     })
 
-    return { success: true, message: 'Conta criada com sucesso.' }
+    return {
+      success: true,
+      message: 'Conta criada! Verifique seu e-mail para confirmar o cadastro.',
+    }
   } catch (error) {
     if (error instanceof APIError) {
       const code = error.body?.code
