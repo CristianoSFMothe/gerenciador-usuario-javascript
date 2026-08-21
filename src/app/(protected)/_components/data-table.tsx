@@ -36,6 +36,8 @@ type DataTableProps<TItem extends { id: string }, TField extends string> = {
   selectedIds?: Set<string>
   onToggleRow?: (id: string) => void
   onToggleAll?: () => void
+  // Base para os data-testid das linhas/células; sem ele a tabela não expõe nenhum.
+  testId?: string
 }
 
 const buildSortHref = (
@@ -116,6 +118,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
   selectedIds,
   onToggleRow,
   onToggleAll,
+  testId,
 }: DataTableProps<TItem, TField>) => {
   const selectable = Boolean(onToggleRow && onToggleAll)
   const allSelected =
@@ -129,14 +132,17 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
 
   if (items.length === 0) {
     return (
-      <div className='flex w-full items-center justify-center px-4 py-16 text-sm text-[#434654] dark:text-[#94a3b8]'>
+      <div
+        data-testid={testId ? `${testId}-empty` : undefined}
+        className='flex w-full items-center justify-center px-4 py-16 text-sm text-[#434654] dark:text-[#94a3b8]'
+      >
         {emptyMessage}
       </div>
     )
   }
 
   return (
-    <Table>
+    <Table data-testid={testId}>
       <TableHeader>
         <TableRow className='border-[#dfe1e6] bg-[#f8f9fa] hover:bg-[#f8f9fa] dark:border-[#1e293b] dark:bg-[#1e293b] dark:hover:bg-[#1e293b]'>
           {selectable && (
@@ -147,6 +153,9 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
                 }
                 onCheckedChange={onToggleAll}
                 aria-label='Selecionar todos'
+                data-testid={
+                  testId ? `${testId}-select-all-checkbox` : undefined
+                }
               />
             </TableHead>
           )}
@@ -170,6 +179,7 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
         {items.map((item) => (
           <TableRow
             key={item.id}
+            data-testid={testId ? `${testId}-row-${item.id}` : undefined}
             className='border-[#dfe1e6] dark:border-[#1e293b]'
           >
             {selectable && (
@@ -178,12 +188,18 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
                   checked={selectedIds?.has(item.id) ?? false}
                   onCheckedChange={() => onToggleRow?.(item.id)}
                   aria-label='Selecionar linha'
+                  data-testid={
+                    testId ? `${testId}-row-${item.id}-checkbox` : undefined
+                  }
                 />
               </TableCell>
             )}
             {columns.map((column) => (
               <TableCell
                 key={column.field}
+                data-testid={
+                  testId ? `${testId}-cell-${column.field}` : undefined
+                }
                 className='p-4 text-sm text-[#434654] dark:text-[#94a3b8]'
               >
                 {column.render(item)}
@@ -200,6 +216,9 @@ const DataTable = <TItem extends { id: string }, TField extends string>({
                         href={editHref(item)}
                         title={`Editar ${entityLabel}`}
                         aria-label={`Editar ${entityLabel}`}
+                        data-testid={
+                          testId ? `${testId}-row-${item.id}-edit` : undefined
+                        }
                         className='p-1 text-[#434654] hover:text-[#003d9b] dark:text-[#94a3b8] dark:hover:text-[#60a5fa]'
                       >
                         <Pencil className='size-3.5' />

@@ -11,11 +11,13 @@ const SEARCH_DEBOUNCE_IN_MS = 400
 type ListSearchInputProps = {
   defaultValue: string
   placeholder: string
+  testId?: string
 }
 
 const ListSearchInput = ({
   defaultValue,
   placeholder,
+  testId,
 }: ListSearchInputProps) => {
   const router = useRouter()
   const pathname = usePathname()
@@ -48,6 +50,7 @@ const ListSearchInput = ({
         value={value}
         onChange={(event) => setValue(event.target.value)}
         placeholder={placeholder}
+        data-testid={testId}
         className='rounded-none border-[#dfe1e6] bg-[#f3faff] pl-9 text-sm dark:border-[#1e293b] dark:bg-[#1e293b]'
       />
     </div>

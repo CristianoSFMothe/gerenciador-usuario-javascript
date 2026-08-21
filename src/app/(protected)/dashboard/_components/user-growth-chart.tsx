@@ -22,7 +22,11 @@ const chartConfig = {
 
 const UserGrowthChart = ({ data }: UserGrowthChartProps) => {
   return (
-    <ChartContainer config={chartConfig} className='aspect-auto h-64 w-full'>
+    <ChartContainer
+      data-testid='dashboard-user-growth-chart'
+      config={chartConfig}
+      className='aspect-auto h-64 w-full'
+    >
       <LineChart data={data} margin={{ left: -20, right: 12, top: 12 }}>
         <CartesianGrid
           vertical={false}

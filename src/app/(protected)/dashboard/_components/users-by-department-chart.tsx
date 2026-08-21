@@ -41,7 +41,10 @@ const buildChartConfig = (data: { name: string }[]): ChartConfig =>
 const UsersByDepartmentChart = ({ data }: UsersByDepartmentChartProps) => {
   if (data.length === 0) {
     return (
-      <div className='flex h-64 w-full items-center justify-center text-sm text-[#434654] dark:text-[#94a3b8]'>
+      <div
+        data-testid='dashboard-department-chart-empty'
+        className='flex h-64 w-full items-center justify-center text-sm text-[#434654] dark:text-[#94a3b8]'
+      >
         Nenhum departamento cadastrado.
       </div>
     )
@@ -50,7 +53,11 @@ const UsersByDepartmentChart = ({ data }: UsersByDepartmentChartProps) => {
   const chartConfig = buildChartConfig(data)
 
   return (
-    <ChartContainer config={chartConfig} className='aspect-auto h-80 w-full'>
+    <ChartContainer
+      data-testid='dashboard-department-chart'
+      config={chartConfig}
+      className='aspect-auto h-80 w-full'
+    >
       <PieChart>
         <ChartTooltip
           content={

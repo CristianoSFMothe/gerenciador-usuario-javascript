@@ -59,7 +59,10 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
     <div className='flex flex-col gap-8 p-8'>
       <div className='flex items-center justify-between'>
         <div className='flex flex-col gap-1'>
-          <h1 className='text-[28px] font-semibold tracking-tight text-[#121d22] dark:text-[#f1f5f9]'>
+          <h1
+            data-testid='dashboard-title'
+            className='text-[28px] font-semibold tracking-tight text-[#121d22] dark:text-[#f1f5f9]'
+          >
             Dashboard
           </h1>
           <p className='text-sm text-[#434654] dark:text-[#94a3b8]'>
@@ -73,7 +76,10 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
             asChild
             className='bg-[#003d9b] text-xs text-white hover:bg-[#003d9b]/90'
           >
-            <Link href='/dashboard/employees/new-employee'>
+            <Link
+              href='/dashboard/employees/new-employee'
+              data-testid='dashboard-new-employee-link'
+            >
               <Plus className='size-3.5' />
               Novo Usuário
             </Link>
@@ -83,6 +89,7 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
 
       <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
         <DashboardStatCard
+          testId='dashboard-stat-total-users'
           title='Total de Usuários'
           value={metrics.totalEmployees}
           icon={Users}
@@ -96,6 +103,7 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
           }
         />
         <DashboardStatCard
+          testId='dashboard-stat-active-users'
           title='Usuários Ativos'
           value={metrics.activeEmployees}
           icon={UserCheck}
@@ -107,6 +115,7 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
           }
         />
         <DashboardStatCard
+          testId='dashboard-stat-inactive-users'
           title='Usuários Desativados'
           value={metrics.inactiveEmployees}
           icon={AlertCircle}
@@ -141,6 +150,7 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
           </h2>
           <div className='print:hidden'>
             <ListSearchInput
+              testId='dashboard-search-input'
               defaultValue={q ?? ''}
               placeholder='Buscar usuário...'
             />
@@ -156,6 +166,7 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
 
         <div className='print:hidden'>
           <EmployeesPagination
+            testId='dashboard-pagination'
             currentPage={currentPage}
             totalCount={totalCount}
             pageSize={pageSize}

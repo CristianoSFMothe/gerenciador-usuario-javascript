@@ -84,6 +84,7 @@ const DashboardEmployeesTable = ({
 }: DashboardEmployeesTableProps) => {
   return (
     <DataTable
+      testId='dashboard-employees-table'
       items={employees}
       columns={COLUMNS}
       query={query}
@@ -96,6 +97,7 @@ const DashboardEmployeesTable = ({
           href={`/dashboard/employees/${employee.id}/edit`}
           title='Visualizar usuário'
           aria-label='Visualizar usuário'
+          data-testid={`dashboard-employees-table-row-${employee.id}-view`}
           className='p-1 text-[#434654] hover:text-[#003d9b] dark:text-[#94a3b8] dark:hover:text-[#60a5fa]'
         >
           <Eye className='size-3.5' />

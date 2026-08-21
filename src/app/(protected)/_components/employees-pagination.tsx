@@ -22,6 +22,7 @@ type EmployeesPaginationProps = {
   sortBy: EmployeeSortField
   sortOrder: EmployeeSortOrder
   status: EmployeeStatusFilter
+  testId?: string
 }
 
 const ELLIPSIS = 'ellipsis' as const
@@ -79,6 +80,7 @@ const EmployeesPagination = ({
   sortBy,
   sortOrder,
   status,
+  testId,
 }: EmployeesPaginationProps) => {
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
   const pageNumbers = buildPageNumbers(currentPage, totalPages)
@@ -87,7 +89,7 @@ const EmployeesPagination = ({
 
   return (
     <div className='flex items-center justify-between border-t border-[#dfe1e6] px-4 py-4 dark:border-[#1e293b]'>
-      <Pagination className='mx-0 w-auto'>
+      <Pagination data-testid={testId} className='mx-0 w-auto'>
         <PaginationContent>
           <PaginationItem
             className={hasPreviousPage ? undefined : 'cursor-not-allowed'}
@@ -102,6 +104,7 @@ const EmployeesPagination = ({
               )}
               aria-disabled={!hasPreviousPage}
               tabIndex={hasPreviousPage ? undefined : -1}
+              data-testid={testId ? `${testId}-previous` : undefined}
               className={
                 hasPreviousPage
                   ? 'cursor-pointer'
@@ -120,6 +123,7 @@ const EmployeesPagination = ({
                 <PaginationLink
                   href={buildPageHref(page, query, sortBy, sortOrder, status)}
                   isActive={page === currentPage}
+                  data-testid={testId ? `${testId}-page-${page}` : undefined}
                   className={cn(
                     'cursor-pointer',
                     page === currentPage
@@ -146,6 +150,7 @@ const EmployeesPagination = ({
               )}
               aria-disabled={!hasNextPage}
               tabIndex={hasNextPage ? undefined : -1}
+              data-testid={testId ? `${testId}-next` : undefined}
               className={
                 hasNextPage
                   ? 'cursor-pointer'
