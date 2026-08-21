@@ -63,6 +63,7 @@ const SideNavBar = ({ open, onClose }: SideNavBarProps) => {
         className={cn(
           'fixed inset-y-0 left-0 z-50 flex h-full w-64 shrink-0 flex-col justify-between border-r border-[#dfe1e6] bg-[#f3faff] py-6 transition-transform duration-200 ease-out dark:border-[#1e293b] dark:bg-[#0f172a]',
           'lg:static lg:translate-x-0',
+          'print:hidden',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >

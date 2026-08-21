@@ -13,7 +13,7 @@ type TopNavbarProps = {
 
 const TopNavbar = ({ user, onMenuClick }: TopNavbarProps) => {
   return (
-    <header className='flex h-16 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 sm:px-6 dark:border-[#1e293b] dark:bg-[#0f172a]'>
+    <header className='flex h-16 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 sm:px-6 dark:border-[#1e293b] dark:bg-[#0f172a] print:hidden'>
       <div className='flex min-w-0 items-center gap-2'>
         <Button
           variant='ghost'

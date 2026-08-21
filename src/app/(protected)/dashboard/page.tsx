@@ -1,6 +1,5 @@
 import {
   AlertCircle,
-  Download,
   Plus,
   TrendingDown,
   TrendingUp,
@@ -16,6 +15,7 @@ import EmployeesPagination from '@/app/(protected)/_components/employees-paginat
 import ListSearchInput from '@/app/(protected)/_components/list-search-input'
 
 import DashboardEmployeesTable from './_components/dashboard-employees-table'
+import DashboardExportButton from './_components/dashboard-export-button'
 import DashboardStatCard from './_components/dashboard-stat-card'
 import UserGrowthChart from './_components/user-growth-chart'
 import UsersByDepartmentChart from './_components/users-by-department-chart'
@@ -67,16 +67,8 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
           </p>
         </div>
 
-        <div className='flex gap-2'>
-          <Button
-            variant='outline'
-            disabled
-            title='Em breve'
-            className='border-[#dfe1e6] bg-[#e4f0f6] text-xs font-semibold text-[#121d22] hover:bg-[#e4f0f6] dark:border-[#1e293b] dark:bg-[#1e293b] dark:text-[#94a3b8] dark:hover:bg-[#1e293b]'
-          >
-            <Download className='size-3.5' />
-            Exportar Relatório
-          </Button>
+        <div className='flex gap-2 print:hidden'>
+          <DashboardExportButton />
           <Button
             asChild
             className='bg-[#003d9b] text-xs text-white hover:bg-[#003d9b]/90'
@@ -147,10 +139,12 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
           <h2 className='text-lg font-semibold text-[#121d22] dark:text-[#f1f5f9]'>
             Lista de Usuários
           </h2>
-          <ListSearchInput
-            defaultValue={q ?? ''}
-            placeholder='Buscar usuário...'
-          />
+          <div className='print:hidden'>
+            <ListSearchInput
+              defaultValue={q ?? ''}
+              placeholder='Buscar usuário...'
+            />
+          </div>
         </div>
 
         <DashboardEmployeesTable
@@ -160,15 +154,17 @@ const Dashboard = async ({ searchParams }: DashboardPageProps) => {
           sortOrder={currentSortOrder}
         />
 
-        <EmployeesPagination
-          currentPage={currentPage}
-          totalCount={totalCount}
-          pageSize={pageSize}
-          query={q}
-          sortBy={currentSortBy}
-          sortOrder={currentSortOrder}
-          status='all'
-        />
+        <div className='print:hidden'>
+          <EmployeesPagination
+            currentPage={currentPage}
+            totalCount={totalCount}
+            pageSize={pageSize}
+            query={q}
+            sortBy={currentSortBy}
+            sortOrder={currentSortOrder}
+            status='all'
+          />
+        </div>
       </div>
     </div>
   )
