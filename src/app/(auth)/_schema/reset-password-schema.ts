@@ -1,13 +1,10 @@
 import { z } from 'zod'
 
-import { passwordSchema } from './shared'
+import { otpCodeSchema, passwordSchema } from './shared'
 
 export const resetPasswordSchema = z
   .object({
-    otp: z
-      .string()
-      .length(6, 'Informe o código de 6 dígitos.')
-      .regex(/^\d+$/, 'O código deve conter apenas números.'),
+    otp: otpCodeSchema,
     password: passwordSchema,
     confirmPassword: z.string().min(1, 'Confirme sua senha.'),
   })

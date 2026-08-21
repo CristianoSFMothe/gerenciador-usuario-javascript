@@ -8,7 +8,8 @@ import { auth } from '@/app/_lib/auth'
 import { type LoginInput, loginSchema } from '../../_schema/login-schema'
 
 type LoginActionResult =
-  | { success: true; message: string }
+  | { success: true; twoFactorRequired: true }
+  | { success: true; twoFactorRequired: false; message: string }
   | { success: false; message: string; code?: 'EMAIL_NOT_VERIFIED' }
 
 export const loginAction = async (
@@ -21,7 +22,7 @@ export const loginAction = async (
   }
 
   try {
-    await auth.api.signInEmail({
+    const result = await auth.api.signInEmail({
       body: {
         email: parsed.data.email,
         password: parsed.data.password,
@@ -29,7 +30,18 @@ export const loginAction = async (
       headers: await headers(),
     })
 
-    return { success: true, message: 'Login realizado com sucesso.' }
+    // Todo login exige um segundo fator por e-mail (ver twoFactor em
+    // _lib/auth.ts); o Better Auth já derruba a sessão de credencial e
+    // troca por um cookie temporário de desafio antes de chegar aqui.
+    if ('twoFactorRedirect' in result && result.twoFactorRedirect) {
+      return { success: true, twoFactorRequired: true }
+    }
+
+    return {
+      success: true,
+      twoFactorRequired: false,
+      message: 'Login realizado com sucesso.',
+    }
   } catch (error) {
     if (error instanceof APIError) {
       if (error.body?.code === 'INVALID_EMAIL_OR_PASSWORD') {

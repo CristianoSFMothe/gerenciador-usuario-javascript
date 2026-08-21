@@ -10,3 +10,8 @@ export const passwordSchema = z
   .regex(/[a-z]/, 'Inclua ao menos uma letra minúscula.')
   .regex(/[A-Z]/, 'Inclua ao menos uma letra maiúscula.')
   .regex(/[0-9]/, 'Inclua ao menos um número.')
+
+export const otpCodeSchema = z
+  .string()
+  .length(6, 'Informe o código de 6 dígitos.')
+  .regex(/^\d+$/, 'O código deve conter apenas números.')

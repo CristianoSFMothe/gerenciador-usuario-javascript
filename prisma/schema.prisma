@@ -224,16 +224,18 @@ model EmployeeAuditLog {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  employee      Employee?
+  id               String     @id
+  name             String
+  email            String
+  emailVerified    Boolean    @default(false)
+  twoFactorEnabled Boolean    @default(false)
+  image            String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  sessions         Session[]
+  accounts         Account[]
+  employee         Employee?
+  twoFactor        TwoFactor?
 
   authoredNotes   EmployeeNote[]     @relation("EmployeeNoteAuthor")
   auditLogChanges EmployeeAuditLog[] @relation("EmployeeAuditLogChangedBy")
@@ -335,4 +337,24 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+// Exigido pelo plugin twoFactor do Better Auth. secret/backupCodes nunca são
+// usados de fato (TOTP e códigos de backup ficam desativados — só o método
+// OTP por e-mail é oferecido); são placeholders só para satisfazer os campos
+// obrigatórios do schema do plugin.
+model TwoFactor {
+  id                      String    @id @default(uuid())
+  secret                  String
+  backupCodes             String
+  verified                Boolean   @default(true)
+  failedVerificationCount Int       @default(0)
+  lockedUntil             DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("twoFactor")
 }
